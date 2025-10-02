@@ -41,10 +41,10 @@ const MainLayout = () => {
   };
 
   return (
-    <div className="flex min-h-screen bg-gray-100">
+  <div className="flex min-h-screen bg-gray-100 w-full">
       {/* Sidebar */}
       <aside
-        className={`fixed inset-y-0 left-0 z-40 w-64 transform bg-white shadow-lg transition-transform lg:translate-x-0 lg:static lg:inset-0 ${
+        className={`fixed inset-y-0 left-0 z-40 w-64 max-w-full transform bg-white shadow-lg transition-transform lg:translate-x-0 lg:static lg:inset-0 ${
           sidebarOpen ? "translate-x-0" : "-translate-x-full"
         } font-inter py-8`}
       >
@@ -137,7 +137,7 @@ const MainLayout = () => {
       </aside>
 
       {/* Main content */}
-      <div className="flex-1 flex flex-col">
+  <div className="flex-1 flex flex-col w-full min-w-0">
         {/* Top bar */}
         <header className="flex items-center justify-between px-4 py-3 bg-white shadow lg:hidden">
           <button onClick={() => setSidebarOpen(true)}>
@@ -146,8 +146,10 @@ const MainLayout = () => {
           <Logo/>
         </header>
 
-        <main className="flex-1 p-6">
-          <Outlet />
+        <main className="flex-1 p-2 sm:p-4 md:p-6 w-full min-w-0 overflow-x-auto">
+          <div className="max-w-full">
+            <Outlet />
+          </div>
         </main>
       </div>
     </div>
