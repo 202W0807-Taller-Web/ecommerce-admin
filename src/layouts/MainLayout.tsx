@@ -1,4 +1,5 @@
 // src/layouts/MainLayout.tsx
+import {useEffect} from "react";
 import { Outlet, Link, useLocation } from "react-router-dom";
 import { useState } from "react";
 import { Menu, X, Home, Package, Truck, ChevronRight } from "lucide-react";
@@ -29,8 +30,32 @@ const navItems: NavItem[] = [
 
 const MainLayout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [openAccordions, setOpenAccordions] = useState<string[]>([]);
   const location = useLocation();
+  const [openAccordions, setOpenAccordions] = useState<string[]>(() => {
+    // Abre el acordeón si la ruta actual es hija de algún módulo
+    const activeParents: string[] = [];
+    navItems.forEach(item => {
+      if (item.children) {
+        if (item.children.some(child => location.pathname.startsWith(child.path))) {
+          activeParents.push(item.label);
+        }
+      }
+    });
+    return activeParents;
+  });
+
+  // Mantiene abierto el acordeón si la ruta actual es hija
+  useEffect(() => {
+    const activeParents: string[] = [];
+    navItems.forEach(item => {
+      if (item.children) {
+        if (item.children.some(child => location.pathname.startsWith(child.path))) {
+          activeParents.push(item.label);
+        }
+      }
+    });
+    setOpenAccordions(prev => Array.from(new Set([...prev, ...activeParents])));
+  }, [location.pathname]);
 
   const toggleAccordion = (label: string) => {
     setOpenAccordions((prev) =>
