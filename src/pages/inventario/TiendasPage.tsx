@@ -1,47 +1,47 @@
-
 import React, { useState } from "react";
 import Input from "../../components/Input";
 import Button from "../../components/Button";
 import FileAction from "../../components/FileAction";
 import Table, { TableHeader, TableCell, StatusBadge, AvatarCell, ActionMenuCell } from "../../components/Table";
 import Pagination from "../../components/Pagination";
-import { PlusCircle, Edit, Trash2, MoreVertical } from "lucide-react";
-import { Search } from "lucide-react";
-import { RefreshCw } from "lucide-react";
+import { PlusCircle } from "lucide-react";
+import { Search, RefreshCw } from "lucide-react";
 
-const almacenesData = [
+const tiendasData = [
     {
         id: 1,
-        imagen: "https://i.pravatar.cc/40?img=1",
-        nombre: "Almacen Central",
+        imagen: "https://i.pravatar.cc/40?img=3",
+        nombre: "Tienda Centro",
+        almacen: "Almacen Central",
         estado: "Activo",
-        direccion: "Av. Principal 123",
+        direccion: "Av. Comercio 100",
         distrito: "Miraflores",
         provincia: "Lima",
         departamento: "Lima",
     },
     {
         id: 2,
-        imagen: "https://i.pravatar.cc/40?img=2",
-        nombre: "Almacen Secundario",
+        imagen: "https://i.pravatar.cc/40?img=4",
+        nombre: "Tienda Norte",
+        almacen: "Almacen Secundario",
         estado: "Inactivo",
-        direccion: "Calle Secundaria 456",
+        direccion: "Calle Norte 200",
         distrito: "San Isidro",
         provincia: "Lima",
         departamento: "Lima",
     },
-    // ...más almacenes
+    // ...más tiendas
 ];
 
-
 // Obtiene valores únicos para los selects
-const distritos = Array.from(new Set(almacenesData.map(a => a.distrito)));
-const provincias = Array.from(new Set(almacenesData.map(a => a.provincia)));
-const departamentos = Array.from(new Set(almacenesData.map(a => a.departamento)));
+const almacenes = Array.from(new Set(tiendasData.map(t => t.almacen)));
+const distritos = Array.from(new Set(tiendasData.map(t => t.distrito)));
+const provincias = Array.from(new Set(tiendasData.map(t => t.provincia)));
+const departamentos = Array.from(new Set(tiendasData.map(t => t.departamento)));
 
-
-export default function AlmacenesPage() {
+export default function TiendasPage() {
     const [busqueda, setBusqueda] = useState("");
+    const [almacen, setAlmacen] = useState("");
     const [distrito, setDistrito] = useState("");
     const [provincia, setProvincia] = useState("");
     const [departamento, setDepartamento] = useState("");
@@ -49,17 +49,19 @@ export default function AlmacenesPage() {
     const pageSize = 10;
 
     // Filtros
-    const filtered = almacenesData.filter((a) =>
-        a.nombre.toLowerCase().includes(busqueda.toLowerCase()) &&
-        (distrito ? a.distrito === distrito : true) &&
-        (provincia ? a.provincia === provincia : true) &&
-        (departamento ? a.departamento === departamento : true)
+    const filtered = tiendasData.filter((t) =>
+        t.nombre.toLowerCase().includes(busqueda.toLowerCase()) &&
+        (almacen ? t.almacen === almacen : true) &&
+        (distrito ? t.distrito === distrito : true) &&
+        (provincia ? t.provincia === provincia : true) &&
+        (departamento ? t.departamento === departamento : true)
     );
     const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
     const paginated = filtered.slice((page - 1) * pageSize, page * pageSize);
 
     const handleClear = () => {
         setBusqueda("");
+        setAlmacen("");
         setDistrito("");
         setProvincia("");
         setDepartamento("");
@@ -68,18 +70,31 @@ export default function AlmacenesPage() {
 
     return (
         <div className="p-2 sm:p-4 md:p-6 w-full max-w-full overflow-x-auto">
-            <h1 className="text-2xl font-bold mb-4">Almacenes</h1>
+            <h1 className="text-2xl font-bold mb-4">Tiendas</h1>
 
             {/* Filtros */}
             <div className="flex flex-col sm:flex-row flex-wrap gap-2 sm:gap-4 mb-6 items-end w-full">
                 <div className="w-full sm:w-64 min-w-0">
                     <Input
                         label="Buscar por nombre"
-                        placeholder="Nombre de almacén"
+                        placeholder="Nombre de tienda"
                         value={busqueda}
                         onChange={e => setBusqueda(e.target.value)}
                         rightIcon={Search}
                     />
+                </div>
+                <div className="w-full sm:w-48 min-w-0">
+                    <label className="mb-[8px] block text-base font-medium text-dark">Almacén</label>
+                    <select
+                        className="bg-white w-full rounded-md border py-[10px] px-4 text-dark"
+                        value={almacen}
+                        onChange={e => setAlmacen(e.target.value)}
+                    >
+                        <option value="">Todos</option>
+                        {almacenes.map(a => (
+                            <option key={a} value={a}>{a}</option>
+                        ))}
+                    </select>
                 </div>
                 <div className="w-full sm:w-48 min-w-0">
                     <label className="mb-[8px] block text-base font-medium text-dark">Distrito</label>
@@ -129,7 +144,7 @@ export default function AlmacenesPage() {
                 </button>
                 <div className="flex-1 flex justify-end">
                     <Button
-                        text="Añadir almacén"
+                        text="Añadir tienda"
                         icon={PlusCircle}
                         iconPosition="right"
                         variant="primary"
@@ -158,6 +173,7 @@ export default function AlmacenesPage() {
                             <TableHeader label="#" className="w-12 min-w-[48px] text-center" />
                             <TableHeader label="Imagen" />
                             <TableHeader label="Nombre" />
+                            <TableHeader label="Almacén" />
                             <TableHeader label="Estado" />
                             <TableHeader label="Dirección" />
                             <TableHeader label="Distrito" />
@@ -168,20 +184,21 @@ export default function AlmacenesPage() {
                     </thead>
                     <tbody>
                         {paginated.length === 0 ? (
-                            <tr><TableCell>No hay almacenes</TableCell></tr>
+                            <tr><TableCell>No hay tiendas</TableCell></tr>
                         ) : (
-                            paginated.map((a, idx) => (
-                                <tr key={a.id} className={idx % 2 ? "bg-gray-50" : "bg-white"}>
-                                    <TableCell className="w-12 min-w-[48px] text-center">{a.id}</TableCell>
-                                    <TableCell><img src={a.imagen} alt={a.nombre} className="w-8 h-8 rounded-full" /></TableCell>
-                                    <TableCell>{a.nombre}</TableCell>
+                            paginated.map((t, idx) => (
+                                <tr key={t.id} className={idx % 2 ? "bg-gray-50" : "bg-white"}>
+                                    <TableCell className="w-12 min-w-[48px] text-center">{t.id}</TableCell>
+                                    <TableCell><img src={t.imagen} alt={t.nombre} className="w-8 h-8 rounded-full" /></TableCell>
+                                    <TableCell>{t.nombre}</TableCell>
+                                    <TableCell>{t.almacen}</TableCell>
                                     <TableCell>
-                                        <StatusBadge label={a.estado} variant={a.estado === "Activo" ? "success" : "neutral"} />
+                                        <StatusBadge label={t.estado} variant={t.estado === "Activo" ? "success" : "neutral"} />
                                     </TableCell>
-                                    <TableCell>{a.direccion}</TableCell>
-                                    <TableCell>{a.distrito}</TableCell>
-                                    <TableCell>{a.provincia}</TableCell>
-                                    <TableCell>{a.departamento}</TableCell>
+                                    <TableCell>{t.direccion}</TableCell>
+                                    <TableCell>{t.distrito}</TableCell>
+                                    <TableCell>{t.provincia}</TableCell>
+                                    <TableCell>{t.departamento}</TableCell>
                                     <ActionMenuCell/>
                                 </tr>
                             ))

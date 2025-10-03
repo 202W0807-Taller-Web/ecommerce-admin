@@ -3,9 +3,7 @@ import {useEffect} from "react";
 import { Outlet, Link, useLocation } from "react-router-dom";
 import { useState } from "react";
 import { Menu, X, Home, Package, Truck, ChevronRight } from "lucide-react";
-// types
 import type { NavItem } from "types/ui/NavItem";
-//components
 import Logo from "@components/Logo";
 
 const navItems: NavItem[] = [
@@ -15,6 +13,7 @@ const navItems: NavItem[] = [
     icon: <Package />,
     children: [
       { label: "Almacenes", path: "/inventario/almacenes" },
+      { label: "Tiendas", path: "/inventario/tiendas" },
       { label: "Productos", path: "/inventario/productos" },
     ],
   },
