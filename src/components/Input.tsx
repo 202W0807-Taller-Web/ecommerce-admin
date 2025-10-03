@@ -4,6 +4,7 @@ import type { LucideIcon } from "lucide-react";
 type InputProps = {
   label?: string;
   type?: string;
+  name?: string;
   placeholder?: string;
   disabled?: boolean;
   value?: string;
@@ -25,6 +26,7 @@ type InputProps = {
 const Input: React.FC<InputProps> = ({
   label,
   type = "text",
+  name,
   placeholder,
   disabled = false,
   value,
@@ -60,6 +62,7 @@ const Input: React.FC<InputProps> = ({
 
         <input
           type={type}
+          name={name}
           placeholder={placeholder}
           disabled={disabled}
           value={value}

@@ -1,11 +1,13 @@
 
 import React, { useState } from "react";
+import Modal from "../../components/Modal";
 import Input from "../../components/Input";
+import InputFile from "../../components/InputFile";
 import Button from "../../components/Button";
 import FileAction from "../../components/FileAction";
-import Table, { TableHeader, TableCell, StatusBadge, AvatarCell, ActionMenuCell } from "../../components/Table";
+import { TableHeader, TableCell, StatusBadge, ActionMenuCell } from "../../components/Table";
 import Pagination from "../../components/Pagination";
-import { PlusCircle, Edit, Trash2, MoreVertical } from "lucide-react";
+import { PlusCircle } from "lucide-react";
 import { Search } from "lucide-react";
 import { RefreshCw } from "lucide-react";
 
@@ -39,7 +41,6 @@ const distritos = Array.from(new Set(almacenesData.map(a => a.distrito)));
 const provincias = Array.from(new Set(almacenesData.map(a => a.provincia)));
 const departamentos = Array.from(new Set(almacenesData.map(a => a.departamento)));
 
-
 export default function AlmacenesPage() {
     const [busqueda, setBusqueda] = useState("");
     const [distrito, setDistrito] = useState("");
@@ -47,6 +48,18 @@ export default function AlmacenesPage() {
     const [departamento, setDepartamento] = useState("");
     const [page, setPage] = useState(1);
     const pageSize = 10;
+
+    // Modal state
+    const [modalOpen, setModalOpen] = useState(false);
+    const [form, setForm] = useState({
+        nombre: "",
+        estado: "Activo",
+        direccion: "",
+        distrito: "",
+        provincia: "",
+        departamento: "",
+        imagen: ""
+    });
 
     // Filtros
     const filtered = almacenesData.filter((a) =>
@@ -64,6 +77,17 @@ export default function AlmacenesPage() {
         setProvincia("");
         setDepartamento("");
         setPage(1);
+    };
+
+    const handleOpenModal = () => setModalOpen(true);
+    const handleCloseModal = () => setModalOpen(false);
+    const handleFormChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+        const { name, value } = e.target;
+        setForm(f => ({ ...f, [name]: value }));
+    };
+    const handleAccept = () => {
+        // Aquí podrías agregar el almacén a la lista
+        setModalOpen(false);
     };
 
     return (
@@ -133,6 +157,7 @@ export default function AlmacenesPage() {
                         icon={PlusCircle}
                         iconPosition="right"
                         variant="primary"
+                        onClick={handleOpenModal}
                     />
                 </div>
             </div>
@@ -201,6 +226,106 @@ export default function AlmacenesPage() {
                     />
                 </div>
             </div>
+            {/* Modal para agregar almacén */}
+            <Modal
+                open={modalOpen}
+                title="Agregar almacén"
+                onCancel={handleCloseModal}
+                onAccept={handleAccept}
+            >
+                <form className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="sm:col-span-2">
+                        <Input
+                            label="Nombre"
+                            name="nombre"
+                            value={form.nombre}
+                            onChange={handleFormChange}
+                            placeholder="Nombre del almacén"
+                        />
+                    </div>
+
+
+                    <div className="sm:col-span-2">
+                        <Input
+                            label="Dirección"
+                            name="direccion"
+                            value={form.direccion}
+                            onChange={handleFormChange}
+                            placeholder="Dirección"
+                        />
+                    </div>
+
+                    <div>
+                        <label className="mb-[8px] block text-base font-medium text-dark">Estado</label>
+                        <select
+                            name="estado"
+                            value={form.estado}
+                            onChange={handleFormChange}
+                            className="bg-white w-full rounded-md border py-[10px] px-4 text-dark"
+                        >
+                            <option value="Activo">Activo</option>
+                            <option value="Inactivo">Inactivo</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label className="mb-[8px] block text-base font-medium text-dark">Departamento</label>
+                        <select
+                            name="departamento"
+                            value={form.departamento}
+                            onChange={handleFormChange}
+                            className="bg-white w-full rounded-md border py-[10px] px-4 text-dark"
+                        >
+                            <option value="">Selecciona departamento</option>
+                            {departamentos.map(dep => (
+                                <option key={dep} value={dep}>{dep}</option>
+                            ))}
+                        </select>
+                    </div>
+
+                    <div>
+                        <label className="mb-[8px] block text-base font-medium text-dark">Provincia</label>
+                        <select
+                            name="provincia"
+                            value={form.provincia}
+                            onChange={handleFormChange}
+                            className="bg-white w-full rounded-md border py-[10px] px-4 text-dark"
+                        >
+                            <option value="">Selecciona provincia</option>
+                            {provincias.map(p => (
+                                <option key={p} value={p}>{p}</option>
+                            ))}
+                        </select>
+                    </div>
+
+                    <div>
+                        <label className="mb-[8px] block text-base font-medium text-dark">Distrito</label>
+                        <select
+                            name="distrito"
+                            value={form.distrito}
+                            onChange={handleFormChange}
+                            className="bg-white w-full rounded-md border py-[10px] px-4 text-dark"
+                        >
+                            <option value="">Selecciona distrito</option>
+                            {distritos.map(d => (
+                                <option key={d} value={d}>{d}</option>
+                            ))}
+                        </select>
+                    </div>
+
+                    <div className="sm:col-span-2">
+                        <InputFile
+                            label="Imagen"
+                            name="imagen"
+                            maxFiles={1}
+                            onFilesChange={(_, dataUrls) => {
+                                // tomar primer dataUrl si existe
+                                setForm(f => ({ ...f, imagen: dataUrls && dataUrls.length ? dataUrls[0] : "" }));
+                            }}
+                        />
+                    </div>
+                </form>
+            </Modal>
         </div>
     );
 }

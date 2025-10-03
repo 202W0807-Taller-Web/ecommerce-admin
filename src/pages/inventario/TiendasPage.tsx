@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import Input from "../../components/Input";
+import InputFile from "../../components/InputFile";
+import Modal from "../../components/Modal";
 import Button from "../../components/Button";
 import FileAction from "../../components/FileAction";
 import Table, { TableHeader, TableCell, StatusBadge, AvatarCell, ActionMenuCell } from "../../components/Table";
@@ -47,6 +49,30 @@ export default function TiendasPage() {
     const [departamento, setDepartamento] = useState("");
     const [page, setPage] = useState(1);
     const pageSize = 10;
+
+    // Modal state for adding tienda
+    const [modalOpen, setModalOpen] = useState(false);
+    const [form, setForm] = useState({
+        nombre: "",
+        almacen: "",
+        estado: "Activo",
+        direccion: "",
+        distrito: "",
+        provincia: "",
+        departamento: "",
+        imagen: ""
+    });
+
+    const handleOpenModal = () => setModalOpen(true);
+    const handleCloseModal = () => setModalOpen(false);
+    const handleFormChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+        const { name, value } = e.target;
+        setForm(f => ({ ...f, [name]: value }));
+    };
+    const handleAccept = () => {
+        // Aquí podrías agregar la tienda a la lista
+        setModalOpen(false);
+    };
 
     // Filtros
     const filtered = tiendasData.filter((t) =>
@@ -148,6 +174,7 @@ export default function TiendasPage() {
                         icon={PlusCircle}
                         iconPosition="right"
                         variant="primary"
+                        onClick={handleOpenModal}
                     />
                 </div>
             </div>
@@ -164,6 +191,121 @@ export default function TiendasPage() {
                     <RefreshCw className="h-5 w-5" />
                 </button>
             </div>
+            {/* Modal para agregar tienda */}
+            <Modal
+                open={modalOpen}
+                title="Agregar tienda"
+                onCancel={handleCloseModal}
+                onAccept={handleAccept}
+            >
+                <form className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    
+
+                    <div className="sm:col-span-2">
+                        <Input
+                            label="Nombre"
+                            name="nombre"
+                            value={form.nombre}
+                            onChange={handleFormChange}
+                            placeholder="Nombre de la tienda"
+                        />
+                    </div>
+
+                    <div className="sm:col-span-2">
+                        <Input
+                            label="Dirección"
+                            name="direccion"
+                            value={form.direccion}
+                            onChange={handleFormChange}
+                            placeholder="Dirección"
+                        />
+                    </div>
+
+                    <div className="sm:col-span-2">
+                        <label className="mb-[8px] block text-base font-medium text-dark">Almacén</label>
+                        <select
+                            name="almacen"
+                            value={form.almacen}
+                            onChange={handleFormChange}
+                            className="bg-white w-full rounded-md border py-[10px] px-4 text-dark"
+                        >
+                            <option value="">Selecciona almacén</option>
+                            {almacenes.map(a => (
+                                <option key={a} value={a}>{a}</option>
+                            ))}
+                        </select>
+                    </div>                    
+
+                    <div>
+                        <label className="mb-[8px] block text-base font-medium text-dark">Departamento</label>
+                        <select
+                            name="departamento"
+                            value={form.departamento}
+                            onChange={handleFormChange}
+                            className="bg-white w-full rounded-md border py-[10px] px-4 text-dark"
+                        >
+                            <option value="">Selecciona departamento</option>
+                            {departamentos.map(dep => (
+                                <option key={dep} value={dep}>{dep}</option>
+                            ))}
+                        </select>
+                    </div>
+
+                    <div>
+                        <label className="mb-[8px] block text-base font-medium text-dark">Provincia</label>
+                        <select
+                            name="provincia"
+                            value={form.provincia}
+                            onChange={handleFormChange}
+                            className="bg-white w-full rounded-md border py-[10px] px-4 text-dark"
+                        >
+                            <option value="">Selecciona provincia</option>
+                            {provincias.map(p => (
+                                <option key={p} value={p}>{p}</option>
+                            ))}
+                        </select>
+                    </div>
+
+                    <div>
+                        <label className="mb-[8px] block text-base font-medium text-dark">Distrito</label>
+                        <select
+                            name="distrito"
+                            value={form.distrito}
+                            onChange={handleFormChange}
+                            className="bg-white w-full rounded-md border py-[10px] px-4 text-dark"
+                        >
+                            <option value="">Selecciona distrito</option>
+                            {distritos.map(d => (
+                                <option key={d} value={d}>{d}</option>
+                            ))}
+                        </select>
+                    </div>
+
+                    <div>
+                        <label className="mb-[8px] block text-base font-medium text-dark">Estado</label>
+                        <select
+                            name="estado"
+                            value={form.estado}
+                            onChange={handleFormChange}
+                            className="bg-white w-full rounded-md border py-[10px] px-4 text-dark"
+                        >
+                            <option value="Activo">Activo</option>
+                            <option value="Inactivo">Inactivo</option>
+                        </select>
+                    </div>
+
+                    <div className="sm:col-span-2">
+                        <InputFile
+                            label="Imagen"
+                            name="imagen"
+                            maxFiles={1}
+                            onFilesChange={(_, dataUrls) => {
+                                setForm(f => ({ ...f, imagen: dataUrls && dataUrls.length ? dataUrls[0] : "" }));
+                            }}
+                        />
+                    </div>
+                </form>
+            </Modal>
 
             {/* Tabla */}
             <div className="overflow-x-auto w-full">
