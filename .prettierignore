@@ -1,0 +1,10 @@
+dist
+package-lock.json
+package.json
+tsconfig.app.json
+tsconfig.json
+tsconfig.node.json
+vite.config.ts
+eslint.config.js
+prettier.config.js
+src/vite-env.d.ts

@@ -2,11 +2,46 @@
 
 @import "tailwindcss";
 
+@plugin "tailgrids/plugin";
 
 @theme {
-    /* fuentes */
-    --font-inter: "Inter", sans-serif
+    --font-inter: "Inter", sans-serif;
+    --color-primary1: #c0a648;
+    --color-primary2: #968751;
+    --color-primary3: #ebc431;
+    --color-primary4: #6b644c;
+    --color-primary5: #413f39;
+    --color-primary6: #333027;
+}
 
-    /* colores */
-    /* ... */
+select, ::picker(select) {
+  appearance: base-select;
+}
+
+select {
+  & option {
+    padding: 5px 10px;
+
+    &:hover {
+      background: theme(--color-primary2);
+      color: white;
+    }
+  }
+
+  & option:checked {
+    background: theme(--color-primary3);
+    color: white
+  }
+
+  & ::checkmark {
+    content: "";
+  }
+
+  &::picker-icon {
+    display: none;
+  }
+
+  &:open {
+    border-color: theme(--color-primary3);
+  }
 }

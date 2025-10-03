@@ -1,10 +1,9 @@
 // src/layouts/MainLayout.tsx
+import {useEffect} from "react";
 import { Outlet, Link, useLocation } from "react-router-dom";
 import { useState } from "react";
 import { Menu, X, Home, Package, Truck, ChevronRight } from "lucide-react";
-// types
 import type { NavItem } from "types/ui/NavItem";
-//components
 import Logo from "@components/Logo";
 
 const navItems: NavItem[] = [
@@ -14,6 +13,7 @@ const navItems: NavItem[] = [
     icon: <Package />,
     children: [
       { label: "Almacenes", path: "/inventario/almacenes" },
+      { label: "Tiendas", path: "/inventario/tiendas" },
       { label: "Productos", path: "/inventario/productos" },
     ],
   },
@@ -29,8 +29,32 @@ const navItems: NavItem[] = [
 
 const MainLayout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [openAccordions, setOpenAccordions] = useState<string[]>([]);
   const location = useLocation();
+  const [openAccordions, setOpenAccordions] = useState<string[]>(() => {
+    // Abre el acordeón si la ruta actual es hija de algún módulo
+    const activeParents: string[] = [];
+    navItems.forEach(item => {
+      if (item.children) {
+        if (item.children.some(child => location.pathname.startsWith(child.path))) {
+          activeParents.push(item.label);
+        }
+      }
+    });
+    return activeParents;
+  });
+
+  // Mantiene abierto el acordeón si la ruta actual es hija
+  useEffect(() => {
+    const activeParents: string[] = [];
+    navItems.forEach(item => {
+      if (item.children) {
+        if (item.children.some(child => location.pathname.startsWith(child.path))) {
+          activeParents.push(item.label);
+        }
+      }
+    });
+    setOpenAccordions(prev => Array.from(new Set([...prev, ...activeParents])));
+  }, [location.pathname]);
 
   const toggleAccordion = (label: string) => {
     setOpenAccordions((prev) =>
@@ -41,10 +65,10 @@ const MainLayout = () => {
   };
 
   return (
-    <div className="flex min-h-screen bg-gray-100">
+  <div className="flex min-h-screen bg-gray-100 w-full">
       {/* Sidebar */}
       <aside
-        className={`fixed inset-y-0 left-0 z-40 w-64 transform bg-white shadow-lg transition-transform lg:translate-x-0 lg:static lg:inset-0 ${
+        className={`fixed inset-y-0 left-0 z-40 w-64 max-w-full transform bg-white shadow-lg transition-transform lg:translate-x-0 lg:static lg:inset-0 ${
           sidebarOpen ? "translate-x-0" : "-translate-x-full"
         } font-inter py-8`}
       >
@@ -137,7 +161,7 @@ const MainLayout = () => {
       </aside>
 
       {/* Main content */}
-      <div className="flex-1 flex flex-col">
+  <div className="flex-1 flex flex-col w-full min-w-0">
         {/* Top bar */}
         <header className="flex items-center justify-between px-4 py-3 bg-white shadow lg:hidden">
           <button onClick={() => setSidebarOpen(true)}>
@@ -146,8 +170,10 @@ const MainLayout = () => {
           <Logo/>
         </header>
 
-        <main className="flex-1 p-6">
-          <Outlet />
+        <main className="flex-1 p-2 sm:p-4 md:p-6 w-full min-w-0 overflow-x-auto">
+          <div className="max-w-full">
+            <Outlet />
+          </div>
         </main>
       </div>
     </div>
