@@ -18,6 +18,15 @@ const router = createBrowserRouter([
             },
         ]
     }
-]);
+]); 
+// KAFKA
+// ordenes y devoluciones
+// necesitan estados de envio (finalizado)
+// orden, productoOrden, Historial orden
+
+// nos mandas la confirmacion de la orden (para reservar y para confirmar)
+// otra para devolucion, descuenta automatico
+
+
 
 export default router;
