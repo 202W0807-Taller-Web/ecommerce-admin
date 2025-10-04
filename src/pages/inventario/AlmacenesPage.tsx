@@ -13,6 +13,7 @@ import { PlusCircle } from "lucide-react";
 import { Search } from "lucide-react";
 import { RefreshCw } from "lucide-react";
 import Select from "../../components/Select";
+import { Link } from "react-router-dom";
 
 const almacenesData = [
     {
@@ -195,9 +196,13 @@ export default function AlmacenesPage() {
                                 <tr key={a.id} className={idx % 2 ? "bg-gray-50" : "bg-white"}>
                                     <TableCell className="w-12 min-w-[48px] text-center">{a.id}</TableCell>
                                     <TableCell><img src={a.imagen} alt={a.nombre} className="w-8 h-8 rounded-full" /></TableCell>
-                                    <TableCell>{a.nombre}</TableCell>
                                     <TableCell>
-                                        <StatusBadge label={a.estado} variant={a.estado === "Activo" ? "success" : "neutral"} />
+                                        <Link to={`/inventario/almacenes/${a.id}`}>
+                                            {a.nombre}
+                                        </Link>
+                                    </TableCell>
+                                    <TableCell>
+                                        <StatusBadge label={a.estado} variant={a.estado === "Activo" ? "success" : "danger"} />
                                     </TableCell>
                                     <TableCell>{a.direccion}</TableCell>
                                     <TableCell>{a.distrito}</TableCell>

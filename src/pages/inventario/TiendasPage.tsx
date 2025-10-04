@@ -15,7 +15,7 @@ const tiendasData = [
         id: 1,
         imagen: "https://i.pravatar.cc/40?img=3",
         nombre: "Tienda Centro",
-        almacen: "Almacen Central",
+        almacenes: ["Almacen Central", "Almacen Secundario"],
         estado: "Activo",
         direccion: "Av. Comercio 100",
         distrito: "Miraflores",
@@ -26,7 +26,7 @@ const tiendasData = [
         id: 2,
         imagen: "https://i.pravatar.cc/40?img=4",
         nombre: "Tienda Norte",
-        almacen: "Almacen Secundario",
+        almacenes: ["Almacen Secundario"],
         estado: "Inactivo",
         direccion: "Calle Norte 200",
         distrito: "San Isidro",
@@ -37,7 +37,7 @@ const tiendasData = [
 ];
 
 // Obtiene valores únicos para los selects
-const almacenes = Array.from(new Set(tiendasData.map(t => t.almacen)));
+const almacenes = Array.from(new Set(tiendasData.flatMap(t => t.almacenes)));
 const distritos = Array.from(new Set(tiendasData.map(t => t.distrito)));
 const provincias = Array.from(new Set(tiendasData.map(t => t.provincia)));
 const departamentos = Array.from(new Set(tiendasData.map(t => t.departamento)));
@@ -83,7 +83,7 @@ export default function TiendasPage() {
     // Filtros
     const filtered = tiendasData.filter((t) =>
         t.nombre.toLowerCase().includes(busqueda.toLowerCase()) &&
-        (almacen ? t.almacen === almacen : true) &&
+        (almacen ? t.almacenes.includes(almacen) : true) &&
         (distrito ? t.distrito === distrito : true) &&
         (provincia ? t.provincia === provincia : true) &&
         (departamento ? t.departamento === departamento : true)
@@ -281,7 +281,7 @@ export default function TiendasPage() {
                             <TableHeader label="#" className="w-12 min-w-[48px] text-center" />
                             <TableHeader label="Imagen" />
                             <TableHeader label="Nombre" />
-                            <TableHeader label="Almacén" />
+                            <TableHeader label="Almacenes" />
                             <TableHeader label="Estado" />
                             <TableHeader label="Dirección" />
                             <TableHeader label="Distrito" />
@@ -299,7 +299,16 @@ export default function TiendasPage() {
                                     <TableCell className="w-12 min-w-[48px] text-center">{t.id}</TableCell>
                                     <TableCell><img src={t.imagen} alt={t.nombre} className="w-8 h-8 rounded-full" /></TableCell>
                                     <TableCell>{t.nombre}</TableCell>
-                                    <TableCell>{t.almacen}</TableCell>
+                                    <TableCell>
+                                        {t.almacenes && t.almacenes.length > 0
+                                            ? t.almacenes.map((a, i) => (
+                                                <span key={a} className="inline-block bg-gray-200 rounded px-2 py-1 mr-1 text-xs">
+                                                    {a}
+                                                    {i < t.almacenes.length - 1 ? ',' : ''}
+                                                </span>
+                                            ))
+                                            : "-"}
+                                    </TableCell>
                                     <TableCell>
                                         <StatusBadge label={t.estado} variant={t.estado === "Activo" ? "success" : "neutral"} />
                                     </TableCell>
