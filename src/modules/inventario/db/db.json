@@ -1,0 +1,244 @@
+{
+  "almacenes": [
+    {
+      "id": "1",
+      "imagen": "https://i.pravatar.cc/40?img=1",
+      "nombre": "Almacen Central",
+      "estado": "Activo",
+      "direccion": "Av. Principal 123",
+      "distrito": "Miraflores",
+      "provincia": "Lima",
+      "departamento": "Lima"
+    },
+    {
+      "id": "2",
+      "imagen": "https://i.pravatar.cc/40?img=2",
+      "nombre": "Almacen Secundario",
+      "estado": "Inactivo",
+      "direccion": "Calle Secundaria 456",
+      "distrito": "San Isidro",
+      "provincia": "Lima",
+      "departamento": "Lima"
+    },
+    {
+      "id": "3",
+      "imagen": "https://i.pravatar.cc/40?img=3",
+      "nombre": "Almacen Norte",
+      "estado": "Activo",
+      "direccion": "Av. Los Pinos 789",
+      "distrito": "Los Olivos",
+      "provincia": "Lima",
+      "departamento": "Lima"
+    },
+    {
+      "id": "8618",
+      "nombre": "nombre test",
+      "estado": "Activo",
+      "direccion": "direccion prueba 02",
+      "distrito": "Los Olivos",
+      "provincia": "Lima",
+      "departamento": "Lima",
+      "imagen": ""
+    },
+    {
+      "id": "daa6",
+      "nombre": "nombre test",
+      "estado": "Activo",
+      "direccion": "direccion prueba 02",
+      "distrito": "Los Olivos",
+      "provincia": "Lima",
+      "departamento": "Lima",
+      "imagen": ""
+    },
+    {
+      "id": "f0f8",
+      "nombre": "nombre test",
+      "estado": "Activo",
+      "direccion": "direccion prueba 02",
+      "distrito": "Los Olivos",
+      "provincia": "Lima",
+      "departamento": "Lima",
+      "imagen": ""
+    },
+    {
+      "id": "f865",
+      "nombre": "nombre test",
+      "estado": "Inactivo",
+      "direccion": "direccion prueba 02",
+      "distrito": "Los Olivos",
+      "provincia": "Lima",
+      "departamento": "Lima",
+      "imagen": ""
+    },
+    {
+      "id": "86f5",
+      "nombre": "nombre test",
+      "estado": "Inactivo",
+      "direccion": "direccion prueba 02",
+      "distrito": "San Isidro",
+      "provincia": "Lima",
+      "departamento": "Lima",
+      "imagen": ""
+    },
+    {
+      "id": "1a0a",
+      "nombre": "nombre test",
+      "estado": "Inactivo",
+      "direccion": "direccion prueba 02",
+      "distrito": "San Isidro",
+      "provincia": "Lima",
+      "departamento": "Lima",
+      "imagen": ""
+    },
+    {
+      "id": "9f41",
+      "nombre": "nombre test",
+      "estado": "Inactivo",
+      "direccion": "direccion prueba 02",
+      "distrito": "San Isidro",
+      "provincia": "Lima",
+      "departamento": "Lima",
+      "imagen": ""
+    },
+    {
+      "id": "8995",
+      "nombre": "nombre test",
+      "estado": "Activo",
+      "direccion": "direccion prueba 02",
+      "distrito": "Miraflores",
+      "provincia": "Lima",
+      "departamento": "Lima",
+      "imagen": ""
+    },
+    {
+      "id": "3de5",
+      "nombre": "",
+      "estado": "Inactivo",
+      "direccion": "",
+      "distrito": "",
+      "provincia": "",
+      "departamento": "Lima",
+      "imagen": ""
+    },
+    {
+      "id": "d284",
+      "nombre": "gonzalo",
+      "estado": "Inactivo",
+      "direccion": "d",
+      "distrito": "",
+      "provincia": "",
+      "departamento": "Lima",
+      "imagen": ""
+    },
+    {
+      "id": "9e3b",
+      "nombre": "Prueba form",
+      "direccion": "Prueba desde otro",
+      "estado": "Inactivo",
+      "departamento": "",
+      "provincia": "",
+      "distrito": "",
+      "imagen": ""
+    },
+    {
+      "id": "96aa",
+      "nombre": "Prueba form",
+      "direccion": "Prueba desde otro",
+      "estado": "Inactivo",
+      "departamento": "",
+      "provincia": "",
+      "distrito": "",
+      "imagen": ""
+    },
+    {
+      "id": "41e4",
+      "nombre": "nombre de prue",
+      "direccion": "desde react hook",
+      "estado": "Activo",
+      "departamento": "",
+      "provincia": "",
+      "distrito": "",
+      "imagen": ""
+    },
+    {
+      "id": "7837",
+      "nombre": "hola mi mundo",
+      "direccion": "wazza",
+      "estado": "Activo",
+      "departamento": "",
+      "provincia": "",
+      "distrito": "",
+      "imagen": ""
+    }
+  ],
+  "tiendas": [
+    {
+      "id": "de7e",
+      "nombre": "nombre test",
+      "almacen": "Central",
+      "estado": "Inactivo",
+      "direccion": "direccion prueba 01",
+      "distrito": "Ate",
+      "provincia": "Lima",
+      "departamento": "Lima",
+      "imagen": ""
+    },
+    {
+      "id": "1",
+      "nombre": "Wds Frre",
+      "almacen": "Central",
+      "estado": "Inactivo",
+      "direccion": "direccion prueba 01",
+      "distrito": "Santa Anita",
+      "provincia": "Lima",
+      "departamento": "Lima",
+      "imagen": ""
+    },
+    {
+      "id": "9e36",
+      "nombre": "nombre desde react hook",
+      "almacen": "",
+      "estado": "Activo",
+      "direccion": "",
+      "distrito": "",
+      "provincia": "",
+      "departamento": "",
+      "imagen": ""
+    },
+    {
+      "id": "1c66",
+      "nombre": "hola",
+      "almacen": "",
+      "estado": "Inactivo",
+      "direccion": "direc hook form",
+      "distrito": "",
+      "provincia": "",
+      "departamento": "",
+      "imagen": ""
+    }
+  ],
+  "productos": [
+    {
+      "id": "1",
+      "imagen": "https://i.pravatar.cc/40?img=5",
+      "sku": "SKU001",
+      "producto": "Laptop Dell Inspiron",
+      "categoria": "Electrónica",
+      "stkDisponible": 12,
+      "stkReservado": 3,
+      "stkTotal": 15,
+      "estadoStk": "Disponible"
+    },
+    {
+      "id": "2",
+      "imagen": "https://i.pravatar.cc/40?img=6",
+      "sku": "SKU002",
+      "producto": "Mouse Logitech",
+      "categoria": "Accesorios",
+      "stkDisponible": 5,
+      "stkReservado": 2,
+      "stkTotal": 7,
+      "estadoStk": "Bajo Stock"
+    }
+  ]
+}

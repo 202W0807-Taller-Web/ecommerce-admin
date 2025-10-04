@@ -8,6 +8,7 @@ type Option = {
 };
 
 type SelectProps = {
+  name?: string,
   label?: string;
   placeholder?: string;
   options: Option[];
@@ -27,6 +28,7 @@ type SelectProps = {
 };
 
 const Select: React.FC<SelectProps> = ({
+  name,
   label,
   placeholder,
   options,
@@ -62,6 +64,7 @@ const Select: React.FC<SelectProps> = ({
         )}
 
         <select
+          name={name}
           disabled={disabled}
           value={value ?? ""}
           onChange={onChange}
