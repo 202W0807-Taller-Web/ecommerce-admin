@@ -1,40 +1,14 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import Input from "../../components/Input";
-import Button from "../../components/Button";
 import FileAction from "../../components/FileAction";
-import Table, { TableHeader, TableCell, StatusBadge, ActionMenuCell } from "../../components/Table";
+import { TableHeader, TableCell, StatusBadge, ActionMenuCell } from "../../components/Table";
 import Pagination from "../../components/Pagination";
 import { Search } from "lucide-react";
 import Select from "../../components/Select";
 
-const productosData = [
-    {
-        id: 1,
-        imagen: "https://i.pravatar.cc/40?img=5",
-        sku: "SKU001",
-        producto: "Laptop Dell Inspiron",
-        categoria: "Electrónica",
-        stkDisponible: 12,
-        stkReservado: 3,
-        stkTotal: 15,
-        estadoStk: "Disponible",
-    },
-    {
-        id: 2,
-        imagen: "https://i.pravatar.cc/40?img=6",
-        sku: "SKU002",
-        producto: "Mouse Logitech",
-        categoria: "Accesorios",
-        stkDisponible: 5,
-        stkReservado: 2,
-        stkTotal: 7,
-        estadoStk: "Bajo Stock",
-    },
-    // ...más productos
-];
-
-const categorias = Array.from(new Set(productosData.map(p => p.categoria)));
-const categoriaOptions = categorias.map(c => ({ value: c, label: c }));
+import { useQuery } from "@tanstack/react-query";
+import type { Producto } from "../../modules/inventario/types/producto";
+import { getProductos } from "../../modules/inventario/api/productos";
 
 export default function ProductosPage() {
     const [busqueda, setBusqueda] = useState("");
@@ -42,6 +16,24 @@ export default function ProductosPage() {
     const [page, setPage] = useState(1);
     const pageSize = 10;
 
+    // Get
+    const {
+        isPending,
+        isError,
+        data: productosData,
+        error,
+    } = useQuery<Producto[]>({
+        queryKey: ["productos"],
+        queryFn: getProductos,
+    });
+
+    if (isPending) return <span>Loading...</span>;
+
+    if (isError) return <span>Error: {error.message}</span>;
+
+    // Categorias
+    const categorias = Array.from(new Set(productosData.map(p => p.categoria)));
+    const categoriaOptions = categorias.map(c => ({ value: c, label: c }));
     // Filtros
     const filtered = productosData.filter((p) =>
         p.producto.toLowerCase().includes(busqueda.toLowerCase()) &&
