@@ -6,6 +6,7 @@ import MainLayout from "./layouts/MainLayout";
 
 // Inventarios
 import AlmacenesPage from "./pages/inventario/AlmacenesPage";
+import AlmacenesDetailsPage from "./pages/inventario/AlmacenesDetailsPage";
 import TiendasPage from "./pages/inventario/TiendasPage";
 import ProductosPage from "./pages/inventario/ProductosPage";
 
@@ -17,6 +18,10 @@ const router = createBrowserRouter([
             {
                 path: 'inventario/almacenes',
                 element: <AlmacenesPage/>,
+            },
+            {
+                path: 'inventario/almacenes/:id',
+                element: <AlmacenesDetailsPage/>,
             },
             {
                 path: 'inventario/tiendas',

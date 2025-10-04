@@ -1,5 +1,6 @@
 
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Modal from "../../components/Modal";
 import Input from "../../components/Input";
 import InputFile from "../../components/InputFile";
@@ -43,10 +44,6 @@ const distritos = Array.from(new Set(almacenesData.map(a => a.distrito)));
 const provincias = Array.from(new Set(almacenesData.map(a => a.provincia)));
 const departamentos = Array.from(new Set(almacenesData.map(a => a.departamento)));
 
-const distritoOptions = distritos.map(d => ({ value: d, label: d }));
-const provinciaOptions = provincias.map(p => ({ value: p, label: p }));
-const departamentoOptions = departamentos.map(dep => ({ value: dep, label: dep }));
-
 export default function AlmacenesPage() {
     const [busqueda, setBusqueda] = useState("");
     const [distrito, setDistrito] = useState("");
@@ -54,6 +51,11 @@ export default function AlmacenesPage() {
     const [departamento, setDepartamento] = useState("");
     const [page, setPage] = useState(1);
     const pageSize = 10;
+    const navigate = useNavigate();
+
+    const distritoOptions = distritos.map(d => ({ value: d, label: d }));
+    const provinciaOptions = provincias.map(p => ({ value: p, label: p }));
+    const departamentoOptions = departamentos.map(dep => ({ value: dep, label: dep }));
 
     // Modal state
     const [modalOpen, setModalOpen] = useState(false);
@@ -206,7 +208,7 @@ export default function AlmacenesPage() {
                                             {
                                                 label: "Ver detalles",
                                                 icon: <Eye className="w-4 h-4 text-blue-600" />,
-                                                onClick: () => console.log(`Ver detalles de: ${a.nombre}`),
+                                                onClick: () => navigate(`/inventario/almacenes/${a.id}`),
                                             },
                                             {
                                                 label: "Actualizar",
