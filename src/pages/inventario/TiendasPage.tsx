@@ -6,8 +6,7 @@ import Button from "../../components/Button";
 import FileAction from "../../components/FileAction";
 import Table, { TableHeader, TableCell, StatusBadge, AvatarCell, ActionMenuCell } from "../../components/Table";
 import Pagination from "../../components/Pagination";
-import { PlusCircle } from "lucide-react";
-import { Search, RefreshCw } from "lucide-react";
+import { PlusCircle, Search, RefreshCw, Pencil, Trash2, PackagePlus, Eye } from "lucide-react";
 import Select from "../../components/Select";
 
 const tiendasData = [
@@ -316,7 +315,29 @@ export default function TiendasPage() {
                                     <TableCell>{t.distrito}</TableCell>
                                     <TableCell>{t.provincia}</TableCell>
                                     <TableCell>{t.departamento}</TableCell>
-                                    <ActionMenuCell/>
+                                                                        <ActionMenuCell
+                                                                            buttons={[{
+                                                                                label: "Ver detalles",
+                                                                                icon: <Eye className="w-4 h-4 text-blue-600" />,
+                                                                                onClick: () => console.log(`Ver detalles de tienda: ${t.nombre}`),
+                                                                            }, {
+                                                                                label: "Actualizar",
+                                                                                icon: <Pencil className="w-4 h-4 text-primary1" />,
+                                                                                onClick: () => console.log(`Actualizar tienda: ${t.nombre}`),
+                                                                            }, {
+                                                                                label: "Eliminar",
+                                                                                icon: <Trash2 className="w-4 h-4 text-red-600" />,
+                                                                                onClick: () => console.log(`Eliminar tienda: ${t.nombre}`),
+                                                                            }, {
+                                                                                label: "Asignar almacenes",
+                                                                                icon: <PackagePlus className="w-4 h-4 text-green-600" />,
+                                                                                onClick: () => console.log(`Asignar almacenes a tienda: ${t.nombre}`),
+                                                                            }, {
+                                                                                label: "Asignar productos",
+                                                                                icon: <PackagePlus className="w-4 h-4 text-purple-600" />,
+                                                                                onClick: () => console.log(`Asignar productos a tienda: ${t.nombre}`),
+                                                                            }]}
+                                                                        />
                                 </tr>
                             ))
                         )}

@@ -182,6 +182,7 @@ export default function AlmacenesDetailsPage() {
               <TableHeader label="Imagen" />
               <TableHeader label="SKU" />
               <TableHeader label="Producto" />
+              <TableHeader label="Categoría" />
               <TableHeader label="Stk. Disponible" />
               <TableHeader label="Stk. Reservado" />
               <TableHeader label="Stk. Total" />
@@ -199,6 +200,7 @@ export default function AlmacenesDetailsPage() {
                   <TableCell><img src={p.imagen} alt={p.producto} className="w-8 h-8 rounded-full" /></TableCell>
                   <TableCell>{p.sku}</TableCell>
                   <TableCell>{p.producto}</TableCell>
+                  <TableCell>{p.categoria}</TableCell>
                   <TableCell>{p.stkDisponible}</TableCell>
                   <TableCell>{p.stkReservado}</TableCell>
                   <TableCell>{p.stkTotal}</TableCell>
