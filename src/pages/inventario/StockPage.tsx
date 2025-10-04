@@ -3,7 +3,8 @@ import Input from "../../components/Input";
 import FileAction from "../../components/FileAction";
 import { TableHeader, TableCell, StatusBadge, ActionMenuCell } from "../../components/Table";
 import Pagination from "../../components/Pagination";
-import { Search } from "lucide-react";
+import { Search, Eye } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import Select from "../../components/Select";
 
 import { useQuery } from "@tanstack/react-query";
@@ -11,6 +12,7 @@ import type { Producto } from "../../modules/inventario/types/producto";
 import { getProductos } from "../../modules/inventario/api/productos";
 
 export default function ProductosPage() {
+    const navigate = useNavigate();
     const [busqueda, setBusqueda] = useState("");
     const [categoria, setCategoria] = useState("");
     const [page, setPage] = useState(1);
@@ -121,7 +123,13 @@ export default function ProductosPage() {
                                     <TableCell>
                                         <StatusBadge label={p.estadoStk} variant={p.estadoStk === "Disponible" ? "success" : "danger"} />
                                     </TableCell>
-                                    <ActionMenuCell/>
+                                    <ActionMenuCell
+                                        buttons={[{
+                                            label: "Ver detalles",
+                                            icon: <Eye className="w-4 h-4 text-blue-600" />,
+                                            onClick: () => navigate(`/inventario/stock/${p.id}`),
+                                        }]}
+                                    />
                                 </tr>
                             ))
                         )}
