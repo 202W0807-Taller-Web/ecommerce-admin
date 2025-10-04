@@ -6,7 +6,7 @@ import InputFile from "../../components/InputFile";
 import Button from "../../components/Button";
 import FileAction from "../../components/FileAction";
 import { TableHeader, TableCell, StatusBadge, ActionMenuCell } from "../../components/Table";
-import { Pencil, Trash2, Store, PackagePlus } from "lucide-react";
+import { Pencil, Trash2, Store, PackagePlus, Eye } from "lucide-react";
 import Pagination from "../../components/Pagination";
 import { PlusCircle } from "lucide-react";
 import { Search } from "lucide-react";
@@ -203,6 +203,11 @@ export default function AlmacenesPage() {
                                     <TableCell>{a.departamento}</TableCell>
                                     <ActionMenuCell
                                         buttons={[
+                                            {
+                                                label: "Ver detalles",
+                                                icon: <Eye className="w-4 h-4 text-blue-600" />,
+                                                onClick: () => console.log(`Ver detalles de: ${a.nombre}`),
+                                            },
                                             {
                                                 label: "Actualizar",
                                                 icon: <Pencil className="w-4 h-4 text-primary1" />,

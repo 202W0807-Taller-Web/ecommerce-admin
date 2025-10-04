@@ -143,7 +143,7 @@ export const ActionMenuCell = ({ buttons }: ActionMenuCellProps) => {
           {buttons?.map((btn, idx) => (
             <button
               key={idx}
-              className="action-menu-btn flex items-center gap-2 px-3 py-2 rounded hover:bg-gray-100 text-left text-sm"
+              className="action-menu-btn cursor-pointer flex items-center gap-2 px-3 py-2 rounded hover:bg-gray-100 text-left text-sm"
               onClick={() => {
                 btn.onClick();
                 setOpen(false);
