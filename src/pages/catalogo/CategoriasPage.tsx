@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { useParams } from "react-router-dom";
 
 type Producto = {
   id: number;
@@ -49,20 +48,24 @@ const productos: Producto[] = [
   },
 ];
 
-const CategoriasPage: React.FC = () => {
-  const { categoria } = useParams<{ categoria: string }>();
-  const [selectedIds, setSelectedIds] = useState<number[]>([]);
+// Extrae categorías únicas para el dropdown
+const categoriasUnicas = Array.from(new Set(productos.map(p => p.categoria)));
 
-  const productosFiltrados = categoria
-    ? productos.filter(
-        (p) => p.categoria.toLowerCase() === categoria.toLowerCase()
-      )
-    : productos;
+const CategoriasPage: React.FC = () => {
+  const [selectedIds, setSelectedIds] = useState<number[]>([]);
+  const [textFilter, setTextFilter] = useState("");
+  const [categoriaFilter, setCategoriaFilter] = useState("");
+
+  // Filtra productos por texto y categoría seleccionada
+  const productosFiltrados = productos.filter((p) => {
+    const cumpleTexto = p.producto.toLowerCase().includes(textFilter.toLowerCase());
+    const cumpleCategoria = categoriaFilter ? p.categoria === categoriaFilter : true;
+    return cumpleTexto && cumpleCategoria;
+  });
 
   const allSelected =
     selectedIds.length === productosFiltrados.length && productosFiltrados.length > 0;
-  const isIndeterminate =
-    selectedIds.length > 0 && !allSelected;
+  const isIndeterminate = selectedIds.length > 0 && !allSelected;
 
   const handleSelect = (id: number) => {
     setSelectedIds((prev) =>
@@ -80,7 +83,7 @@ const CategoriasPage: React.FC = () => {
 
   return (
     <div style={{ padding: 24 }}>
-      <h2>Productos en categoría: {categoria || "Todas"}</h2>
+      <h2>Productos en categoría: {categoriaFilter || "Todas"}</h2>
 
       <div
         style={{
@@ -88,12 +91,17 @@ const CategoriasPage: React.FC = () => {
           justifyContent: "space-between",
           alignItems: "center",
           marginBottom: 24,
+          gap: 12,
+          flexWrap: "wrap",
         }}
       >
-        <div style={{ flexGrow: 1, maxWidth: 300 }}>
+        {/* Filtro de texto */}
+        <div style={{ flexGrow: 1, minWidth: 200, maxWidth: 300 }}>
           <input
             type="text"
             placeholder="Buscar producto"
+            value={textFilter}
+            onChange={(e) => setTextFilter(e.target.value)}
             style={{
               width: "100%",
               padding: "8px 12px",
@@ -102,6 +110,29 @@ const CategoriasPage: React.FC = () => {
               fontSize: 14,
             }}
           />
+        </div>
+
+        {/* Dropdown de categorías */}
+        <div>
+          <select
+            value={categoriaFilter}
+            onChange={(e) => setCategoriaFilter(e.target.value)}
+            style={{
+              padding: "8px 12px",
+              borderRadius: 6,
+              border: "1px solid #ccc",
+              backgroundColor: "#fff",
+              cursor: "pointer",
+              fontSize: 14,
+            }}
+          >
+            <option value="">Todas las categorías</option>
+            {categoriasUnicas.map((cat) => (
+              <option key={cat} value={cat}>
+                {cat.charAt(0).toUpperCase() + cat.slice(1)}
+              </option>
+            ))}
+          </select>
         </div>
 
         <div style={{ display: "flex", gap: 12 }}>
@@ -118,7 +149,7 @@ const CategoriasPage: React.FC = () => {
               fontSize: 14,
             }}
           >
-            <span role="img" aria-label="upload"></span> Subir archivo
+            Subir archivo
           </button>
 
           <button
@@ -134,11 +165,12 @@ const CategoriasPage: React.FC = () => {
               fontSize: 14,
             }}
           >
-            <span role="img" aria-label="add">➕</span> Agregar producto
+            ➕ Agregar producto
           </button>
         </div>
       </div>
 
+      {/* Tabla de productos filtrados */}
       <table
         style={{
           width: "100%",
@@ -154,7 +186,13 @@ const CategoriasPage: React.FC = () => {
             }}
           >
             <th
-              style={{ paddingLeft: 16, width: 40, textAlign: "left", paddingTop: 10, paddingBottom: 10 }}
+              style={{
+                paddingLeft: 16,
+                width: 40,
+                textAlign: "left",
+                paddingTop: 10,
+                paddingBottom: 10,
+              }}
             >
               <input
                 type="checkbox"
@@ -232,7 +270,13 @@ const CategoriasPage: React.FC = () => {
                   backgroundColor: isSelected ? "#e6f7ff" : "transparent",
                 }}
               >
-                <td style={{ paddingLeft: 16, paddingTop: 12, paddingBottom: 12 }}>
+                <td
+                  style={{
+                    paddingLeft: 16,
+                    paddingTop: 12,
+                    paddingBottom: 12,
+                  }}
+                >
                   <input
                     type="checkbox"
                     style={{ width: 20, height: 20 }}
@@ -258,14 +302,24 @@ const CategoriasPage: React.FC = () => {
                     style={{ display: "block" }}
                   />
                 </td>
-                <td style={{ paddingTop: 12, paddingBottom: 12, textAlign: "center" }}>
+                <td
+                  style={{ paddingTop: 12, paddingBottom: 12, textAlign: "center" }}
+                >
                   {producto.producto}
                 </td>
-                <td style={{ paddingTop: 12, paddingBottom: 12 }}>{producto.estadoStk}</td>
-                <td style={{ paddingTop: 12, paddingBottom: 12 }}>{producto.stkDisponible}</td>
                 <td style={{ paddingTop: 12, paddingBottom: 12 }}>
-                  <button style={{ border: "none", background: "none", cursor: "pointer" }}>
-                    <span role="img" aria-label="edit">✏️</span>
+                  {producto.estadoStk}
+                </td>
+                <td style={{ paddingTop: 12, paddingBottom: 12 }}>
+                  {producto.stkDisponible}
+                </td>
+                <td style={{ paddingTop: 12, paddingBottom: 12 }}>
+                  <button
+                    style={{ border: "none", background: "none", cursor: "pointer" }}
+                  >
+                    <span role="img" aria-label="edit">
+                      castillo.jpg
+                    </span>
                   </button>
                 </td>
               </tr>
