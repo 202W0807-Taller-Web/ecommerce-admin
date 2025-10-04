@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Input from "../../components/Input";
 import Button from "../../components/Button";
 import FileAction from "../../components/FileAction";
@@ -32,6 +33,7 @@ type TiendaInput = {
 };
 
 export default function TiendasPage() {
+  const navigate = useNavigate();
   const [busqueda, setBusqueda] = useState("");
   const [almacen, setAlmacen] = useState("");
   const [distrito, setDistrito] = useState("");
@@ -89,7 +91,7 @@ export default function TiendasPage() {
     },
   });
 
-  const onSubmit: SubmitHandler<TiendaInput> = data => {
+  const onSubmit: SubmitHandler<TiendaInput> = (data:any) => {
     addTienda(data);
   };
 
@@ -266,7 +268,29 @@ export default function TiendasPage() {
                   <TableCell>{t.distrito}</TableCell>
                   <TableCell>{t.provincia}</TableCell>
                   <TableCell>{t.departamento}</TableCell>
-                  <ActionMenuCell />
+                  <ActionMenuCell
+                    buttons={[{
+                      label: "Ver detalles",
+                      icon: <Eye className="w-4 h-4 text-blue-600" />,
+                      onClick: () => navigate(`/inventario/tiendas/${t.id}`),
+                    }, {
+                      label: "Actualizar",
+                      icon: <Pencil className="w-4 h-4 text-primary1" />,
+                      onClick: () => console.log(`Actualizar tienda: ${t.nombre}`),
+                    }, {
+                      label: "Eliminar",
+                      icon: <Trash2 className="w-4 h-4 text-red-600" />,
+                      onClick: () => console.log(`Eliminar tienda: ${t.nombre}`),
+                    }, {
+                      label: "Asignar almacenes",
+                      icon: <PackagePlus className="w-4 h-4 text-green-600" />,
+                      onClick: () => console.log(`Asignar almacenes a tienda: ${t.nombre}`),
+                    }, {
+                      label: "Asignar productos",
+                      icon: <PackagePlus className="w-4 h-4 text-purple-600" />,
+                      onClick: () => console.log(`Asignar productos a tienda: ${t.nombre}`),
+                    }]}
+                  />
                 </tr>
               ))
             )}
@@ -297,105 +321,6 @@ export default function TiendasPage() {
         <TiendaForm control={control} errors={errors} />
       </ModalForm>
 
-      {/* <Modal
-        open={modalOpen}
-        title="Agregar tienda"
-        onCancel={handleCloseModal}
-        onAccept={handleAccept}
-      >
-        <form className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div className="sm:col-span-2">
-            <Input
-              label="Nombre"
-              name="nombre"
-              value={form.nombre}
-              onChange={handleFormChange}
-              placeholder="Nombre de la tienda"
-            />
-          </div>
-
-          <div className="sm:col-span-2">
-            <Input
-              label="Dirección"
-              name="direccion"
-              value={form.direccion}
-              onChange={handleFormChange}
-              placeholder="Dirección"
-            />
-          </div>
-
-          <div className="sm:col-span-2">
-            <Select
-              name="almacen"
-              label="Almacén"
-              placeholder="Selecciona almacén"
-              options={almacenOptions}
-              value={form.almacen}
-              onChange={handleFormChange}
-            />
-          </div>
-
-          <div>
-            <Select
-              name="departamento"
-              label="Departamento"
-              placeholder="Selecciona departamento"
-              options={departamentoOptions}
-              value={form.departamento}
-              onChange={handleFormChange}
-            />
-          </div>
-
-          <div>
-            <Select
-              name="provincia"
-              label="Provincia"
-              placeholder="Selecciona provincia"
-              options={provinciaOptions}
-              value={form.provincia}
-              onChange={handleFormChange}
-            />
-          </div>
-
-          <div>
-            <Select
-              name="distrito"
-              label="Distrito"
-              placeholder="Selecciona distrito"
-              options={distritoOptions}
-              value={form.distrito}
-              onChange={handleFormChange}
-            />
-          </div>
-
-          <div>
-            <Select
-              name="estado"
-              label="Estado"
-              options={[
-                { value: "Activo", label: "Activo" },
-                { value: "Inactivo", label: "Inactivo" },
-              ]}
-              value={form.estado}
-              onChange={handleFormChange}
-            />
-          </div>
-
-          <div className="sm:col-span-2">
-            <InputFile
-              label="Imagen"
-              name="imagen"
-              maxFiles={1}
-              onFilesChange={(_, dataUrls) => {
-                setForm(f => ({
-                  ...f,
-                  imagen: dataUrls && dataUrls.length ? dataUrls[0] : "",
-                }));
-              }}
-            />
-          </div>
-        </form>
-      </Modal> */}
     </div>
   );
 }

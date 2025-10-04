@@ -96,7 +96,7 @@ export default function AlmacenesPage() {
     },
   });
 
-  const onSubmit: SubmitHandler<AlmacenInput> = data => {
+  const onSubmit: SubmitHandler<AlmacenInput> = (data:any) => {
     addAlmacen(data);
   };
 
