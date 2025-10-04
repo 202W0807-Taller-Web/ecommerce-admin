@@ -1,15 +1,18 @@
 
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Modal from "../../components/Modal";
 import Input from "../../components/Input";
 import InputFile from "../../components/InputFile";
 import Button from "../../components/Button";
 import FileAction from "../../components/FileAction";
 import { TableHeader, TableCell, StatusBadge, ActionMenuCell } from "../../components/Table";
+import { Pencil, Trash2, Store, PackagePlus, Eye } from "lucide-react";
 import Pagination from "../../components/Pagination";
 import { PlusCircle } from "lucide-react";
 import { Search } from "lucide-react";
 import { RefreshCw } from "lucide-react";
+import Select from "../../components/Select";
 
 const almacenesData = [
     {
@@ -48,6 +51,11 @@ export default function AlmacenesPage() {
     const [departamento, setDepartamento] = useState("");
     const [page, setPage] = useState(1);
     const pageSize = 10;
+    const navigate = useNavigate();
+
+    const distritoOptions = distritos.map(d => ({ value: d, label: d }));
+    const provinciaOptions = provincias.map(p => ({ value: p, label: p }));
+    const departamentoOptions = departamentos.map(dep => ({ value: dep, label: dep }));
 
     // Modal state
     const [modalOpen, setModalOpen] = useState(false);
@@ -106,48 +114,36 @@ export default function AlmacenesPage() {
                     />
                 </div>
                 <div className="w-full sm:w-48 min-w-0">
-                    <label className="mb-[8px] block text-base font-medium text-dark">Distrito</label>
-                    <select
-                        className="bg-white w-full rounded-md border py-[10px] px-4 text-dark"
+                    <Select
+                        label="Distrito"
+                        placeholder="Todos"
+                        options={distritoOptions}
                         value={distrito}
                         onChange={e => setDistrito(e.target.value)}
-                    >
-                        <option value="">Todos</option>
-                        {distritos.map(d => (
-                            <option key={d} value={d}>{d}</option>
-                        ))}
-                    </select>
+                    />
                 </div>
                 <div className="w-full sm:w-48 min-w-0">
-                    <label className="mb-[8px] block text-base font-medium text-dark">Provincia</label>
-                    <select
-                        className="bg-white w-full rounded-md border py-[10px] px-4 text-dark"
+                    <Select
+                        label="Provincia"
+                        placeholder="Todas"
+                        options={provinciaOptions}
                         value={provincia}
                         onChange={e => setProvincia(e.target.value)}
-                    >
-                        <option value="">Todas</option>
-                        {provincias.map(p => (
-                            <option key={p} value={p}>{p}</option>
-                        ))}
-                    </select>
+                    />
                 </div>
                 <div className="w-full sm:w-48 min-w-0">
-                    <label className="mb-[8px] block text-base font-medium text-dark">Departamento</label>
-                    <select
-                        className="bg-white w-full rounded-md border py-[10px] px-4 text-dark"
+                    <Select
+                        label="Departamento"
+                        placeholder="Todos"
+                        options={departamentoOptions}
                         value={departamento}
                         onChange={e => setDepartamento(e.target.value)}
-                    >
-                        <option value="">Todos</option>
-                        {departamentos.map(dep => (
-                            <option key={dep} value={dep}>{dep}</option>
-                        ))}
-                    </select>
+                    />
                 </div>
                 <button
                     type="button"
                     onClick={handleClear}
-                    className="text-body-color px-3 py-2 rounded-md border-none bg-transparent hover:text-secondary-color"
+                    className="text-body-color cursor-pointer px-3 py-2 rounded-md border-none bg-transparent hover:text-secondary-color"
                 >
                     Clear all
                 </button>
@@ -176,8 +172,8 @@ export default function AlmacenesPage() {
             </div>
 
             {/* Tabla */}
-            <div className="overflow-x-auto w-full">
-                <table className="min-w-[600px] w-full border-collapse mb-2 text-xs sm:text-sm">
+            <div className="w-full overflow-auto">
+                <table className="overflow-visible min-w-[600px] w-full border-collapse mb-2 text-xs sm:text-sm">
                     <thead className="bg-gray-50">
                         <tr>
                             <TableHeader label="#" className="w-12 min-w-[48px] text-center" />
@@ -207,7 +203,35 @@ export default function AlmacenesPage() {
                                     <TableCell>{a.distrito}</TableCell>
                                     <TableCell>{a.provincia}</TableCell>
                                     <TableCell>{a.departamento}</TableCell>
-                                    <ActionMenuCell/>
+                                    <ActionMenuCell
+                                        buttons={[
+                                            {
+                                                label: "Ver detalles",
+                                                icon: <Eye className="w-4 h-4 text-blue-600" />,
+                                                onClick: () => navigate(`/inventario/almacenes/${a.id}`),
+                                            },
+                                            {
+                                                label: "Actualizar",
+                                                icon: <Pencil className="w-4 h-4 text-primary1" />,
+                                                onClick: () => console.log(`Actualizar almacén: ${a.nombre}`),
+                                            },
+                                            {
+                                                label: "Eliminar",
+                                                icon: <Trash2 className="w-4 h-4 text-red-600" />,
+                                                onClick: () => console.log(`Eliminar almacén: ${a.nombre}`),
+                                            },
+                                            {
+                                                label: "Asignar tiendas",
+                                                icon: <Store className="w-4 h-4 text-secondary-color" />,
+                                                onClick: () => console.log(`Asignar tiendas a: ${a.nombre}`),
+                                            },
+                                            {
+                                                label: "Asignar productos",
+                                                icon: <PackagePlus className="w-4 h-4 text-green-600" />,
+                                                onClick: () => console.log(`Asignar productos a: ${a.nombre}`),
+                                            },
+                                        ]}
+                                    />
                                 </tr>
                             ))
                         )}
@@ -256,61 +280,42 @@ export default function AlmacenesPage() {
                     </div>
 
                     <div>
-                        <label className="mb-[8px] block text-base font-medium text-dark">Estado</label>
-                        <select
-                            name="estado"
+                        <Select
+                            label="Estado"
+                            options={[{ value: "Activo", label: "Activo" }, { value: "Inactivo", label: "Inactivo" }]}
                             value={form.estado}
                             onChange={handleFormChange}
-                            className="bg-white w-full rounded-md border py-[10px] px-4 text-dark"
-                        >
-                            <option value="Activo">Activo</option>
-                            <option value="Inactivo">Inactivo</option>
-                        </select>
+                        />
                     </div>
 
                     <div>
-                        <label className="mb-[8px] block text-base font-medium text-dark">Departamento</label>
-                        <select
-                            name="departamento"
+                        <Select
+                            label="Departamento"
+                            placeholder="Selecciona departamento"
+                            options={departamentoOptions}
                             value={form.departamento}
                             onChange={handleFormChange}
-                            className="bg-white w-full rounded-md border py-[10px] px-4 text-dark"
-                        >
-                            <option value="">Selecciona departamento</option>
-                            {departamentos.map(dep => (
-                                <option key={dep} value={dep}>{dep}</option>
-                            ))}
-                        </select>
+                        />
                     </div>
 
                     <div>
-                        <label className="mb-[8px] block text-base font-medium text-dark">Provincia</label>
-                        <select
-                            name="provincia"
+                        <Select
+                            label="Provincia"
+                            placeholder="Selecciona provincia"
+                            options={provinciaOptions}
                             value={form.provincia}
                             onChange={handleFormChange}
-                            className="bg-white w-full rounded-md border py-[10px] px-4 text-dark"
-                        >
-                            <option value="">Selecciona provincia</option>
-                            {provincias.map(p => (
-                                <option key={p} value={p}>{p}</option>
-                            ))}
-                        </select>
+                        />
                     </div>
 
                     <div>
-                        <label className="mb-[8px] block text-base font-medium text-dark">Distrito</label>
-                        <select
-                            name="distrito"
+                        <Select
+                            label="Distrito"
+                            placeholder="Selecciona distrito"
+                            options={distritoOptions}
                             value={form.distrito}
                             onChange={handleFormChange}
-                            className="bg-white w-full rounded-md border py-[10px] px-4 text-dark"
-                        >
-                            <option value="">Selecciona distrito</option>
-                            {distritos.map(d => (
-                                <option key={d} value={d}>{d}</option>
-                            ))}
-                        </select>
+                        />
                     </div>
 
                     <div className="sm:col-span-2">

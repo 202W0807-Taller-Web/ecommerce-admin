@@ -5,6 +5,7 @@ import FileAction from "../../components/FileAction";
 import Table, { TableHeader, TableCell, StatusBadge, ActionMenuCell } from "../../components/Table";
 import Pagination from "../../components/Pagination";
 import { Search } from "lucide-react";
+import Select from "../../components/Select";
 
 const productosData = [
     {
@@ -33,6 +34,7 @@ const productosData = [
 ];
 
 const categorias = Array.from(new Set(productosData.map(p => p.categoria)));
+const categoriaOptions = categorias.map(c => ({ value: c, label: c }));
 
 export default function ProductosPage() {
     const [busqueda, setBusqueda] = useState("");
@@ -70,17 +72,13 @@ export default function ProductosPage() {
                     />
                 </div>
                 <div className="w-full sm:w-48 min-w-0">
-                    <label className="mb-[8px] block text-base font-medium text-dark">Categoría</label>
-                    <select
-                        className="bg-white w-full rounded-md border py-[10px] px-4 text-dark"
+                    <Select
+                        label="Categoría"
+                        placeholder="Todas"
+                        options={categoriaOptions}
                         value={categoria}
                         onChange={e => setCategoria(e.target.value)}
-                    >
-                        <option value="">Todas</option>
-                        {categorias.map(c => (
-                            <option key={c} value={c}>{c}</option>
-                        ))}
-                    </select>
+                    />
                 </div>
                 <button
                     type="button"

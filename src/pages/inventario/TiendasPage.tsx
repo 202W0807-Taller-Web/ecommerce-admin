@@ -8,6 +8,7 @@ import Table, { TableHeader, TableCell, StatusBadge, AvatarCell, ActionMenuCell 
 import Pagination from "../../components/Pagination";
 import { PlusCircle } from "lucide-react";
 import { Search, RefreshCw } from "lucide-react";
+import Select from "../../components/Select";
 
 const tiendasData = [
     {
@@ -40,6 +41,11 @@ const almacenes = Array.from(new Set(tiendasData.map(t => t.almacen)));
 const distritos = Array.from(new Set(tiendasData.map(t => t.distrito)));
 const provincias = Array.from(new Set(tiendasData.map(t => t.provincia)));
 const departamentos = Array.from(new Set(tiendasData.map(t => t.departamento)));
+
+const almacenOptions = almacenes.map(a => ({ value: a, label: a }));
+const distritoOptions = distritos.map(d => ({ value: d, label: d }));
+const provinciaOptions = provincias.map(p => ({ value: p, label: p }));
+const departamentoOptions = departamentos.map(dep => ({ value: dep, label: dep }));
 
 export default function TiendasPage() {
     const [busqueda, setBusqueda] = useState("");
@@ -110,56 +116,40 @@ export default function TiendasPage() {
                     />
                 </div>
                 <div className="w-full sm:w-48 min-w-0">
-                    <label className="mb-[8px] block text-base font-medium text-dark">Almacén</label>
-                    <select
-                        className="bg-white w-full rounded-md border py-[10px] px-4 text-dark"
+                    <Select
+                        label="Almacén"
+                        placeholder="Todos"
+                        options={almacenOptions}
                         value={almacen}
                         onChange={e => setAlmacen(e.target.value)}
-                    >
-                        <option value="">Todos</option>
-                        {almacenes.map(a => (
-                            <option key={a} value={a}>{a}</option>
-                        ))}
-                    </select>
+                    />
                 </div>
                 <div className="w-full sm:w-48 min-w-0">
-                    <label className="mb-[8px] block text-base font-medium text-dark">Distrito</label>
-                    <select
-                        className="bg-white w-full rounded-md border py-[10px] px-4 text-dark"
+                    <Select
+                        label="Distrito"
+                        placeholder="Todos"
+                        options={distritoOptions}
                         value={distrito}
                         onChange={e => setDistrito(e.target.value)}
-                    >
-                        <option value="">Todos</option>
-                        {distritos.map(d => (
-                            <option key={d} value={d}>{d}</option>
-                        ))}
-                    </select>
+                    />
                 </div>
                 <div className="w-full sm:w-48 min-w-0">
-                    <label className="mb-[8px] block text-base font-medium text-dark">Provincia</label>
-                    <select
-                        className="bg-white w-full rounded-md border py-[10px] px-4 text-dark"
+                    <Select
+                        label="Provincia"
+                        placeholder="Todas"
+                        options={provinciaOptions}
                         value={provincia}
                         onChange={e => setProvincia(e.target.value)}
-                    >
-                        <option value="">Todas</option>
-                        {provincias.map(p => (
-                            <option key={p} value={p}>{p}</option>
-                        ))}
-                    </select>
+                    />
                 </div>
                 <div className="w-full sm:w-48 min-w-0">
-                    <label className="mb-[8px] block text-base font-medium text-dark">Departamento</label>
-                    <select
-                        className="bg-white w-full rounded-md border py-[10px] px-4 text-dark"
+                    <Select
+                        label="Departamento"
+                        placeholder="Todos"
+                        options={departamentoOptions}
                         value={departamento}
                         onChange={e => setDepartamento(e.target.value)}
-                    >
-                        <option value="">Todos</option>
-                        {departamentos.map(dep => (
-                            <option key={dep} value={dep}>{dep}</option>
-                        ))}
-                    </select>
+                    />
                 </div>
                 <button
                     type="button"
@@ -222,76 +212,52 @@ export default function TiendasPage() {
                     </div>
 
                     <div className="sm:col-span-2">
-                        <label className="mb-[8px] block text-base font-medium text-dark">Almacén</label>
-                        <select
-                            name="almacen"
+                        <Select
+                            label="Almacén"
+                            placeholder="Selecciona almacén"
+                            options={almacenOptions}
                             value={form.almacen}
                             onChange={handleFormChange}
-                            className="bg-white w-full rounded-md border py-[10px] px-4 text-dark"
-                        >
-                            <option value="">Selecciona almacén</option>
-                            {almacenes.map(a => (
-                                <option key={a} value={a}>{a}</option>
-                            ))}
-                        </select>
-                    </div>                    
+                        />
+                    </div>
 
                     <div>
-                        <label className="mb-[8px] block text-base font-medium text-dark">Departamento</label>
-                        <select
-                            name="departamento"
+                        <Select
+                            label="Departamento"
+                            placeholder="Selecciona departamento"
+                            options={departamentoOptions}
                             value={form.departamento}
                             onChange={handleFormChange}
-                            className="bg-white w-full rounded-md border py-[10px] px-4 text-dark"
-                        >
-                            <option value="">Selecciona departamento</option>
-                            {departamentos.map(dep => (
-                                <option key={dep} value={dep}>{dep}</option>
-                            ))}
-                        </select>
+                        />
                     </div>
 
                     <div>
-                        <label className="mb-[8px] block text-base font-medium text-dark">Provincia</label>
-                        <select
-                            name="provincia"
+                        <Select
+                            label="Provincia"
+                            placeholder="Selecciona provincia"
+                            options={provinciaOptions}
                             value={form.provincia}
                             onChange={handleFormChange}
-                            className="bg-white w-full rounded-md border py-[10px] px-4 text-dark"
-                        >
-                            <option value="">Selecciona provincia</option>
-                            {provincias.map(p => (
-                                <option key={p} value={p}>{p}</option>
-                            ))}
-                        </select>
+                        />
                     </div>
 
                     <div>
-                        <label className="mb-[8px] block text-base font-medium text-dark">Distrito</label>
-                        <select
-                            name="distrito"
+                        <Select
+                            label="Distrito"
+                            placeholder="Selecciona distrito"
+                            options={distritoOptions}
                             value={form.distrito}
                             onChange={handleFormChange}
-                            className="bg-white w-full rounded-md border py-[10px] px-4 text-dark"
-                        >
-                            <option value="">Selecciona distrito</option>
-                            {distritos.map(d => (
-                                <option key={d} value={d}>{d}</option>
-                            ))}
-                        </select>
+                        />
                     </div>
 
                     <div>
-                        <label className="mb-[8px] block text-base font-medium text-dark">Estado</label>
-                        <select
-                            name="estado"
+                        <Select
+                            label="Estado"
+                            options={[{ value: "Activo", label: "Activo" }, { value: "Inactivo", label: "Inactivo" }]}
                             value={form.estado}
                             onChange={handleFormChange}
-                            className="bg-white w-full rounded-md border py-[10px] px-4 text-dark"
-                        >
-                            <option value="Activo">Activo</option>
-                            <option value="Inactivo">Inactivo</option>
-                        </select>
+                        />
                     </div>
 
                     <div className="sm:col-span-2">

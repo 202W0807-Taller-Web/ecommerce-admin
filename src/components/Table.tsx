@@ -1,5 +1,7 @@
 import { EllipsisVertical } from "lucide-react";
+import { useState, useRef, useEffect } from "react";
 import React from "react";
+import ReactDOM from "react-dom";
 
 /* ---------- Tipos ---------- */
 type StatusVariant = "neutral" | "success" | "danger" | "warning";
@@ -12,6 +14,16 @@ interface TableHeaderProps {
 interface TableCellProps {
   children: React.ReactNode;
   className?: string;
+}
+
+interface ActionButton {
+  label: string;
+  icon: React.ReactNode;
+  onClick: () => void;
+}
+
+interface ActionMenuCellProps {
+  buttons?: ActionButton[];
 }
 
 interface StatusBadgeProps {
@@ -77,57 +89,80 @@ export const AvatarCell = ({
   );
 };
 
-export const ActionMenuCell = () => {
+export const ActionMenuCell = ({ buttons }: ActionMenuCellProps) => {
+  const [open, setOpen] = useState(false);
+  const iconRef = useRef<HTMLSpanElement>(null);
+  const [menuPos, setMenuPos] = useState<{ top: number; left: number }>({ top: 0, left: 0 });
+
+  useEffect(() => {
+    if (open && iconRef.current) {
+      const rect = iconRef.current.getBoundingClientRect();
+      setMenuPos({ top: rect.bottom + 4, left: rect.left });
+    }
+    function handleClickOutside(event: MouseEvent) {
+      // Si el click es en un botón del menú, no cerrar
+      const target = event.target as HTMLElement;
+      if (target.closest('.action-menu-btn')) return;
+      if (open && !(iconRef.current && iconRef.current.contains(target))) {
+        setOpen(false);
+      }
+    }
+    if (open) {
+      document.addEventListener("mousedown", handleClickOutside);
+    } else {
+      document.removeEventListener("mousedown", handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [open]);
+
   return (
     <TableCell className="w-10 text-center">
-      <EllipsisVertical className="cursor-pointer" />
+      <span ref={iconRef} style={{ display: "inline-block" }}>
+        <EllipsisVertical className="cursor-pointer" onClick={buttons ? () => setOpen((v) => !v) : ()=>{}} />
+      </span>
+      {open && ReactDOM.createPortal(
+        <div
+          style={{
+            position: "fixed",
+            top: menuPos.top,
+            left: menuPos.left - 50,
+            zIndex: 9999,
+            background: "white",
+            boxShadow: "0 2px 8px rgba(0,0,0,0.15)",
+            borderRadius: "0.5rem",
+            padding: "0.5rem",
+            minWidth: "160px",
+            border: "1px solid #e5e7eb",
+            display: "flex",
+            flexDirection: "column",
+            gap: "0.5rem"
+          }}
+        >
+          {buttons?.map((btn, idx) => (
+            <button
+              key={idx}
+              className="action-menu-btn cursor-pointer flex items-center gap-2 px-3 py-2 rounded hover:bg-gray-100 text-left text-sm"
+              onClick={() => {
+                btn.onClick();
+                setOpen(false);
+              }}
+            >
+              {btn.icon}
+              <span>{btn.label}</span>
+            </button>
+          ))}
+        </div>,
+        document.body
+      )}
     </TableCell>
   );
 };
 
 /* ---------- Ejemplo ---------- */
 
-function Table() {
-  return (
-    <table className="w-full border-collapse mb-2">
-      <thead className="bg-gray-50">
-        <tr>
-          <TableHeader label="#" className="w-12 min-w-[48px] text-center" />
-          <TableHeader label="Nombre" />
-          <TableHeader label="Estado" />
-          <TableHeader label="Estado 2" />
-          <TableHeader label="Avatar" />
-          <TableHeader label="" className="w-10 text-center" />
-        </tr>
-      </thead>
-      <tbody>
-        <tr className="bg-white">
-          <TableCell className="w-12 min-w-[48px] text-center">1</TableCell>
-          <TableCell>Nombre de Ejemplo</TableCell>
-          <TableCell>
-            <StatusBadge label="Activo" variant="success" />
-          </TableCell>
-          <TableCell>
-            <StatusBadge label="Peligro" variant="danger" />
-          </TableCell>
-          <AvatarCell name="Emilio Caceres" />
-          <ActionMenuCell />
-        </tr>
-        <tr className="bg-gray-50">
-          <TableCell className="w-12 min-w-[48px] text-center">2</TableCell>
-          <TableCell>Hola mundo</TableCell>
-          <TableCell>
-            <StatusBadge label="Neutro" variant="neutral" />
-          </TableCell>
-          <TableCell>
-            <StatusBadge label="Ambar" variant="warning" />
-          </TableCell>
-          <AvatarCell name="Amber Morgan" />
-          <ActionMenuCell />
-        </tr>
-      </tbody>
-    </table>
-  );
+// ...existing code...
+export default function Table() {
+  return <table></table>;
 }
-
-export default Table;
