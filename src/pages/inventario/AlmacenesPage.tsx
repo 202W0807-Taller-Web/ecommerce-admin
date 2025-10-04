@@ -206,22 +206,22 @@ export default function AlmacenesPage() {
                                             {
                                                 label: "Actualizar",
                                                 icon: <Pencil className="w-4 h-4 text-primary1" />,
-                                                onClick: () => alert(`Actualizar almacén ${a.nombre}`),
+                                                onClick: () => console.log(`Actualizar almacén: ${a.nombre}`),
                                             },
                                             {
                                                 label: "Eliminar",
                                                 icon: <Trash2 className="w-4 h-4 text-red-600" />,
-                                                onClick: () => alert(`Eliminar almacén ${a.nombre}`),
+                                                onClick: () => console.log(`Eliminar almacén: ${a.nombre}`),
                                             },
                                             {
                                                 label: "Asignar tiendas",
                                                 icon: <Store className="w-4 h-4 text-secondary-color" />,
-                                                onClick: () => alert(`Asignar tiendas a ${a.nombre}`),
+                                                onClick: () => console.log(`Asignar tiendas a: ${a.nombre}`),
                                             },
                                             {
                                                 label: "Asignar productos",
                                                 icon: <PackagePlus className="w-4 h-4 text-green-600" />,
-                                                onClick: () => alert(`Asignar productos a ${a.nombre}`),
+                                                onClick: () => console.log(`Asignar productos a: ${a.nombre}`),
                                             },
                                         ]}
                                     />

@@ -100,7 +100,10 @@ export const ActionMenuCell = ({ buttons }: ActionMenuCellProps) => {
       setMenuPos({ top: rect.bottom + 4, left: rect.left });
     }
     function handleClickOutside(event: MouseEvent) {
-      if (open && !(iconRef.current && iconRef.current.contains(event.target as Node))) {
+      // Si el click es en un botón del menú, no cerrar
+      const target = event.target as HTMLElement;
+      if (target.closest('.action-menu-btn')) return;
+      if (open && !(iconRef.current && iconRef.current.contains(target))) {
         setOpen(false);
       }
     }
@@ -140,7 +143,7 @@ export const ActionMenuCell = ({ buttons }: ActionMenuCellProps) => {
           {buttons?.map((btn, idx) => (
             <button
               key={idx}
-              className="flex items-center gap-2 px-3 py-2 rounded hover:bg-gray-100 text-left text-sm"
+              className="action-menu-btn flex items-center gap-2 px-3 py-2 rounded hover:bg-gray-100 text-left text-sm"
               onClick={() => {
                 btn.onClick();
                 setOpen(false);
