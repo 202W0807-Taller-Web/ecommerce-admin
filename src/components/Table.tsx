@@ -63,7 +63,7 @@ export const StatusBadge = ({
   variant = "neutral",
 }: StatusBadgeProps) => {
   const baseClasses =
-    "px-3 inline-flex text-sm leading-5 font-semibold rounded-xl text-center uppercase py-1";
+    "px-3 inline-flex justify-center text-sm leading-5 font-semibold rounded-xl text-center w-full uppercase py-1";
 
   const variants: Record<StatusVariant, string> = {
     neutral: "bg-white border border-gray-300 text-gray-700",
