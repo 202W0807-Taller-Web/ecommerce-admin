@@ -143,7 +143,7 @@ export default function AlmacenesPage() {
                 <button
                     type="button"
                     onClick={handleClear}
-                    className="text-body-color px-3 py-2 rounded-md border-none bg-transparent hover:text-secondary-color"
+                    className="text-body-color cursor-pointer px-3 py-2 rounded-md border-none bg-transparent hover:text-secondary-color"
                 >
                     Clear all
                 </button>
