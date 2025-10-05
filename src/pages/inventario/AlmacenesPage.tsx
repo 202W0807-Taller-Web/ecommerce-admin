@@ -1,21 +1,21 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import Input from "../../components/Input";
-import Button from "../../components/Button";
+// import { useNavigate } from "react-router-dom";
+// import Input from "../../components/Input";
+// import Button from "../../components/Button";
 import FileAction from "../../components/FileAction";
-import {
-  TableHeader,
-  TableCell,
-  StatusBadge,
-  ActionMenuCell,
-} from "../../components/Table";
-import { Pencil, Trash2, Store, PackagePlus, Eye } from "lucide-react";
-import Pagination from "../../components/Pagination";
-import { PlusCircle } from "lucide-react";
-import { Search } from "lucide-react";
+// import {
+//   TableHeader,
+//   TableCell,
+//   StatusBadge,
+//   ActionMenuCell,
+// } from "../../components/Table";
+// import { Pencil, Trash2, Store, PackagePlus, Eye } from "lucide-react";
+// import Pagination from "../../components/Pagination";
+// import { PlusCircle } from "lucide-react";
+// import { Search } from "lucide-react";
 import { RefreshCw } from "lucide-react";
-import Select from "../../components/Select";
-import { Link } from "react-router-dom";
+// import Select from "../../components/Select";
+// import { Link } from "react-router-dom";
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useForm, type SubmitHandler } from "react-hook-form";
@@ -23,10 +23,13 @@ import {
   getAlmacenes,
   createAlmacen,
 } from "../../modules/inventario/api/almacenes";
-import { useModal } from "@hooks/useModal";
+// import { useModal } from "@hooks/useModal";
 import ModalForm from "@components/ModalForm";
 import AlmacenForm from "./components/AlmacenForm";
-import type { Almacen } from "../../modules/inventario/types/almacen";
+import type { Almacen, Meta } from "../../modules/inventario/types/almacen";
+import AlmacenDataTable from "./components/AlmacenDataTable";
+import usePagination from "@hooks/usePagination";
+import Pagination from "@components/Pagination";
 
 type AlmacenInput = {
   nombre: string;
@@ -35,113 +38,115 @@ type AlmacenInput = {
   departamento: string;
   provincia: string;
   distrito: string;
-  imagen?: string;
+  imagen: string | null;
 };
 
 export default function AlmacenesPage() {
-  const [busqueda, setBusqueda] = useState("");
-  const [distrito, setDistrito] = useState("");
-  const [provincia, setProvincia] = useState("");
-  const [departamento, setDepartamento] = useState("");
-  const [page, setPage] = useState(1);
-  const pageSize = 10;
-  const navigate = useNavigate();
+  const { page, setPage } = usePagination();
+
+  // const [busqueda, setBusqueda] = useState("");
+  // const [distrito, setDistrito] = useState("");
+  // const [provincia, setProvincia] = useState("");
+  // const [departamento, setDepartamento] = useState("");
+  // const [page, setPage] = useState(1);
+  // const pageSize = 10;
+  // const navigate = useNavigate();
 
   // Modal Form
-  const [isOpenModalForm, openModalForm, closeModalForm] = useModal(false);
+  // const [isOpenModalForm, openModalForm, closeModalForm] = useModal(false);
 
   // react-query
-  const {
-    isPending,
-    isError,
-    data: almacenesData,
-    error,
-  } = useQuery<Almacen[]>({
-    queryKey: ["almacenes"],
-    queryFn: getAlmacenes,
+  const { isPending, isError, data, error } = useQuery<{
+    almacenes: Almacen[];
+    meta: Meta;
+  }>({
+    queryKey: ["almacenes", { page, limit: 5 }],
+    queryFn: () => getAlmacenes({ page, limit: 5 }),
   });
 
-  const queryClient = useQueryClient();
+  const { almacenes = [], meta } = data || {};
+
+  // const queryClient = useQueryClient();
 
   // react-hook-form
-  const {
-    control,
-    handleSubmit,
-    reset,
-    formState: { errors, isSubmitting },
-  } = useForm<AlmacenInput>({
-    defaultValues: {
-      nombre: "",
-      direccion: "",
-      estado: "Activo",
-      departamento: "",
-      provincia: "",
-      distrito: "",
-      imagen: "",
-    },
-  });
+  // const {
+  //   control,
+  //   handleSubmit,
+  //   reset,
+  //   formState: { errors, isSubmitting },
+  // } = useForm<AlmacenInput>({
+  //   defaultValues: {
+  //     nombre: "",
+  //     direccion: "",
+  //     estado: "Activo",
+  //     departamento: "",
+  //     provincia: "",
+  //     distrito: "",
+  //     imagen: "",
+  //   },
+  // });
 
   // react-query
-  const { mutate: addAlmacen } = useMutation({
-    mutationFn: createAlmacen,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["almacenes"] });
-      alert("Almacen creado correctamente");
-      reset();
-      closeModalForm();
-    },
-    onError: error => {
-      console.error("Error al crear almacén:", error);
-      alert("No se pudo crear el almacén");
-    },
-  });
+  // const { mutate: addAlmacen } = useMutation({
+  //   mutationFn: createAlmacen,
+  //   onSuccess: () => {
+  //     queryClient.invalidateQueries({ queryKey: ["almacenes"] });
+  //     alert("Almacen creado correctamente");
+  //     reset();
+  //     closeModalForm();
+  //   },
+  //   onError: error => {
+  //     console.error("Error al crear almacén:", error);
+  //     alert("No se pudo crear el almacén");
+  //   },
+  // });
 
-  const onSubmit: SubmitHandler<AlmacenInput> = data => {
-    addAlmacen(data);
-  };
+  // const onSubmit: SubmitHandler<AlmacenInput> = data => {
+  //   addAlmacen(data);
+  // };
 
   if (isPending) return <span>Loading...</span>;
 
   if (isError) return <span>Error: {error.message}</span>;
 
   // Obtiene valores únicos para los selects
-  const distritos = Array.from(new Set(almacenesData.map(a => a.distrito)));
-  const provincias = Array.from(new Set(almacenesData.map(a => a.provincia)));
-  const departamentos = Array.from(
-    new Set(almacenesData.map(a => a.departamento))
-  );
+  // const distritos = Array.from(new Set(almacenesData.map(a => a.distrito)));
+  // const provincias = Array.from(new Set(almacenesData.map(a => a.provincia)));
+  // const departamentos = Array.from(
+  //   new Set(almacenesData.map(a => a.departamento))
+  // );
 
-  const distritoOptions = distritos.map(d => ({ value: d, label: d }));
-  const provinciaOptions = provincias.map(p => ({ value: p, label: p }));
-  const departamentoOptions = departamentos.map(dep => ({
-    value: dep,
-    label: dep,
-  }));
+  // const distritoOptions = distritos.map(d => ({ value: d, label: d }));
+  // const provinciaOptions = provincias.map(p => ({ value: p, label: p }));
+  // const departamentoOptions = departamentos.map(dep => ({
+  //   value: dep,
+  //   label: dep,
+  // }));
 
   // Filtros
-  const filtered = almacenesData.filter(
-    a =>
-      a.nombre.toLowerCase().includes(busqueda.toLowerCase()) &&
-      (distrito ? a.distrito === distrito : true) &&
-      (provincia ? a.provincia === provincia : true) &&
-      (departamento ? a.departamento === departamento : true)
-  );
-  const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
-  const paginated = filtered.slice((page - 1) * pageSize, page * pageSize);
+  // const filtered = almacenesData.filter(
+  //   a =>
+  //     a.nombre.toLowerCase().includes(busqueda.toLowerCase()) &&
+  //     (distrito ? a.distrito === distrito : true) &&
+  //     (provincia ? a.provincia === provincia : true) &&
+  //     (departamento ? a.departamento === departamento : true)
+  // );
+  // const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
+  // const paginated = filtered.slice((page - 1) * pageSize, page * pageSize);
 
-  const handleClear = () => {
-    setBusqueda("");
-    setDistrito("");
-    setProvincia("");
-    setDepartamento("");
-    setPage(1);
-  };
+  // const handleClear = () => {
+  //   setBusqueda("");
+  //   setDistrito("");
+  //   setProvincia("");
+  //   setDepartamento("");
+  //   setPage(1);
+  // };
 
   return (
     <div className="p-2 sm:p-4 md:p-6 w-full max-w-full overflow-x-auto">
       <h1 className="text-2xl font-bold mb-4">Almacenes</h1>
 
-      {/* Filtros */}
+      {/* Filtros
       <div className="flex flex-col sm:flex-row flex-wrap gap-2 sm:gap-4 mb-6 items-end w-full">
         <div className="w-full sm:w-64 min-w-0">
           <Input
@@ -212,96 +217,8 @@ export default function AlmacenesPage() {
 
       {/* Tabla */}
       <div className="w-full overflow-auto">
-        <table className="overflow-visible min-w-[600px] w-full border-collapse mb-2 text-xs sm:text-sm">
-          <thead className="bg-gray-50">
-            <tr>
-              <TableHeader
-                label="#"
-                className="w-12 min-w-[48px] text-center"
-              />
-              <TableHeader label="Imagen" />
-              <TableHeader label="Nombre" />
-              <TableHeader label="Estado" />
-              <TableHeader label="Dirección" />
-              <TableHeader label="Distrito" />
-              <TableHeader label="Provincia" />
-              <TableHeader label="Departamento" />
-              <th className="w-24 min-w-[64px] text-center border border-stroke"></th>
-            </tr>
-          </thead>
-          <tbody>
-            {paginated.length === 0 ? (
-              <tr>
-                <TableCell>No hay almacenes</TableCell>
-              </tr>
-            ) : (
-              paginated.map((a, idx) => (
-                <tr key={a.id} className={idx % 2 ? "bg-gray-50" : "bg-white"}>
-                  <TableCell className="w-12 min-w-[48px] text-center">
-                    {a.id}
-                  </TableCell>
-                  <TableCell>
-                    <img
-                      src={a.imagen}
-                      alt={a.nombre}
-                      className="w-8 h-8 rounded-full"
-                    />
-                  </TableCell>
-                  <TableCell>{a.nombre}</TableCell>
-                  <TableCell>
-                    <StatusBadge
-                      label={a.estado}
-                      variant={a.estado === "Activo" ? "success" : "neutral"}
-                    />
-                  </TableCell>
-                  <TableCell>{a.direccion}</TableCell>
-                  <TableCell>{a.distrito}</TableCell>
-                  <TableCell>{a.provincia}</TableCell>
-                  <TableCell>{a.departamento}</TableCell>
-                  <ActionMenuCell
-                    buttons={[
-                      {
-                        label: "Ver detalles",
-                        icon: <Eye className="w-4 h-4 text-blue-600" />,
-                        onClick: () =>
-                          navigate(`/inventario/almacenes/${a.id}`),
-                      },
-                      {
-                        label: "Actualizar",
-                        icon: <Pencil className="w-4 h-4 text-primary1" />,
-                        onClick: () =>
-                          console.log(`Actualizar almacén: ${a.nombre}`),
-                      },
-                      {
-                        label: "Eliminar",
-                        icon: <Trash2 className="w-4 h-4 text-red-600" />,
-                        onClick: () =>
-                          console.log(`Eliminar almacén: ${a.nombre}`),
-                      },
-                      {
-                        label: "Asignar tiendas",
-                        icon: (
-                          <Store className="w-4 h-4 text-secondary-color" />
-                        ),
-                        onClick: () =>
-                          console.log(`Asignar tiendas a: ${a.nombre}`),
-                      },
-                      {
-                        label: "Asignar productos",
-                        icon: (
-                          <PackagePlus className="w-4 h-4 text-green-600" />
-                        ),
-                        onClick: () =>
-                          console.log(`Asignar productos a: ${a.nombre}`),
-                      },
-                    ]}
-                  />
-                </tr>
-              ))
-            )}
-          </tbody>
-        </table>
-        <div className="flex justify-end items-center w-full mt-2">
+        {/* Filtror y paginacion */}
+        {/* <div className="flex justify-end items-center w-full mt-2">
           <span className="text-sm text-gray-500 mr-2">
             {`Mostrando ${filtered.length === 0 ? 0 : (page - 1) * pageSize + 1} - ${filtered.length === 0 ? 0 : Math.min(page * pageSize, filtered.length)} de ${filtered.length} resultados`}
           </span>
@@ -312,10 +229,23 @@ export default function AlmacenesPage() {
             totalPages={totalPages}
             onPageChange={setPage}
           />
-        </div>
+        </div> */}
       </div>
+      {/* Componente de Tabla */}
+      <AlmacenDataTable almacenes={almacenes} />
+      <Pagination
+        currentPage={page}
+        totalPages={meta?.lastPage || 0}
+        onPageChange={setPage}
+      />
+      {/* Paginación simple */}
+      {meta && (
+        <div className="mt-4 text-sm text-gray-600">
+          Página {meta.page} de {meta.lastPage} — Total: {meta.total}
+        </div>
+      )}
       {/* Modal para agregar almacén */}
-      <ModalForm
+      {/* <ModalForm
         title="Añadir Almacén"
         isOpen={isOpenModalForm}
         closeModal={closeModalForm}
@@ -323,7 +253,7 @@ export default function AlmacenesPage() {
         isLoading={isSubmitting}
       >
         <AlmacenForm control={control} errors={errors} />
-      </ModalForm>
+      </ModalForm> */}
     </div>
   );
 }
