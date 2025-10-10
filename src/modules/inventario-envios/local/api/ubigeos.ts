@@ -24,7 +24,7 @@ export const getDistritos = async (
   id_provincia: string
 ): Promise<Distrito[]> => {
   const response = await API.get<{ success: boolean; data: Distrito[] }>(
-    "ditritos",
+    "distritos",
     {
       params: { id_provincia },
     }
