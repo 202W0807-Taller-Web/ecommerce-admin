@@ -173,6 +173,8 @@ export default function TiendasPage() {
       {/* Tabla */}
       <TiendaDataTable
         tiendas={tiendas}
+        page={page}
+        limit={limit}
         isLoading={isPending}
         isError={isError}
       />

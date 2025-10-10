@@ -363,6 +363,8 @@ export default function AlmacenesDetailsPage() {
         {/* Tabla tiendas */}
         <TiendaDataTable
           tiendas={tiendasData}
+          page={pageTiendas}
+          limit={limit}
           isLoading={tiendasPending}
           isError={tiendasError}
           almacenes={false}

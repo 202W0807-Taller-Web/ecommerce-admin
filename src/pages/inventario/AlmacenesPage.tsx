@@ -168,6 +168,8 @@ export default function AlmacenesPage() {
         almacenes={almacenes}
         isLoading={isPending}
         isError={isError}
+        page={page}
+        limit={limit}
       />
 
       {/* Pie de Tabla */}

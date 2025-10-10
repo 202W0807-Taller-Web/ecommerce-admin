@@ -5,7 +5,7 @@ import { Eye, Pencil, Trash2 } from "lucide-react";
 interface Column<T> {
   label: string;
   key: keyof T | string;
-  render?: (item: T) => React.ReactNode;
+  render?: (item: T, index: number) => React.ReactNode;
   className?: string;
 }
 
@@ -89,7 +89,9 @@ const LocalDataTable = <T extends Record<string, any>>({
               >
                 {columns.map((col, colIdx) => (
                   <TableCell key={colIdx} className={col.className}>
-                    {col.render ? col.render(item) : (item[col.key] as any)}
+                    {col.render
+                      ? col.render(item, idx)
+                      : (item[col.key] as any)}
                   </TableCell>
                 ))}
 

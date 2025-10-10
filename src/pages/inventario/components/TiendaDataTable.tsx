@@ -7,17 +7,22 @@ const TiendaDataTable = ({
   isLoading,
   isError,
   almacenes = true,
+  page,
+  limit,
 }: {
   tiendas: Tienda[];
   isLoading?: boolean;
   isError?: boolean;
   almacenes?: boolean;
+  page: number;
+  limit: number;
 }) => {
   const columns = [
     {
       label: "#",
-      key: "id",
+      key: "serial",
       className: "w-12 text-center",
+      render: (_: Tienda, idx: number) => (page - 1) * limit + idx + 1,
     },
     // {
     //   label: "Imagen",

@@ -6,13 +6,22 @@ const AlmacenDataTable = ({
   almacenes,
   isLoading,
   isError,
+  page,
+  limit,
 }: {
   almacenes: Almacen[];
   isLoading?: boolean;
   isError?: boolean;
+  page: number;
+  limit: number;
 }) => {
   const columns = [
-    { label: "#", key: "id", className: "w-12 text-center" },
+    {
+      label: "#",
+      key: "serial",
+      className: "w-12 text-center",
+      render: (_: Almacen, idx: number) => (page - 1) * limit + idx + 1,
+    },
     // {
     //   label: "Imagen",
     //   key: "imagen",
