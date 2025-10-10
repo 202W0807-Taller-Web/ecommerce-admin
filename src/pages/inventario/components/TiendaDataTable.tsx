@@ -1,25 +1,31 @@
 import LocalDataTable from "./LocalDataTable";
 import { StatusBadge } from "@components/Table";
-import type { Almacen } from "../../../modules/inventario-envios/local/types/almacen";
+import type { Tienda } from "../../../modules/inventario-envios/local/types/tienda";
 
-const AlmacenDataTable = ({
-  almacenes,
+const TiendaDataTable = ({
+  tiendas,
   isLoading,
   isError,
+  almacenes = true,
 }: {
-  almacenes: Almacen[];
+  tiendas: Tienda[];
   isLoading?: boolean;
   isError?: boolean;
+  almacenes?: boolean;
 }) => {
   const columns = [
-    { label: "#", key: "id", className: "w-12 text-center" },
+    {
+      label: "#",
+      key: "id",
+      className: "w-12 text-center",
+    },
     // {
     //   label: "Imagen",
     //   key: "imagen",
-    //   render: (a: Almacen) => (
+    //   render: (t: Tienda) => (
     //     <img
-    //       src={a.imagen || "none"}
-    //       alt={a.nombre}
+    //       src={t.imagen || "none"}
+    //       alt={t.nombre}
     //       className="w-8 h-8 rounded-full"
     //     />
     //   ),
@@ -28,10 +34,10 @@ const AlmacenDataTable = ({
     {
       label: "Estado",
       key: "estado",
-      render: (a: Almacen) => (
+      render: (t: Tienda) => (
         <StatusBadge
-          label={a.estado}
-          variant={a.estado === "ACTIVO" ? "success" : "danger"}
+          label={t.estado}
+          variant={t.estado === "ACTIVO" ? "success" : "danger"}
         />
       ),
     },
@@ -41,15 +47,17 @@ const AlmacenDataTable = ({
     { label: "Departamento", key: "departamento" },
   ];
 
+  if (almacenes) columns.push({ label: "Almacén", key: "almacen" });
+
   return (
     <LocalDataTable
-      data={almacenes}
+      data={tiendas}
       columns={columns}
-      resourceName="almacenes"
+      resourceName="tiendas"
       isLoading={isLoading}
       isError={isError}
     />
   );
 };
 
-export default AlmacenDataTable;
+export default TiendaDataTable;

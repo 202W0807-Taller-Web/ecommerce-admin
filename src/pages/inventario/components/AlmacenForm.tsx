@@ -2,13 +2,21 @@ import { Controller, type Control, type FieldErrors } from "react-hook-form";
 import Input from "@components/Input";
 import Select from "@components/Select";
 import InputFile from "@components/InputFile";
+import SelectsUbigeo from "./SelectsUbigeo";
 
 type AlmacenFormProps = {
   control: Control<any>;
   errors: FieldErrors<any>;
+  ubicacionRef?: React.RefObject<{
+    reset: () => void;
+  } | null>;
 };
 
-const AlmacenForm: React.FC<AlmacenFormProps> = ({ control, errors }) => {
+const AlmacenForm: React.FC<AlmacenFormProps> = ({
+  control,
+  errors,
+  ubicacionRef,
+}) => {
   return (
     <>
       <div className="sm:col-span-2">
@@ -19,14 +27,13 @@ const AlmacenForm: React.FC<AlmacenFormProps> = ({ control, errors }) => {
           render={({ field }) => (
             <Input
               label="Nombre"
-              placeholder="Nombre del almacén"
+              placeholder="Nombre de la tienda"
               error={errors.nombre?.message as string}
               {...field}
             />
           )}
         />
       </div>
-
       <div className="sm:col-span-2">
         <Controller
           name="direccion"
@@ -35,30 +42,50 @@ const AlmacenForm: React.FC<AlmacenFormProps> = ({ control, errors }) => {
           render={({ field }) => (
             <Input
               label="Dirección"
-              placeholder="Dirección del almacén"
+              placeholder="Dirección de la tienda"
               error={errors.direccion?.message as string}
               {...field}
             />
           )}
         />
       </div>
-
       <Controller
         name="estado"
         control={control}
+        rules={{ required: "Seleccione un estado" }}
         render={({ field }) => (
           <Select
             label="Estado"
+            placeholder="Seleccione un estado"
             options={[
               { value: "Activo", label: "Activo" },
               { value: "Inactivo", label: "Inactivo" },
             ]}
+            error={errors.estado?.message as string}
             {...field}
           />
         )}
       />
-
-      {/* Repite para departamento, provincia, distrito */}
+      <Controller
+        name="ubigeo"
+        control={control}
+        rules={{
+          validate: value => {
+            if (!value) return "El ubigeo es obligatorio";
+            const { departamento, provincia, distrito } = value;
+            if (!departamento || !provincia || !distrito)
+              return "Debe seleccionar todos los campos de ubigeo";
+            return true;
+          },
+        }}
+        render={({ field, fieldState }) => (
+          <SelectsUbigeo
+            error={fieldState.error?.message}
+            {...field}
+            ref={ubicacionRef}
+          />
+        )}
+      />
 
       <div className="sm:col-span-2">
         <Controller
