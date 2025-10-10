@@ -2,17 +2,31 @@ import API from "./api";
 import type { Root } from "../types/pagination";
 import type { Almacen, AlmacenBackend } from "../types/almacen";
 
+const recurso = "/locales";
+
 export const getAlmacenes = async ({
   page,
   limit,
+  nombre,
+  departamento,
+  provincia,
+  distrito,
 }: {
   page: number;
   limit: number;
+  nombre: string;
+  departamento: string;
+  provincia: string;
+  distrito: string;
 }): Promise<Root<Almacen>> => {
-  const response = await API.get<Root<AlmacenBackend>>("/almacenes", {
+  const response = await API.get<Root<AlmacenBackend>>(recurso, {
     params: {
       page,
       per_page: limit,
+      nombre,
+      departamento,
+      provincia,
+      distrito,
     },
   });
 
@@ -39,7 +53,7 @@ export const getAlmacenes = async ({
 
 export const getAlmacen = async (id: number): Promise<Almacen> => {
   const response = await API.get<{ success: boolean; data: AlmacenBackend }>(
-    `/almacenes/${id}`
+    `${recurso}/${id}`
   );
 
   const { data } = response.data;

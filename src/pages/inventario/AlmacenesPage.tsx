@@ -45,8 +45,12 @@ export default function AlmacenesPage() {
 
   // react-query
   const { data, isPending, isError } = useQuery<Root<Almacen>>({
-    queryKey: ["almacenes", { page, limit }],
-    queryFn: () => getAlmacenes({ page, limit }),
+    queryKey: [
+      "almacenes",
+      { page, limit, nombre, departamento, provincia, distrito },
+    ],
+    queryFn: () =>
+      getAlmacenes({ page, limit, nombre, departamento, provincia, distrito }),
   });
 
   const almacenes = data?.data ?? [];
