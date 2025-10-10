@@ -1,90 +1,100 @@
-import { useState } from "react";
-// import { useNavigate } from "react-router-dom";
-// import Input from "../../components/Input";
-// import Button from "../../components/Button";
-import FileAction from "../../components/FileAction";
-// import {
-//   TableHeader,
-//   TableCell,
-//   StatusBadge,
-//   ActionMenuCell,
-// } from "../../components/Table";
-// import { Pencil, Trash2, Store, PackagePlus, Eye } from "lucide-react";
-// import Pagination from "../../components/Pagination";
-// import { PlusCircle } from "lucide-react";
-// import { Search } from "lucide-react";
-import { RefreshCw } from "lucide-react";
-// import Select from "../../components/Select";
-// import { Link } from "react-router-dom";
-
+import { useRef, useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useForm, type SubmitHandler } from "react-hook-form";
-import {
-  getAlmacenes,
-  createAlmacen,
-} from "../../modules/inventario/api/almacenes";
-// import { useModal } from "@hooks/useModal";
+import { getAlmacenes } from "../../modules/inventario-envios/local/api/almacenes";
+import type {
+  Almacen,
+  AlmacenBody,
+} from "../../modules/inventario-envios/local/types/almacen";
+import type { Root } from "../../modules/inventario-envios/local/types/pagination";
+import AlmacenDataTable from "./components/AlmacenDataTable";
+import SelectsUbigeo from "./components/SelectsUbigeo";
+import FooterTable from "./components/FooterTable";
+import FilterForm from "./components/FilterForm";
+import { useSearchParams } from "react-router-dom";
+import Input from "@components/Input";
+import Button from "@components/Button";
+import FileAction from "@components/FileAction";
+import { useModal } from "@hooks/useModal";
+import { PlusCircle } from "lucide-react";
 import ModalForm from "@components/ModalForm";
 import AlmacenForm from "./components/AlmacenForm";
-import type { Almacen, Meta } from "../../modules/inventario/types/almacen";
-import AlmacenDataTable from "./components/AlmacenDataTable";
-import usePagination from "@hooks/usePagination";
-import Pagination from "@components/Pagination";
 
-type AlmacenInput = {
-  nombre: string;
-  direccion: string;
-  estado: string;
-  departamento: string;
-  provincia: string;
-  distrito: string;
-  imagen: string | null;
-};
+const limit = 2; // Número de items por página
 
 export default function AlmacenesPage() {
-  const { page, setPage } = usePagination();
+  // Modales
+  const [isOpenModalForm, openModalForm, closeModalForm] = useModal(false);
+  const [isOpenModalUpdateStock, openModalUpdateStock, closeModalUpdateStock] =
+    useModal(false);
+  const [isOpenModalImportData, openModalImportData, closeModalImportData] =
+    useModal(false);
 
-  // const [busqueda, setBusqueda] = useState("");
-  // const [distrito, setDistrito] = useState("");
-  // const [provincia, setProvincia] = useState("");
-  // const [departamento, setDepartamento] = useState("");
-  // const [page, setPage] = useState(1);
-  // const pageSize = 10;
-  // const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const ubicacionRef = useRef<{ reset: () => void }>(null);
+  const [ubigeo, setUbigeo] = useState({ label: "", value: "" });
 
-  // Modal Form
-  // const [isOpenModalForm, openModalForm, closeModalForm] = useModal(false);
+  // Obtener valores de la URL
+  const nombre = searchParams.get("nombre") || "";
+  const page = parseInt(searchParams.get("page") || "1", 10);
+
+  // Detectar ubigeo
+  const departamento = searchParams.get("departamento") || "";
+  const provincia = searchParams.get("provincia") || "";
+  const distrito = searchParams.get("distrito") || "";
 
   // react-query
-  const { isPending, isError, data, error } = useQuery<{
-    almacenes: Almacen[];
-    meta: Meta;
-  }>({
-    queryKey: ["almacenes", { page, limit: 5 }],
-    queryFn: () => getAlmacenes({ page, limit: 5 }),
+  const { data, isPending, isError } = useQuery<Root<Almacen>>({
+    queryKey: ["almacenes", { page, limit }],
+    queryFn: () => getAlmacenes({ page, limit }),
   });
 
-  const { almacenes = [], meta } = data || {};
+  const almacenes = data?.data ?? [];
+  const pagination = data?.pagination;
+
+  // Cambiar pagina
+  const handlePageChange = (newPage: number) => {
+    const currentParams = Object.fromEntries(searchParams.entries());
+    setSearchParams({ ...currentParams, page: String(newPage) });
+  };
+
+  // Busqueda con URL
+  const handleSubmitSearch = (formData: Record<string, string>) => {
+    const params: Record<string, string> = {};
+    if (formData.nombre) params.nombre = formData.nombre;
+    if (ubigeo.value && ubigeo.label) params[ubigeo.label] = ubigeo.value;
+    params.page = "1";
+    setSearchParams(params);
+  };
+
+  // Limpiar inputs
+  const handleReset = () => {
+    ubicacionRef.current?.reset();
+    setUbigeo({ label: "", value: "" });
+    setSearchParams({});
+  };
 
   // const queryClient = useQueryClient();
 
   // react-hook-form
-  // const {
-  //   control,
-  //   handleSubmit,
-  //   reset,
-  //   formState: { errors, isSubmitting },
-  // } = useForm<AlmacenInput>({
-  //   defaultValues: {
-  //     nombre: "",
-  //     direccion: "",
-  //     estado: "Activo",
-  //     departamento: "",
-  //     provincia: "",
-  //     distrito: "",
-  //     imagen: "",
-  //   },
-  // });
+  const {
+    control,
+    handleSubmit,
+    reset,
+    formState: { errors, isSubmitting },
+  } = useForm<AlmacenBody>({
+    defaultValues: {
+      nombre: "",
+      direccion: "",
+      estado: "",
+      ubigeo: {
+        departamento: "",
+        provincia: "",
+        distrito: "",
+      },
+      imagen: "",
+    },
+  });
 
   // react-query
   // const { mutate: addAlmacen } = useMutation({
@@ -101,159 +111,105 @@ export default function AlmacenesPage() {
   //   },
   // });
 
-  // const onSubmit: SubmitHandler<AlmacenInput> = data => {
-  //   addAlmacen(data);
-  // };
-
-  if (isPending) return <span>Loading...</span>;
-
-  if (isError) return <span>Error: {error.message}</span>;
-
-  // Obtiene valores únicos para los selects
-  // const distritos = Array.from(new Set(almacenesData.map(a => a.distrito)));
-  // const provincias = Array.from(new Set(almacenesData.map(a => a.provincia)));
-  // const departamentos = Array.from(
-  //   new Set(almacenesData.map(a => a.departamento))
-  // );
-
-  // const distritoOptions = distritos.map(d => ({ value: d, label: d }));
-  // const provinciaOptions = provincias.map(p => ({ value: p, label: p }));
-  // const departamentoOptions = departamentos.map(dep => ({
-  //   value: dep,
-  //   label: dep,
-  // }));
-
-  // Filtros
-  // const filtered = almacenesData.filter(
-  //   a =>
-  //     a.nombre.toLowerCase().includes(busqueda.toLowerCase()) &&
-  //     (distrito ? a.distrito === distrito : true) &&
-  //     (provincia ? a.provincia === provincia : true) &&
-  //     (departamento ? a.departamento === departamento : true)
-  // );
-  // const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
-  // const paginated = filtered.slice((page - 1) * pageSize, page * pageSize);
-
-  // const handleClear = () => {
-  //   setBusqueda("");
-  //   setDistrito("");
-  //   setProvincia("");
-  //   setDepartamento("");
-  //   setPage(1);
-  // };
+  const onSubmitAddAlmacen: SubmitHandler<AlmacenBody> = data => {
+    alert(`Se ha creado el almacen:\n ${JSON.stringify(data)}`);
+    console.log(data);
+    closeModalForm();
+    reset();
+    ubicacionRef.current?.reset();
+  };
 
   return (
     <div className="p-2 sm:p-4 md:p-6 w-full max-w-full overflow-x-auto">
       <h1 className="text-2xl font-bold mb-4">Almacenes</h1>
-
-      {/* Filtros
-      <div className="flex flex-col sm:flex-row flex-wrap gap-2 sm:gap-4 mb-6 items-end w-full">
-        <div className="w-full sm:w-64 min-w-0">
-          <Input
-            label="Buscar por nombre"
-            placeholder="Nombre de almacén"
-            value={busqueda}
-            onChange={e => setBusqueda(e.target.value)}
-            rightIcon={Search}
+      {/* Filtracion */}
+      <FilterForm
+        onSubmit={handleSubmitSearch}
+        onReset={handleReset}
+        disabled={isPending}
+      >
+        <Input
+          type="text"
+          name="nombre"
+          label="Nombre"
+          placeholder="Buscar por nombre"
+          defaultValue={nombre}
+          className="sm:flex-1"
+        />
+        <SelectsUbigeo ref={ubicacionRef} onChangeUbicacion={setUbigeo} />
+      </FilterForm>
+      {/* Acciones */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 w-full mb-3">
+        <div className="flex flex-wrap gap-4">
+          <FileAction
+            text="Importar data"
+            variant="upload"
+            onClick={openModalImportData}
+          />
+          <FileAction text="Exportar data" variant="download" />
+          <FileAction
+            text="Actualizar stock"
+            variant="update"
+            onClick={openModalUpdateStock}
           />
         </div>
-        <div className="w-full sm:w-48 min-w-0">
-          <Select
-            label="Distrito"
-            placeholder="Todos"
-            options={distritoOptions}
-            value={distrito}
-            onChange={e => setDistrito(e.target.value)}
-          />
-        </div>
-        <div className="w-full sm:w-48 min-w-0">
-          <Select
-            label="Provincia"
-            placeholder="Todas"
-            options={provinciaOptions}
-            value={provincia}
-            onChange={e => setProvincia(e.target.value)}
-          />
-        </div>
-        <div className="w-full sm:w-48 min-w-0">
-          <Select
-            label="Departamento"
-            placeholder="Todos"
-            options={departamentoOptions}
-            value={departamento}
-            onChange={e => setDepartamento(e.target.value)}
-          />
-        </div>
-        <button
-          type="button"
-          onClick={handleClear}
-          className="text-body-color cursor-pointer px-3 py-2 rounded-md border-none bg-transparent hover:text-secondary-color"
-        >
-          Clear all
-        </button>
-        <div className="flex-1 flex justify-end">
+        <div className="sm:shrink-0 sm:w-auto w-full">
           <Button
             text="Añadir almacén"
+            variant="secondary"
             icon={PlusCircle}
-            iconPosition="right"
-            variant="primary"
             onClick={openModalForm}
           />
         </div>
       </div>
 
-      {/* Acciones */}
-      <div className="flex flex-col sm:flex-row flex-wrap gap-2 sm:gap-4 my-10 w-full">
-        <FileAction text="Importar data" variant="upload" />
-        <FileAction text="Exportar data" variant="download" />
-        <button
-          type="button"
-          className="cursor-pointer flex items-center text-sm gap-2 text-body-color underline hover:text-secondary-color"
-        >
-          <span>Actualizar stock</span>
-          <RefreshCw className="h-5 w-5" />
-        </button>
-      </div>
-
       {/* Tabla */}
-      <div className="w-full overflow-auto">
-        {/* Filtror y paginacion */}
-        {/* <div className="flex justify-end items-center w-full mt-2">
-          <span className="text-sm text-gray-500 mr-2">
-            {`Mostrando ${filtered.length === 0 ? 0 : (page - 1) * pageSize + 1} - ${filtered.length === 0 ? 0 : Math.min(page * pageSize, filtered.length)} de ${filtered.length} resultados`}
-          </span>
-        </div>
-        <div className="flex justify-center mt-4 w-full">
-          <Pagination
-            currentPage={page}
-            totalPages={totalPages}
-            onPageChange={setPage}
-          />
-        </div> */}
-      </div>
-      {/* Componente de Tabla */}
-      <AlmacenDataTable almacenes={almacenes} />
-      <Pagination
-        currentPage={page}
-        totalPages={meta?.lastPage || 0}
-        onPageChange={setPage}
+      <AlmacenDataTable
+        almacenes={almacenes}
+        isLoading={isPending}
+        isError={isError}
       />
-      {/* Paginación simple */}
-      {meta && (
-        <div className="mt-4 text-sm text-gray-600">
-          Página {meta.page} de {meta.lastPage} — Total: {meta.total}
-        </div>
-      )}
+
+      {/* Pie de Tabla */}
+      <FooterTable
+        page={page}
+        limit={limit}
+        pagination={pagination}
+        handlePageChange={handlePageChange}
+      />
+
       {/* Modal para agregar almacén */}
-      {/* <ModalForm
+      <ModalForm
         title="Añadir Almacén"
         isOpen={isOpenModalForm}
         closeModal={closeModalForm}
-        onSubmit={handleSubmit(onSubmit)}
+        onSubmit={handleSubmit(onSubmitAddAlmacen)}
         isLoading={isSubmitting}
       >
-        <AlmacenForm control={control} errors={errors} />
-      </ModalForm> */}
+        <AlmacenForm
+          control={control}
+          errors={errors}
+          ubicacionRef={ubicacionRef}
+        />
+      </ModalForm>
+
+      {/* Modal para actualizar stock */}
+      <ModalForm
+        title="Actualizar stock"
+        isOpen={isOpenModalUpdateStock}
+        closeModal={closeModalUpdateStock}
+        // onSubmit={handleSubmit(onSubmit)}
+        // isLoading={isSubmitting}
+      ></ModalForm>
+
+      {/* Modal para Importar data */}
+      <ModalForm
+        title="Importar data"
+        isOpen={isOpenModalImportData}
+        closeModal={closeModalImportData}
+        // onSubmit={handleSubmit(onSubmit)}
+        // isLoading={isSubmitting}
+      ></ModalForm>
     </div>
   );
 }
