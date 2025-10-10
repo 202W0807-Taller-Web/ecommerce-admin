@@ -6,6 +6,7 @@ export const getTiendas = async ({
   page,
   limit,
   nombre,
+  almacen,
   departamento,
   provincia,
   distrito,
@@ -13,15 +14,17 @@ export const getTiendas = async ({
   page: number;
   limit: number;
   nombre: string;
+  almacen: string;
   departamento: string;
   provincia: string;
   distrito: string;
 }) => {
-  const response = await API.get<Root<Tienda[]>>("/tiendas", {
+  const response = await API.get<Root<Tienda>>("/tiendas", {
     params: {
       page,
       per_page: limit,
       nombre,
+      almacen,
       departamento,
       provincia,
       distrito,

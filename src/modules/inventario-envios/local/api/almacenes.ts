@@ -9,7 +9,7 @@ export const getAlmacenes = async ({
   page: number;
   limit: number;
 }): Promise<Root<Almacen>> => {
-  const response = await API.get<Root<AlmacenBackend>>("/locales", {
+  const response = await API.get<Root<AlmacenBackend>>("/almacenes", {
     params: {
       page,
       per_page: limit,
@@ -35,4 +35,26 @@ export const getAlmacenes = async ({
     data: transformedData,
     pagination,
   };
+};
+
+export const getAlmacen = async (id: number): Promise<Almacen> => {
+  const response = await API.get<{ success: boolean; data: AlmacenBackend }>(
+    `/almacenes/${id}`
+  );
+
+  const { data } = response.data;
+
+  const transformedData: Almacen = {
+    id: data.id,
+    imagen: data.imagen,
+    nombre: data.nombre,
+    estado: data.estado,
+    direccion: data.direccion?.referencia ?? "",
+    distrito: data.direccion?.distrito?.nombre ?? "",
+    provincia: data.direccion?.distrito?.provincia?.nombre ?? "",
+    departamento:
+      data.direccion?.distrito?.provincia?.departamento?.nombre ?? "",
+  };
+
+  return transformedData;
 };
