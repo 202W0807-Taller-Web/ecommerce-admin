@@ -322,6 +322,11 @@ const CategoriasPage: React.FC = () => {
   const [textFilter, setTextFilter] = useState("");
   const [categoriaFilter, setCategoriaFilter] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+  const [showModal, setShowModal] = useState(false);
+  React.useEffect(() => {
+    setCurrentPage(1);
+  }, [textFilter, categoriaFilter]);
+
 
   const productosFiltrados = productos.filter((p) => {
     const cumpleTexto = p.producto
@@ -379,6 +384,8 @@ const CategoriasPage: React.FC = () => {
         );
       }
     }
+
+
 
     return pages.map((page, idx) => {
       if (page === "...") {
@@ -501,6 +508,7 @@ const CategoriasPage: React.FC = () => {
           </button>
 
           <button
+            onClick={()=> setShowModal(true)}
             style={{
               display: "flex",
               alignItems: "center",
@@ -683,6 +691,71 @@ const CategoriasPage: React.FC = () => {
           </button>
         </div>
       )}
+      {/* 🪟 Modal para agregar producto */}
+      {showModal && (
+        <div
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            width: "100vw",
+            height: "100vh",
+            backgroundColor: "rgba(0,0,0,0.5)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            zIndex: 1000,
+          }}
+        >
+          <div
+            style={{
+              backgroundColor: "#fff",
+              padding: "24px 32px",
+              borderRadius: 12,
+              boxShadow: "0 4px 20px rgba(0,0,0,0.2)",
+              maxWidth: 400,
+              width: "90%",
+              textAlign: "center",
+            }}
+          >
+            <h3 style={{ marginBottom: 16, fontWeight:"bold", }}>Nuevo Producto</h3>
+            <p style={{ color: "#555", marginBottom: 24 }}>
+              Aquí podrás registrar manualmente un nuevo producto o importar desde un
+              archivo más adelante.
+            </p>
+
+            
+            <button
+              onClick={() => setShowModal(false)}
+              style={{
+                padding: "8px 16px",
+                borderRadius: 6,
+                backgroundColor: "#2c2c2cff",
+                color: "#fff",
+                border: "none",
+                cursor: "pointer",
+              }}
+            >
+              Agregar producto
+            </button>
+
+            <button
+              onClick={() => setShowModal(false)}
+              style={{
+                padding: "8px 16px",
+                borderRadius: 6,
+                backgroundColor: "#ffffffff",
+                color: "#000000ff",
+                border: "none",
+                cursor: "pointer",
+              }}
+            >
+              Cerrar
+            </button>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 };
