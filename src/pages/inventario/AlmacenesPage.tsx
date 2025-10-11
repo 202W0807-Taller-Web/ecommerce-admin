@@ -1,7 +1,13 @@
 import { useRef, useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useForm, type SubmitHandler } from "react-hook-form";
-import { getAlmacenes } from "../../modules/inventario-envios/local/api/almacenes";
+import {
+  getAlmacenes,
+  createAlmacen,
+  updateAlmacen,
+  deleteAlmacen,
+  getAlmacen,
+} from "../../modules/inventario-envios/local/api/almacenes";
 import type {
   Almacen,
   AlmacenBody,
@@ -20,7 +26,7 @@ import { PlusCircle } from "lucide-react";
 import ModalForm from "@components/ModalForm";
 import AlmacenForm from "./components/AlmacenForm";
 
-const limit = 2; // Número de items por página
+const limit = 4; // Número de items por página
 
 export default function AlmacenesPage() {
   // Modales
@@ -29,6 +35,11 @@ export default function AlmacenesPage() {
     useModal(false);
   const [isOpenModalImportData, openModalImportData, closeModalImportData] =
     useModal(false);
+
+  // Estados de edición
+  const [almacenSeleccionado, setAlmacenSeleccionado] =
+    useState<Almacen | null>(null);
+  const [isOpenModalEdit, openModalEdit, closeModalEdit] = useModal(false);
 
   const [searchParams, setSearchParams] = useSearchParams();
   const ubicacionRef = useRef<{ reset: () => void }>(null);
@@ -78,8 +89,6 @@ export default function AlmacenesPage() {
     setSearchParams({});
   };
 
-  // const queryClient = useQueryClient();
-
   // react-hook-form
   const {
     control,
@@ -100,27 +109,84 @@ export default function AlmacenesPage() {
     },
   });
 
-  // react-query
-  // const { mutate: addAlmacen } = useMutation({
-  //   mutationFn: createAlmacen,
-  //   onSuccess: () => {
-  //     queryClient.invalidateQueries({ queryKey: ["almacenes"] });
-  //     alert("Almacen creado correctamente");
-  //     reset();
-  //     closeModalForm();
-  //   },
-  //   onError: error => {
-  //     console.error("Error al crear almacén:", error);
-  //     alert("No se pudo crear el almacén");
-  //   },
-  // });
+  // react-query mutation - CREATE
+  const queryClient = useQueryClient();
+  const { mutate: addAlmacen } = useMutation({
+    mutationFn: createAlmacen,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["almacenes"] });
+      alert("Almacen creado correctamente");
+      reset();
+      ubicacionRef.current?.reset();
+      closeModalForm();
+    },
+    onError: error => {
+      console.error("Error al crear almacén:", error);
+      alert("No se pudo crear el almacén");
+    },
+  });
 
   const onSubmitAddAlmacen: SubmitHandler<AlmacenBody> = data => {
-    alert(`Se ha creado el almacen:\n ${JSON.stringify(data)}`);
-    console.log(data);
-    closeModalForm();
-    reset();
-    ubicacionRef.current?.reset();
+    console.log("Datos a enviar:", data);
+    addAlmacen(data);
+  };
+
+  // react-query mutation - UPDATE
+  const { mutate: editAlmacen } = useMutation({
+    mutationFn: ({ id, data }: { id: number; data: AlmacenBody }) =>
+      updateAlmacen(id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["almacenes"] });
+      alert("Almacén actualizado correctamente");
+      closeModalEdit();
+    },
+    onError: error => {
+      console.error("Error al actualizar almacén:", error);
+      alert("No se pudo actualizar el almacén");
+    },
+  });
+
+  // react-query mutation - DELETE
+  const { mutate: removeAlmacen } = useMutation({
+    mutationFn: deleteAlmacen,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["almacenes"] });
+      alert("Almacén eliminado correctamente");
+    },
+    onError: error => {
+      console.error("Error al eliminar almacén:", error);
+      alert("No se pudo eliminar el almacén");
+    },
+  });
+
+  // Funciones de modales para editar y eliminar
+  const handleEdit = async (id: number) => {
+    try {
+      const almacen = await getAlmacen(id);
+      setAlmacenSeleccionado(almacen);
+      openModalEdit();
+      if (almacen) {
+        reset({
+          nombre: almacen.nombre,
+          direccion: almacen.direccion,
+          estado: almacen.estado === "ACTIVO" ? "Activo" : "Inactivo",
+          ubigeo: {
+            departamento: almacen.id_departamento,
+            provincia: almacen.id_provincia,
+            distrito: almacen.id_distrito,
+          },
+          imagen: almacen.imagen,
+        });
+      }
+    } catch (error) {
+      console.error("Error al obtener almacén:", error);
+    }
+  };
+
+  const handleDelete = (id: number, nombre: string) => {
+    if (confirm(`¿Estás seguro de eliminar el almacén "${nombre}"?`)) {
+      removeAlmacen(id);
+    }
   };
 
   return (
@@ -174,6 +240,8 @@ export default function AlmacenesPage() {
         isError={isError}
         page={page}
         limit={limit}
+        onEdit={handleEdit}
+        onDelete={handleDelete}
       />
 
       {/* Pie de Tabla */}
@@ -197,6 +265,26 @@ export default function AlmacenesPage() {
           errors={errors}
           ubicacionRef={ubicacionRef}
         />
+      </ModalForm>
+
+      {/* Modal para editar almacén */}
+      <ModalForm
+        title="Editar Almacén"
+        isOpen={isOpenModalEdit}
+        closeModal={closeModalEdit}
+        onSubmit={handleSubmit(data => {
+          if (almacenSeleccionado)
+            editAlmacen({ id: almacenSeleccionado.id, data });
+        })}
+        isLoading={isSubmitting}
+      >
+        {almacenSeleccionado && (
+          <AlmacenForm
+            control={control}
+            errors={errors}
+            ubicacionRef={ubicacionRef}
+          />
+        )}
       </ModalForm>
 
       {/* Modal para actualizar stock */}

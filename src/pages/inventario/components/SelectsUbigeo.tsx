@@ -1,4 +1,4 @@
-import { useState, useImperativeHandle, forwardRef } from "react";
+import { useState, useEffect, useImperativeHandle, forwardRef } from "react";
 import { useQuery } from "@tanstack/react-query";
 import Select from "@components/Select";
 import type { Option } from "../../../types/ui/Option";
@@ -15,6 +15,11 @@ import {
 
 type SelectsUbigeoProps = {
   className?: string;
+  value?: {
+    departamento: string;
+    provincia: string;
+    distrito: string;
+  };
   onChange?: (value: any) => void;
   onChangeUbicacion?: ({
     label,
@@ -28,12 +33,26 @@ type SelectsUbigeoProps = {
 
 const SelectsUbigeo = forwardRef(
   (
-    { className = "", onChange, onChangeUbicacion, error }: SelectsUbigeoProps,
+    {
+      className = "",
+      value,
+      onChange,
+      onChangeUbicacion,
+      error,
+    }: SelectsUbigeoProps,
     ref
   ) => {
     const [departamento, setDepartamento] = useState("");
     const [provincia, setProvincia] = useState("");
     const [distrito, setDistrito] = useState("");
+
+    useEffect(() => {
+      if (value) {
+        setDepartamento(value.departamento || "");
+        setProvincia(value.provincia || "");
+        setDistrito(value.distrito || "");
+      }
+    }, [value]);
 
     // Reset manual
     useImperativeHandle(ref, () => ({

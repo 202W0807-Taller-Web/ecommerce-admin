@@ -27,7 +27,7 @@ const AlmacenForm: React.FC<AlmacenFormProps> = ({
           render={({ field }) => (
             <Input
               label="Nombre"
-              placeholder="Nombre de la tienda"
+              placeholder="Nombre del almacén"
               error={errors.nombre?.message as string}
               {...field}
             />
@@ -42,7 +42,7 @@ const AlmacenForm: React.FC<AlmacenFormProps> = ({
           render={({ field }) => (
             <Input
               label="Dirección"
-              placeholder="Dirección de la tienda"
+              placeholder="Dirección del almacén"
               error={errors.direccion?.message as string}
               {...field}
             />
@@ -80,8 +80,9 @@ const AlmacenForm: React.FC<AlmacenFormProps> = ({
         }}
         render={({ field, fieldState }) => (
           <SelectsUbigeo
+            value={field.value}
+            onChange={field.onChange}
             error={fieldState.error?.message}
-            {...field}
             ref={ubicacionRef}
           />
         )}

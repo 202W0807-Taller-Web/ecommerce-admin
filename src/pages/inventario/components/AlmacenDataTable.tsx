@@ -1,6 +1,8 @@
 import LocalDataTable from "./LocalDataTable";
 import { StatusBadge } from "@components/Table";
 import type { Almacen } from "../../../modules/inventario-envios/local/types/almacen";
+import { Eye, Pencil, Trash2 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const AlmacenDataTable = ({
   almacenes,
@@ -8,13 +10,18 @@ const AlmacenDataTable = ({
   isError,
   page,
   limit,
+  onEdit,
+  onDelete,
 }: {
   almacenes: Almacen[];
   isLoading?: boolean;
   isError?: boolean;
   page: number;
   limit: number;
+  onEdit: (id: number) => void;
+  onDelete: (id: number, nombre: string) => void;
 }) => {
+  const navigate = useNavigate();
   const columns = [
     {
       label: "#",
@@ -57,6 +64,23 @@ const AlmacenDataTable = ({
       resourceName="almacenes"
       isLoading={isLoading}
       isError={isError}
+      getActions={almacen => [
+        {
+          label: "Ver detalles",
+          icon: <Eye className="w-4 h-4 text-blue-600" />,
+          onClick: () => navigate(`${almacen.id}`),
+        },
+        {
+          label: "Editar",
+          icon: <Pencil className="w-4 h-4 text-primary1" />,
+          onClick: () => onEdit(almacen.id),
+        },
+        {
+          label: "Eliminar",
+          icon: <Trash2 className="w-4 h-4 text-red-600" />,
+          onClick: () => onDelete(almacen.id, almacen.nombre),
+        },
+      ]}
     />
   );
 };

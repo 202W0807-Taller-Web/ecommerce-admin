@@ -1,6 +1,6 @@
 import API from "./api";
 import type { Root } from "../types/pagination";
-import type { Almacen, AlmacenBackend } from "../types/almacen";
+import type { Almacen, AlmacenBackend, AlmacenBody } from "../types/almacen";
 
 const recurso = "/locales";
 
@@ -68,7 +68,66 @@ export const getAlmacen = async (id: number): Promise<Almacen> => {
     provincia: data.direccion?.distrito?.provincia?.nombre ?? "",
     departamento:
       data.direccion?.distrito?.provincia?.departamento?.nombre ?? "",
+    id_departamento:
+      String(data.direccion?.distrito?.provincia?.departamento?.id) ?? "",
+    id_provincia: String(data.direccion?.distrito?.provincia?.id) ?? "",
+    id_distrito: String(data.direccion?.distrito?.id) ?? "",
   };
 
   return transformedData;
+};
+
+export const createAlmacen = async (almacen: AlmacenBody): Promise<Almacen> => {
+  const response = await API.post<{
+    success: boolean;
+    data: AlmacenBackend;
+    message: string;
+  }>(recurso, almacen);
+
+  const { data } = response.data;
+
+  const transformedData: Almacen = {
+    id: data.id,
+    imagen: data.imagen,
+    nombre: data.nombre,
+    estado: data.estado,
+    direccion: data.direccion?.referencia ?? "",
+    distrito: data.direccion?.distrito?.nombre ?? "",
+    provincia: data.direccion?.distrito?.provincia?.nombre ?? "",
+    departamento:
+      data.direccion?.distrito?.provincia?.departamento?.nombre ?? "",
+  };
+
+  return transformedData;
+};
+
+export const updateAlmacen = async (
+  id: number,
+  almacen: AlmacenBody
+): Promise<Almacen> => {
+  const response = await API.put<{
+    success: boolean;
+    data: AlmacenBackend;
+    message: string;
+  }>(`${recurso}/${id}`, almacen);
+
+  const { data } = response.data;
+
+  const transformedData: Almacen = {
+    id: data.id,
+    imagen: data.imagen,
+    nombre: data.nombre,
+    estado: data.estado,
+    direccion: data.direccion?.referencia ?? "",
+    distrito: data.direccion?.distrito?.nombre ?? "",
+    provincia: data.direccion?.distrito?.provincia?.nombre ?? "",
+    departamento:
+      data.direccion?.distrito?.provincia?.departamento?.nombre ?? "",
+  };
+
+  return transformedData;
+};
+
+export const deleteAlmacen = async (id: number): Promise<void> => {
+  await API.delete(`${recurso}/${id}`);
 };

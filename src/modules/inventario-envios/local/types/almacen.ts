@@ -18,6 +18,9 @@ export interface Almacen {
   distrito: string;
   provincia: string;
   departamento: string;
+  id_departamento?: string;
+  id_provincia?: string;
+  id_distrito?: string;
 }
 
 export interface AlmacenBody {
