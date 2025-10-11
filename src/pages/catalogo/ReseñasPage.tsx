@@ -131,7 +131,7 @@ const ReseñasPage: React.FC = () => {
             <tr
               style={{
                 backgroundColor: "#f3f4f6",
-                borderBottom: "1px solid #2c2c2c", // 🔹 línea más fina y color actualizado
+                borderBottom: "1px solid #2c2c2c", 
               }}
             >
               <th
