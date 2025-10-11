@@ -9,6 +9,7 @@ import AlmacenesPage from "./pages/inventario/AlmacenesPage";
 import TiendasPage from "./pages/inventario/TiendasPage";
 import ProductosPage from "./pages/inventario/ProductosPage";
 import CategoriasPage from "./pages/catalogo/CategoriasPage";
+import AtributosPage from "./pages/catalogo/AtributosPage";
 import ReseñasPage from "./pages/catalogo/ReseñasPage";
 
 const router = createBrowserRouter([
@@ -36,6 +37,10 @@ const router = createBrowserRouter([
             {
                 path: 'catalogo/reseñas',
                 element: <ReseñasPage/>,
+            },
+            {
+                path: 'catalogo/atributos',
+                element: <AtributosPage/>,
             },
         ]
     }

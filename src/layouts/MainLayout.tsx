@@ -27,7 +27,8 @@ const staticNavItems: NavItem[] = [
     label: "Catálogo",
     icon: <Truck />,
     children: [
-      { label: "Categorías", path: "/catalogo/categorias" }, // Aquí no tiene hijos
+      { label: "Categorías", path: "/catalogo/categorias" },
+      { label: "Atributos", path: "/catalogo/atributos" },
       { label: "Reseñas", path: "/catalogo/reseñas" },
     ],
   },
