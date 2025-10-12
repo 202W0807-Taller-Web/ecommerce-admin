@@ -1,107 +1,81 @@
 import React, { useState, useEffect } from "react";
-import { Upload, Plus } from "lucide-react";
-import AddProductModal from "../../components/Catalogo/AddProductModal";
+import { getProductos } from "../../services/catalogo/ProductoService";
 import SearchBar from "../../components/Catalogo/SearchBar";
 import CategoryFilter from "../../components/Catalogo/CategoryFilter";
 import ActionButtons from "../../components/Catalogo/ActionButtons";
 import ProductTable from "../../components/Catalogo/ProductTable";
 import Pagination from "../../components/Catalogo/Pagination";
 
-// 🧩 Datos de ejemplo
-const productos = [
-  {
-    id: 1,
-    imagen: "https://i.pravatar.cc/40?img=5",
-    sku: "SKU001",
-    producto: "Laptop Dell Inspiron",
-    categoria: "electrónica",
-    stkDisponible: 12,
-    stkReservado: 3,
-    stkTotal: 15,
-    estadoStk: "Disponible",
-  },
-  {
-    id: 2,
-    imagen: "https://i.pravatar.cc/40?img=6",
-    sku: "SKU002",
-    producto: "Mouse Logitech",
-    categoria: "accesorios",
-    stkDisponible: 5,
-    stkReservado: 2,
-    stkTotal: 7,
-    estadoStk: "Bajo Stock",
-  },
-  {
-    id: 3,
-    imagen: "https://i.pravatar.cc/40?img=7",
-    sku: "SKU003",
-    producto: "Camiseta Deportiva",
-    categoria: "ropa",
-    stkDisponible: 20,
-    stkReservado: 5,
-    stkTotal: 25,
-    estadoStk: "Disponible",
-  },
-  {
-    id: 15,
-    imagen: "https://i.pravatar.cc/40?img=19",
-    sku: "SKU015",
-    producto: "Disco Duro Externo 1TB",
-    categoria: "almacenamiento",
-    stkDisponible: 18,
-    stkReservado: 3,
-    stkTotal: 21,
-    estadoStk: "Disponible",
-  },
-  {
-    id: 16,
-    imagen: "https://i.pravatar.cc/40?img=20",
-    sku: "SKU016",
-    producto: "Memoria USB 64GB Kingston",
-    categoria: "almacenamiento",
-    stkDisponible: 30,
-    stkReservado: 5,
-    stkTotal: 35,
-    estadoStk: "Disponible",
-  },
-  {
-    id: 27,
-    imagen: "https://i.pravatar.cc/40?img=31",
-    sku: "SKU027",
-    producto: "Cámara de Seguridad WiFi",
-    categoria: "electrónica",
-    stkDisponible: 11,
-    stkReservado: 2,
-    stkTotal: 13,
-    estadoStk: "Disponible",
-  },
-];
-
 const ITEMS_PER_PAGE = 5;
 
 const CategoriasPage: React.FC = () => {
+  const [productos, setProductos] = useState<any[]>([]);
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
   const [textFilter, setTextFilter] = useState("");
   const [categoriaFilter, setCategoriaFilter] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const categoriasUnicas = Array.from(new Set(productos.map((p) => p.categoria)));
+  // Cargar productos desde la base de datos
+  useEffect(() => {
+    const fetchProductos = async () => {
+      console.log("Intentando cargar productos desde el backend...");
+      setLoading(true);
+      setError(null);
+      try {
+        const data = await getProductos();
+        console.log("Productos recibidos:", data);
+        setProductos(data);
+      } catch (err: any) {
+        console.error("Error al cargar productos:", err);
+        setError(err.message || "Error al cargar productos");
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  // 🔁 Reinicia la página cuando cambia el filtro
+    fetchProductos();
+  }, []);
+
+  // Extrae las categorías únicas desde los atributos
+  const categoriasUnicas = Array.from(
+    new Set(
+      productos
+        .map(
+          (p) =>
+            p.productoAtributos?.find(
+              (a) => a.atributoValor?.valor // obtiene el valor (por ejemplo "Ropa")
+            )?.atributoValor?.valor
+        )
+        .filter(Boolean)
+    )
+  );
+
+  // Reinicia la página cuando cambia el filtro
   useEffect(() => {
     setCurrentPage(1);
   }, [textFilter, categoriaFilter]);
 
-  // 🔍 Filtrado por texto y categoría
+  // Filtrado por texto y categoría
   const productosFiltrados = productos.filter((p) => {
-    const cumpleTexto = p.producto
+    const categoria =
+      p.productoAtributos?.find(
+        (a) => a.atributoValor?.valor
+      )?.atributoValor?.valor || "";
+
+    const cumpleTexto = p.nombre
       .toLowerCase()
       .includes(textFilter.toLowerCase());
-    const cumpleCategoria = categoriaFilter ? p.categoria === categoriaFilter : true;
+
+    const cumpleCategoria = categoriaFilter
+      ? categoria.toLowerCase() === categoriaFilter.toLowerCase()
+      : true;
+
     return cumpleTexto && cumpleCategoria;
   });
 
-  // 📄 Paginación
+  // Paginación
   const totalPages = Math.ceil(productosFiltrados.length / ITEMS_PER_PAGE);
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
   const currentItems = productosFiltrados.slice(
@@ -109,7 +83,7 @@ const CategoriasPage: React.FC = () => {
     startIndex + ITEMS_PER_PAGE
   );
 
-  // ✅ Selección de filas
+  // Selección de filas
   const handleSelect = (id: number) => {
     setSelectedIds((prev) =>
       prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
@@ -129,7 +103,7 @@ const CategoriasPage: React.FC = () => {
         Productos en categoría: {categoriaFilter || "Todas"}
       </h2>
 
-      {/* 🔎 Barra de búsqueda + filtro + acciones */}
+      {/* Barra de búsqueda + filtro + acciones */}
       <div className="flex justify-between items-center flex-wrap gap-3 mb-6">
         <SearchBar text={textFilter} onChange={setTextFilter} />
         <CategoryFilter
@@ -140,21 +114,33 @@ const CategoriasPage: React.FC = () => {
         <ActionButtons />
       </div>
 
-      {/* 📋 Tabla de productos (solo columnas requeridas) */}
-      <ProductTable
-        productos={currentItems.map((p) => ({
-          id: p.id,
-          imagen: p.imagen,
-          producto: p.producto,
-          estadoStk: p.estadoStk,
-          stkTotal: p.stkTotal,
-        }))}
-        selectedIds={selectedIds}
-        onSelect={handleSelect}
-        onSelectAll={handleSelectAll}
-      />
+      {/* Estado de carga o error */}
+      {loading && <p className="text-gray-500">Cargando productos...</p>}
+      {error && <p className="text-red-600">{error}</p>}
 
-      {/* 📑 Paginación */}
+      {/* Tabla de productos */}
+      {!loading && !error && (
+        <ProductTable
+          productos={currentItems.map((p) => ({
+            id: p.id,
+            imagen: p.productoImagenes?.find((img) => img.principal)?.imagen 
+              || p.productoImagenes?.[0]?.imagen 
+              || "https://via.placeholder.com/40",
+            producto: p.nombre,
+            descripcion: p.descripcion,
+            precio: p.variantes?.[0]?.precio || 0,
+            sku: p.variantes?.[0]?.sku || "Sin SKU",
+            estadoStk: "Disponible", // Falta ajustar por el backend
+            stkTotal: p.variantes?.length || 0, // 
+          }))}
+          selectedIds={selectedIds}
+          onSelect={handleSelect}
+          onSelectAll={handleSelectAll}
+        />
+
+      )}
+
+      {/* Paginación */}
       <div className="mt-6">
         <Pagination
           totalPages={totalPages}
