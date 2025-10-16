@@ -14,10 +14,12 @@ const CategoryFilter = ({ categorias, value, onChange }) => (
     }}
   >
     <option value="">Todas las categorías</option>
-    {categorias.map((cat) => (
-      <option key={cat} value={cat}>
-        {cat.charAt(0).toUpperCase() + cat.slice(1)}
-      </option>
+    {categorias
+      .filter((cat): cat is string => typeof cat === "string" && cat.trim() !== "")
+      .map((cat) => (
+        <option key={cat} value={cat}>
+          {cat.charAt(0).toUpperCase() + cat.slice(1)}
+        </option>
     ))}
   </select>
 );
