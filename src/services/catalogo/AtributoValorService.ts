@@ -1,5 +1,5 @@
 import { fetchUrl } from "./api";
-import type { AtributoValor, NuevoAtributoValor } from "../../types/catalogo/AtributoValores";
+import type { AtributoValor } from "../../types/catalogo/AtributoValores";
 
 export const getAtributoValores = async (): Promise<AtributoValor[]> => {
   return await fetchUrl<AtributoValor[]>("/api/atributovalores");
@@ -22,10 +22,15 @@ export const getValorById = async (
 
 export const createValorAtributo = async (
   atributoId: number,
-  data: NuevoAtributoValor
+  formData: FormData
 ): Promise<AtributoValor> => {
-  return await fetchUrl<AtributoValor>(`/api/atributos/${atributoId}/valores`, {
+  const res = await fetch(`/api/atributos/${atributoId}/valores`, {
     method: "POST",
-    body: JSON.stringify(data),
+    body: formData,
   });
+  if (!res.ok) {
+    const t = await res.text();
+    throw new Error(`Error crear valor atributo: ${res.status} ${t}`);
+  }
+  return res.json() as Promise<AtributoValor>;
 };
