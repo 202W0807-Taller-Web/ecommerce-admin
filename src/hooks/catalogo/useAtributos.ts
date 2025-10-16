@@ -1,7 +1,7 @@
 import { useData } from "@hooks/general/useData";
 import { usePostData } from "@hooks/general/usePostData";
 import { getAtributos, getAtributoById, createAtributo } from "../../services/catalogo/AtributoService";
-import type { Atributo, NuevoAtributo } from "../../types/catalogo/Atributos";
+import type { Atributo } from "../../types/catalogo/Atributos";
 
 // GET
 export const useAtributos = () => useData<Atributo[]>(getAtributos, []);
@@ -11,4 +11,4 @@ export const useAtributoById = (id: number) =>
 
 // POST
 export const useCreateAtributo = () =>
-  usePostData<NuevoAtributo, Atributo>(createAtributo);
+  usePostData<FormData, Atributo>(createAtributo);

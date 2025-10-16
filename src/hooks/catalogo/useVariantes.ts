@@ -1,7 +1,7 @@
 import { useData } from "@hooks/general/useData";
 import { usePostData } from "@hooks/general/usePostData";
 import { getVariantesByProductoId, createVariante } from "../../services/catalogo/VarianteService";
-import type { Variante, NuevaVariante } from "../../types/catalogo/Variantes";
+import type { Variante } from "../../types/catalogo/Variantes";
 
 // GET
 export const useVariantesByProducto = (productoId: number) =>
@@ -11,6 +11,4 @@ export const useVariantesByProducto = (productoId: number) =>
 
 // POST
 export const useCreateVariante = (productoId: number) =>
-  usePostData<NuevaVariante, Variante>(
-    (input) => createVariante(productoId, input)
-  );
+  usePostData<FormData, Variante>((fd) => createVariante(productoId, fd));

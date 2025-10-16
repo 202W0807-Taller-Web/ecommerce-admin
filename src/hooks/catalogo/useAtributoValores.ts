@@ -6,7 +6,7 @@ import {
   getValorById,
   createValorAtributo,
 } from "../../services/catalogo/AtributoValorService";
-import type { AtributoValor, NuevoAtributoValor } from "../../types/catalogo/AtributoValores";
+import type { AtributoValor } from "../../types/catalogo/AtributoValores";
 
 // GET
 export const useAtributoValores = () =>
@@ -26,6 +26,6 @@ export const useValorById = (atributoId: number, valorId: number) =>
 
 // POST
 export const useCreateValorAtributo = (atributoId: number) =>
-  usePostData<NuevoAtributoValor, AtributoValor>(
-    (input) => createValorAtributo(atributoId, input)
+  usePostData<FormData, AtributoValor>(
+    (fd) => createValorAtributo(atributoId, fd)
   );

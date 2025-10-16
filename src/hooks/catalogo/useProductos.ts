@@ -1,7 +1,7 @@
 import { useData } from "@hooks/general/useData";
 import { usePostData } from "@hooks/general/usePostData";
 import { getProductos, getProductoById, createProducto } from "../../services/catalogo/ProductoService";
-import type { Producto, NuevoProducto } from "../../types/catalogo/Productos";
+import type { Producto } from "../../types/catalogo/Productos";
 
 // GET
 export const useProductos = () => useData<Producto[]>(getProductos, []);
@@ -11,4 +11,4 @@ export const useProductoById = (id: number) =>
 
 // POST
 export const useCreateProducto = () =>
-  usePostData<NuevoProducto, Producto>(createProducto);
+  usePostData<FormData, Producto>(createProducto);
