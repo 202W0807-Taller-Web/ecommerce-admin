@@ -1,7 +1,13 @@
 export interface Root<T = any> {
   success: boolean;
   data: T[];
-  pagination: Pagination;
+  pagination?: Pagination;
+}
+
+export interface RootSingleData<T = any> {
+  sucess: boolean;
+  data: T;
+  message?: string;
 }
 
 export interface Pagination {
