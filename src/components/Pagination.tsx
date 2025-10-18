@@ -1,6 +1,5 @@
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
-/* ---------- Tipos ---------- */
 interface PageButtonProps {
   page?: number;
   children?: React.ReactNode;
@@ -16,7 +15,6 @@ interface PaginationProps {
   onPageChange: (page: number) => void;
 }
 
-/* ---------- Componentes ---------- */
 const PageButton = ({
   page,
   children,
@@ -40,7 +38,6 @@ const PageButton = ({
   </button>
 );
 
-/* ---------- Componente principal ---------- */
 const Pagination = ({
   currentPage,
   totalPages,
@@ -51,7 +48,6 @@ const Pagination = ({
 
   const pages: number[] = [];
 
-  // Rango dinamico de paginas visibles
   const startPage = Math.max(1, currentPage - siblingCount);
   const endPage = Math.min(totalPages, currentPage + siblingCount);
 
@@ -61,7 +57,6 @@ const Pagination = ({
 
   return (
     <ul className="text-body-color flex items-center justify-center gap-2">
-      {/* Boton anterior */}
       <li>
         <PageButton
           disabled={currentPage === 1}
@@ -70,7 +65,6 @@ const Pagination = ({
           <ChevronLeft />
         </PageButton>
       </li>
-      {/* Primera pagina */}
       {startPage > 1 && (
         <>
           <li>
@@ -79,7 +73,7 @@ const Pagination = ({
           {startPage > 2 && <span className="px-1">...</span>}
         </>
       )}
-      {/* Paginas dinamicas */}
+
       {pages.map((page) => (
         <li key={page}>
           <PageButton
@@ -89,7 +83,7 @@ const Pagination = ({
           />
         </li>
       ))}
-      {/* Ultima pagina */}
+
       {endPage < totalPages && (
         <>
           {endPage < totalPages - 1 && <span className="px-1">...</span>}
@@ -101,7 +95,7 @@ const Pagination = ({
           </li>
         </>
       )}
-      {/* Boton siguiente */}
+
       <li>
         <PageButton
           disabled={currentPage === totalPages}

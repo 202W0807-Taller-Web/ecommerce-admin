@@ -19,7 +19,6 @@ const CategoriasPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [showAddModal, setShowAddModal] = useState(false);
 
-  // ✅ mover fetchProductos fuera del useEffect para poder reutilizarlo
   const fetchProductos = async () => {
     console.log("Intentando cargar productos desde el backend...");
     setLoading(true);
@@ -52,7 +51,6 @@ const CategoriasPage: React.FC = () => {
     }
   };
 
-  // Extrae las categorías únicas
   const categoriasUnicas = Array.from(
     new Set(
       productos
@@ -66,12 +64,11 @@ const CategoriasPage: React.FC = () => {
     )
   );
 
-  // Reinicia la página cuando cambian los filtros
+
   useEffect(() => {
     setCurrentPage(1);
   }, [textFilter, categoriaFilter]);
 
-  // Filtrado
   const productosFiltrados = productos.filter((p) => {
     const categoria =
       p.productoAtributos?.find((a) => a.atributoValor?.valor)?.atributoValor
@@ -88,7 +85,6 @@ const CategoriasPage: React.FC = () => {
     return cumpleTexto && cumpleCategoria;
   });
 
-  // Paginación
   const totalPages = Math.ceil(productosFiltrados.length / ITEMS_PER_PAGE);
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
   const currentItems = productosFiltrados.slice(
@@ -96,7 +92,6 @@ const CategoriasPage: React.FC = () => {
     startIndex + ITEMS_PER_PAGE
   );
 
-  // Selección de filas
   const handleSelect = (id: number) => {
     setSelectedIds((prev) =>
       prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
@@ -124,14 +119,13 @@ const CategoriasPage: React.FC = () => {
           value={categoriaFilter}
           onChange={setCategoriaFilter}
         />
+        {}
         <ActionButtons onProductAdded={fetchProductos} />
       </div>
 
-      {/* Estado de carga o error */}
       {loading && <p className="text-gray-500">Cargando productos...</p>}
       {error && <p className="text-red-600">{error}</p>}
 
-      {/* Tabla */}
       {!loading && !error && (
         <ProductTable
           productos={currentItems.map((p) => ({
@@ -153,7 +147,6 @@ const CategoriasPage: React.FC = () => {
         />
       )}
 
-      {/* Paginación */}
       <div className="mt-6">
         <Pagination
           totalPages={totalPages}
@@ -162,7 +155,6 @@ const CategoriasPage: React.FC = () => {
         />
       </div>
 
-      {/* Modal */}
       {showAddModal && (
         <AddProductModal
           onClose={() => setShowAddModal(false)}

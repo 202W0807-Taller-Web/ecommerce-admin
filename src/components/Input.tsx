@@ -9,16 +9,13 @@ type InputProps = {
   value?: string;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
 
-  /** Iconos opcionales */
   leftIcon?: LucideIcon;
   rightIcon?: LucideIcon;
 
-  /** Mensajes de ayuda */
   helperText?: string;
   error?: string;
   success?: string;
 
-  /** Variantes de estilos */
   variant?: "default" | "invalid" | "success";
 };
 
