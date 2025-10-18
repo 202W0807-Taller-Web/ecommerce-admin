@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { PlusCircle } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { PlusCircle, Eye, Pencil, Trash2 } from "lucide-react";
 import { useModal } from "@hooks/useModal";
 import Button from "@components/Button";
 import FooterTable from "@components/FooterTable";
@@ -10,8 +11,10 @@ import LocalFilterForm from "./components/local/LocalFilterForm";
 import { LocalCreateModal } from "./components/local/LocalCreateModal";
 import { LocalEditModal } from "./components/local/LocalEditModal";
 import type { LocalListItem } from "@services/inventario-envios/local/types/local";
+import { useDeleteLocal } from "./hooks/local/useDeleteLocal";
 
 export default function AlmacenesPage() {
+  const navigate = useNavigate();
   const almacenesFilter = useLocalesFilterUrl();
   const { page, nombre, departamento, provincia, distrito, setPage } =
     almacenesFilter;
@@ -26,6 +29,8 @@ export default function AlmacenesPage() {
     distrito,
   });
 
+  const { mutate: deleteAlmacen } = useDeleteLocal("almacenes");
+
   const [isCreateOpen, openCreateModal, closeCreateModal] = useModal();
   const [isEditOpen, openEditModal, closeEditModal] = useModal();
   const [selectedLocal, setSelectedLocal] = useState<LocalListItem | null>(
@@ -35,6 +40,23 @@ export default function AlmacenesPage() {
   const handleEdit = (local: LocalListItem) => {
     setSelectedLocal(local);
     openEditModal();
+  };
+
+  const handleDelete = (local: LocalListItem) => {
+    const del = confirm(
+      `¿Esta seguro de eliminar el almacen "${local.nombre}"?`
+    );
+    if (del) {
+      deleteAlmacen(local.id, {
+        onSuccess: () => {
+          alert(`El almacen "${local.nombre} se elimino correctamente"`);
+        },
+        onError: error => {
+          console.error("Error al eliminar el local: ", error);
+          alert("No se pudo eliminar el almacen");
+        },
+      });
+    }
   };
 
   const almacenes = data?.data ?? [];
@@ -65,14 +87,18 @@ export default function AlmacenesPage() {
         getActions={item => [
           {
             label: "Ver detalles",
-            icon: <i className="ri-eye-line text-blue-500"></i>,
-            onClick: () =>
-              console.log(`ver detalle ${item.nombre} (id: ${item.id})`),
+            icon: <Eye className="w-4 h-4 text-blue-600" />,
+            onClick: () => navigate(`/inventario/almacenes/${item.id}`),
           },
           {
             label: "Editar",
-            icon: <i className="ri-pencil-line text-primary1"></i>,
+            icon: <Pencil className="w-4 h-4 text-primary1" />,
             onClick: () => handleEdit(item),
+          },
+          {
+            label: "Eliminar",
+            icon: <Trash2 className="w-4 h-4 text-red-600" />,
+            onClick: () => handleDelete(item),
           },
         ]}
       />

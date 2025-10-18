@@ -1,3 +1,5 @@
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useLocales } from "./hooks/local/useLocales";
 import { useLocalesFilterUrl } from "./hooks/local/useLocalesFilterUrl";
 import { useModal } from "@hooks/useModal";
@@ -6,9 +8,13 @@ import FooterTable from "@components/FooterTable";
 import LocalDataTable from "./components/local/LocalDataTable";
 import LocalFilterForm from "./components/local/LocalFilterForm";
 import Button from "@components/Button";
-import { PlusCircle } from "lucide-react";
+import { PlusCircle, Eye, Pencil, Trash2 } from "lucide-react";
+import { LocalEditModal } from "./components/local/LocalEditModal";
+import type { LocalListItem } from "@services/inventario-envios/local/types/local";
+import { useDeleteLocal } from "./hooks/local/useDeleteLocal";
 
 export default function AlmacenesPage() {
+  const navigate = useNavigate();
   const tiendasFilter = useLocalesFilterUrl();
   const { page, nombre, departamento, provincia, distrito, setPage } =
     tiendasFilter;
@@ -23,7 +29,35 @@ export default function AlmacenesPage() {
     distrito,
   });
 
-  const [isOpen, openModal, closeModal] = useModal();
+  const { mutate: deleteTienda } = useDeleteLocal("tiendas");
+
+  const [isCreateOpen, openCreateModal, closeCreateModal] = useModal();
+  const [isEditOpen, openEditModal, closeEditModal] = useModal();
+  const [selectedLocal, setSelectedLocal] = useState<LocalListItem | null>(
+    null
+  );
+
+  const handleEdit = (local: LocalListItem) => {
+    setSelectedLocal(local);
+    openEditModal();
+  };
+
+  const handleDelete = (local: LocalListItem) => {
+    const del = confirm(
+      `¿Esta seguro de eliminar la tienda "${local.nombre}"?`
+    );
+    if (del) {
+      deleteTienda(local.id, {
+        onSuccess: () => {
+          alert(`La tienda "${local.nombre} se elimino correctamente"`);
+        },
+        onError: error => {
+          console.error("Error al eliminar el local: ", error);
+          alert("No se pudo eliminar la tienda");
+        },
+      });
+    }
+  };
 
   const tiendas = data?.data ?? [];
   const pagination = data?.pagination ?? {
@@ -41,7 +75,7 @@ export default function AlmacenesPage() {
         text="Añadir tienda"
         variant="secondary"
         icon={PlusCircle}
-        onClick={openModal}
+        onClick={openCreateModal}
       />
       <LocalDataTable
         data={tiendas}
@@ -50,6 +84,23 @@ export default function AlmacenesPage() {
         resourceName="tiendas"
         isLoading={isPending}
         isError={isError}
+        getActions={item => [
+          {
+            label: "Ver detalles",
+            icon: <Eye className="w-4 h-4 text-blue-600" />,
+            onClick: () => navigate(`/inventario/tiendas/${item.id}`),
+          },
+          {
+            label: "Editar",
+            icon: <Pencil className="w-4 h-4 text-primary1" />,
+            onClick: () => handleEdit(item),
+          },
+          {
+            label: "Eliminar",
+            icon: <Trash2 className="w-4 h-4 text-red-600" />,
+            onClick: () => handleDelete(item),
+          },
+        ]}
       />
       <FooterTable
         page={pagination.page}
@@ -60,8 +111,14 @@ export default function AlmacenesPage() {
       />
       <LocalCreateModal
         localType="tiendas"
-        isOpen={isOpen}
-        closeModal={closeModal}
+        isOpen={isCreateOpen}
+        closeModal={closeCreateModal}
+      />
+      <LocalEditModal
+        localType="tiendas"
+        isOpen={isEditOpen}
+        closeModal={closeEditModal}
+        localData={selectedLocal}
       />
     </>
   );
