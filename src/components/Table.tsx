@@ -58,6 +58,27 @@ export const TableCell = ({ children, className = "" }: TableCellProps) => {
   );
 };
 
+export const TableCellInfo = ({
+  size,
+  content,
+  className,
+}: {
+  size: number;
+  content: string;
+  className?: string;
+}) => {
+  return (
+    <tr>
+      <td
+        colSpan={size}
+        className={`text-center py-6 text-gray-500 italic border border-stroke ${className}`}
+      >
+        {content}
+      </td>
+    </tr>
+  );
+};
+
 export const StatusBadge = ({
   label,
   variant = "neutral",
@@ -92,7 +113,10 @@ export const AvatarCell = ({
 export const ActionMenuCell = ({ buttons }: ActionMenuCellProps) => {
   const [open, setOpen] = useState(false);
   const iconRef = useRef<HTMLSpanElement>(null);
-  const [menuPos, setMenuPos] = useState<{ top: number; left: number }>({ top: 0, left: 0 });
+  const [menuPos, setMenuPos] = useState<{ top: number; left: number }>({
+    top: 0,
+    left: 0,
+  });
 
   useEffect(() => {
     if (open && iconRef.current) {
@@ -102,7 +126,7 @@ export const ActionMenuCell = ({ buttons }: ActionMenuCellProps) => {
     function handleClickOutside(event: MouseEvent) {
       // Si el click es en un botón del menú, no cerrar
       const target = event.target as HTMLElement;
-      if (target.closest('.action-menu-btn')) return;
+      if (target.closest(".action-menu-btn")) return;
       if (open && !(iconRef.current && iconRef.current.contains(target))) {
         setOpen(false);
       }
@@ -120,42 +144,46 @@ export const ActionMenuCell = ({ buttons }: ActionMenuCellProps) => {
   return (
     <TableCell className="w-10 text-center">
       <span ref={iconRef} style={{ display: "inline-block" }}>
-        <EllipsisVertical className="cursor-pointer" onClick={buttons ? () => setOpen((v) => !v) : ()=>{}} />
+        <EllipsisVertical
+          className="cursor-pointer"
+          onClick={buttons ? () => setOpen(v => !v) : () => {}}
+        />
       </span>
-      {open && ReactDOM.createPortal(
-        <div
-          style={{
-            position: "fixed",
-            top: menuPos.top,
-            left: menuPos.left - 50,
-            zIndex: 9999,
-            background: "white",
-            boxShadow: "0 2px 8px rgba(0,0,0,0.15)",
-            borderRadius: "0.5rem",
-            padding: "0.5rem",
-            minWidth: "160px",
-            border: "1px solid #e5e7eb",
-            display: "flex",
-            flexDirection: "column",
-            gap: "0.5rem"
-          }}
-        >
-          {buttons?.map((btn, idx) => (
-            <button
-              key={idx}
-              className="action-menu-btn cursor-pointer flex items-center gap-2 px-3 py-2 rounded hover:bg-gray-100 text-left text-sm"
-              onClick={() => {
-                btn.onClick();
-                setOpen(false);
-              }}
-            >
-              {btn.icon}
-              <span>{btn.label}</span>
-            </button>
-          ))}
-        </div>,
-        document.body
-      )}
+      {open &&
+        ReactDOM.createPortal(
+          <div
+            style={{
+              position: "fixed",
+              top: menuPos.top,
+              left: menuPos.left - 50,
+              zIndex: 9999,
+              background: "white",
+              boxShadow: "0 2px 8px rgba(0,0,0,0.15)",
+              borderRadius: "0.5rem",
+              padding: "0.5rem",
+              minWidth: "160px",
+              border: "1px solid #e5e7eb",
+              display: "flex",
+              flexDirection: "column",
+              gap: "0.5rem",
+            }}
+          >
+            {buttons?.map((btn, idx) => (
+              <button
+                key={idx}
+                className="action-menu-btn cursor-pointer flex items-center gap-2 px-3 py-2 rounded hover:bg-gray-100 text-left text-sm"
+                onClick={() => {
+                  btn.onClick();
+                  setOpen(false);
+                }}
+              >
+                {btn.icon}
+                <span>{btn.label}</span>
+              </button>
+            ))}
+          </div>,
+          document.body
+        )}
     </TableCell>
   );
 };

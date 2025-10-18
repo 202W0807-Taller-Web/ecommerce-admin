@@ -1,53 +1,95 @@
 import { useNavigate } from "react-router-dom";
-import { TableHeader, TableCell, ActionMenuCell } from "@components/Table";
+import {
+  TableHeader,
+  TableCellInfo,
+  TableCell,
+  StatusBadge,
+  ActionMenuCell,
+} from "@components/Table";
 import { Eye, Pencil, Trash2 } from "lucide-react";
+import type { LocalListItem } from "@services/inventario-envios/local/types/local";
 
-interface Column<T> {
-  label: string;
-  key: keyof T | string;
-  render?: (item: T, index: number) => React.ReactNode;
-  className?: string;
-}
-
-interface LocalDataTableProps<T> {
-  data: T[];
-  columns: Column<T>[];
-  resourceName: string;
-  getRowKey?: (item: T) => string | number;
-  getActions?: (item: T) => any[];
+interface LocalDataTableProps {
+  data: LocalListItem[];
+  page: number;
+  limit: number;
+  resourceName: "almacenes" | "tiendas";
   isLoading?: boolean;
   isError?: boolean;
+  getRowKey?: (item: LocalListItem) => string | number;
+  getActions?: (item: LocalListItem) => any[];
 }
 
-const TableCellInfo = ({
-  size,
-  content,
-}: {
-  size: number;
-  content: string;
-}) => {
-  return (
-    <tr>
-      <td
-        colSpan={size}
-        className="text-center py-6 text-gray-500 italic border border-stroke"
-      >
-        {content}
-      </td>
-    </tr>
-  );
-};
-
-const LocalDataTable = <T extends Record<string, any>>({
+const LocalDataTable = ({
   data,
-  columns,
+  page,
+  limit,
   resourceName,
   getRowKey = item => item.id,
   getActions,
   isLoading,
   isError,
-}: LocalDataTableProps<T>) => {
+}: LocalDataTableProps) => {
   const navigate = useNavigate();
+
+  const columns: {
+    label: string;
+    key: keyof LocalListItem;
+    className?: string;
+    render?: (item: LocalListItem, index: number) => React.ReactNode;
+  }[] = [
+    {
+      label: "#",
+      key: "id",
+      className: "w-12 text-center",
+      render: (_: LocalListItem, idx: number) => (page - 1) * limit + idx + 1,
+    },
+    {
+      label: "Imagen",
+      key: "imagen",
+      className: "w-16 text-center",
+      render: (local: LocalListItem) => (
+        <div className="relative flex justify-center items-center group">
+          <img
+            src={
+              local.imagen ||
+              (resourceName === "almacenes"
+                ? "https://i.ibb.co/LhsjTdTM/almacen.jpg"
+                : "https://i.ibb.co/67pNqs5D/tienda.jpg")
+            }
+            alt={local.nombre}
+            className="w-8 h-8 rounded-full object-cover transition-transform duration-200 group-hover:scale-110"
+          />
+        </div>
+      ),
+    },
+    { label: "Nombre", key: "nombre" },
+    {
+      label: "Estado",
+      key: "estado",
+      render: (local: LocalListItem) => (
+        <StatusBadge
+          label={local.estado}
+          variant={local.estado === "ACTIVO" ? "success" : "danger"}
+        />
+      ),
+    },
+    {
+      label: "Distrito",
+      key: "distrito",
+      render: (local: LocalListItem) => local.distrito?.nombre ?? "",
+    },
+    {
+      label: "Provincia",
+      key: "provincia",
+      render: (local: LocalListItem) => local.provincia?.nombre ?? "",
+    },
+    {
+      label: "Departamento",
+      key: "departamento",
+      render: (local: LocalListItem) => local.departamento?.nombre ?? "",
+    },
+  ];
 
   return (
     <div className="w-full overflow-auto">
@@ -68,6 +110,7 @@ const LocalDataTable = <T extends Record<string, any>>({
         <tbody>
           {isLoading ? (
             <TableCellInfo
+              className="animate-pulse"
               size={columns.length + 1}
               content="Cargando datos ..."
             />
@@ -103,7 +146,10 @@ const LocalDataTable = <T extends Record<string, any>>({
                           {
                             label: "Ver detalles",
                             icon: <Eye className="w-4 h-4 text-blue-600" />,
-                            onClick: () => navigate(`${item.id}`),
+                            onClick: () =>
+                              navigate(
+                                `/inventario/${resourceName}/${item.id}`
+                              ),
                           },
                           {
                             label: "Actualizar",

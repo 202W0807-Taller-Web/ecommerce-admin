@@ -6,12 +6,12 @@ import type {
   Departamento,
   Provincia,
   Distrito,
-} from "../../../modules/inventario-envios/local/types/ubigeo";
+} from "@services/inventario-envios/local/types/ubigeo";
 import {
   getDepartamentos,
   getProvincias,
   getDistritos,
-} from "../../../modules/inventario-envios/local/api/ubigeos";
+} from "@services/inventario-envios/local/api/ubigeos";
 
 type SelectsUbigeoProps = {
   className?: string;

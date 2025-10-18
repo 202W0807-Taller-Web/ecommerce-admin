@@ -2,6 +2,8 @@ import API from "./api";
 import type { Root } from "../types/pagination";
 import type { Tienda } from "../types/tienda";
 
+const recurso = "/tiendas";
+
 export const getTiendas = async ({
   page,
   limit,
@@ -19,7 +21,7 @@ export const getTiendas = async ({
   provincia: string;
   distrito: string;
 }) => {
-  const response = await API.get<Root<Tienda>>("/tiendas", {
+  const response = await API.get<Root<Tienda>>(`${recurso}`, {
     params: {
       page,
       per_page: limit,
@@ -32,4 +34,11 @@ export const getTiendas = async ({
   });
 
   return response.data;
+};
+
+export const getTienda = async (id: number): Promise<Tienda> => {
+  const response = await API.get<{ success: boolean; data: Tienda }>(
+    `${recurso}/${id}`
+  );
+  return response.data.data;
 };
