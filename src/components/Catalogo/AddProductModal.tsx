@@ -141,7 +141,6 @@ export default function AddProductModal({ onClose, onAdd }: AddProductModalProps
           )}
         </div>
 
-        {/* Descripción */}
         <div>
           <label className="block text-gray-800 mb-1">Descripción:</label>
           <textarea
@@ -153,7 +152,6 @@ export default function AddProductModal({ onClose, onAdd }: AddProductModalProps
           />
         </div>
 
-        {/* Atributos adicionales */}
 
           <div className="grid grid-cols-2 gap-x-4 gap-y-3">
             {atributosFiltrados.map(([nombre, valores]: any) => (

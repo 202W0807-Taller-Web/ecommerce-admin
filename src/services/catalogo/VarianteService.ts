@@ -1,7 +1,6 @@
 import { fetchUrl } from "./api";
 import type { Variante } from "../../types/catalogo/Variantes";
 
-// 🔹 1. Obtener variantes de un producto
 export const getVariantesByProductoId = async (productoId: number): Promise<Variante[]> => {
   try {
     const endpoint = `/api/variantes/productos/${productoId}/variantes`;
@@ -13,7 +12,6 @@ export const getVariantesByProductoId = async (productoId: number): Promise<Vari
   }
 };
 
-// 🔹 2. Fallback: Obtener variantes dentro del producto
 export const getVariantesFromProductos = async (productoId: number): Promise<Variante[]> => {
   const endpoint = `/api/productos`;
   console.log(`📡 Obteniendo productos desde: ${endpoint}`);
@@ -27,7 +25,6 @@ export const getVariantesFromProductos = async (productoId: number): Promise<Var
   return producto.variantes ?? [];
 };
 
-// 🔹 3. Crear una nueva variante
 export const createVariante = async (productoId: number, formData: FormData): Promise<Variante> => {
   const endpoint = `/api/variantes/productos/${productoId}/variantes`;
   console.log("🚀 Enviando a:", endpoint);

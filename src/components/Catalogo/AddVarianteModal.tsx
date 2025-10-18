@@ -103,7 +103,6 @@ const AddVarianteModal: React.FC<AddVarianteModalProps> = ({ onClose, onSubmit }
             />
           </div>
 
-          {/* Talla y Color en la misma fila */}
           <div className="flex gap-4">
             <div className="flex-1">
               <label className="block text-sm font-medium">Talla</label>

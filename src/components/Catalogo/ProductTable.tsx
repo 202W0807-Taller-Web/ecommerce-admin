@@ -25,17 +25,17 @@ const ProductTable: React.FC<ProductTableProps> = ({
 }) => {
   const navigate = useNavigate();
 
-  // Verifica si todos los productos visibles están seleccionados
+
   const allSelected =
     selectedIds.length === productos.length && productos.length > 0;
 
-  // 🔹 Navegar a la página de variantes del producto seleccionado
+
   const handleEditClick = (producto: Producto) => {
     console.log(
       `🟢 Navegando a /catalogo/productos/${producto.id}/variantes con nombre: ${producto.producto}`
     );
 
-    // Enviamos el nombre del producto a través de location.state
+
     navigate(`/catalogo/productos/${producto.id}/variantes`, {
       state: { nombreProducto: producto.producto },
     });
