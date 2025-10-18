@@ -8,7 +8,7 @@ import MainLayout from "./layouts/MainLayout";
 import AlmacenDetailPage from "./pages/inventario/AlmacenDetailPage";
 import AlmacenesPage from "./pages/inventario/AlmacenesPage";
 import TiendasPage from "./pages/inventario/TiendasPage";
-// import ProductosPage from "./pages/inventario/ProductosPage";
+import TiendaDetailPage from "./pages/inventario/TiendaDetailPage";
 
 const router = createBrowserRouter([
   {
@@ -27,10 +27,10 @@ const router = createBrowserRouter([
         path: "inventario/tiendas",
         element: <TiendasPage />,
       },
-    //   {
-    //     path: "inventario/tiendas/:id",
-    //     element: <TiendaDetailPage />,
-    //   },
+      {
+        path: "inventario/tiendas/:id",
+        element: <TiendaDetailPage />,
+      },
     ],
   },
 ]);
