@@ -1,24 +1,25 @@
-import { fetchUrl } from "./api";
-import type { Producto } from "../../types/catalogo/Productos";
+const API_BASE_URL = import.meta.env.VITE_API_CATALOGO_URL; // ✅ toma la URL desde .env
 
-export const getProductos = async (): Promise<Producto[]> => {
-  return await fetchUrl<Producto[]>("/api/productos");
+export const getProductos = async () => {
+  const res = await fetch(`${API_BASE_URL}/api/productos`);
+  if (!res.ok) {
+    throw new Error(`Error al cargar productos: ${res.status}`);
+  }
+  return res.json();
 };
 
-export const createProducto = async (formData: FormData): Promise<Producto> => {
-  const res = await fetch("/api/productos", {
+export const createProducto = async (formData: FormData) => {
+  console.log("📦 Enviando producto al backend...");
+
+  const res = await fetch(`${API_BASE_URL}/api/productos`, {
     method: "POST",
-    body: formData,
+    body: formData, // ⚠️ No agregues Content-Type manualmente
   });
 
   if (!res.ok) {
     const text = await res.text();
-    throw new Error(`Error al crear producto: ${res.status} ${text}`);
+    throw new Error(`Error al crear producto: ${res.status} - ${text}`);
   }
-  const json = await res.json();
-  return json as Producto;
-};
 
-export const getProductoById = async (id: number): Promise<Producto> => {
-  return await fetchUrl<Producto>(`/api/productos/${id}`);
+  return res.json();
 };

@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { getProductos } from "../../services/catalogo/ProductoService";
+import { getProductos, createProducto } from "../../services/catalogo/ProductoService";
 import SearchBar from "../../components/Catalogo/SearchBar";
 import CategoryFilter from "../../components/Catalogo/CategoryFilter";
 import ActionButtons from "../../components/Catalogo/ActionButtons";
 import ProductTable from "../../components/Catalogo/ProductTable";
 import Pagination from "../../components/Catalogo/Pagination";
+import AddProductModal from "../../components/Catalogo/AddProductModal";
 
 const ITEMS_PER_PAGE = 5;
 
@@ -16,53 +17,65 @@ const CategoriasPage: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [showAddModal, setShowAddModal] = useState(false);
 
-  // Cargar productos desde la base de datos
+  // ✅ mover fetchProductos fuera del useEffect para poder reutilizarlo
+  const fetchProductos = async () => {
+    console.log("Intentando cargar productos desde el backend...");
+    setLoading(true);
+    setError(null);
+    try {
+      const data = await getProductos();
+      console.log("Productos recibidos:", data);
+      setProductos(data);
+    } catch (err: any) {
+      console.error("Error al cargar productos:", err);
+      setError(err.message || "Error al cargar productos");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const fetchProductos = async () => {
-      console.log("Intentando cargar productos desde el backend...");
-      setLoading(true);
-      setError(null);
-      try {
-        const data = await getProductos();
-        console.log("Productos recibidos:", data);
-        setProductos(data);
-      } catch (err: any) {
-        console.error("Error al cargar productos:", err);
-        setError(err.message || "Error al cargar productos");
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchProductos();
   }, []);
 
-  // Extrae las categorías únicas desde los atributos
+  const handleAddProduct = async (formData: FormData) => {
+    try {
+      const nuevo = await createProducto(formData);
+      console.log("✅ Producto creado:", nuevo);
+      await fetchProductos();
+      setShowAddModal(false);
+    } catch (error) {
+      console.error("❌ Error creando producto:", error);
+      alert("Hubo un error al crear el producto.");
+    }
+  };
+
+  // Extrae las categorías únicas
   const categoriasUnicas = Array.from(
     new Set(
       productos
         .map(
           (p) =>
             p.productoAtributos?.find(
-              (a) => a.atributoValor?.valor // obtiene el valor (por ejemplo "Ropa")
+              (a) => a.atributoValor?.valor
             )?.atributoValor?.valor
         )
         .filter(Boolean)
     )
   );
 
-  // Reinicia la página cuando cambia el filtro
+  // Reinicia la página cuando cambian los filtros
   useEffect(() => {
     setCurrentPage(1);
   }, [textFilter, categoriaFilter]);
 
-  // Filtrado por texto y categoría
+  // Filtrado
   const productosFiltrados = productos.filter((p) => {
     const categoria =
-      p.productoAtributos?.find(
-        (a) => a.atributoValor?.valor
-      )?.atributoValor?.valor || "";
+      p.productoAtributos?.find((a) => a.atributoValor?.valor)?.atributoValor
+        ?.valor || "";
 
     const cumpleTexto = p.nombre
       .toLowerCase()
@@ -111,33 +124,34 @@ const CategoriasPage: React.FC = () => {
           value={categoriaFilter}
           onChange={setCategoriaFilter}
         />
-        <ActionButtons />
+        {/* ✅ Mantiene el botón original y solo le agregamos el evento */}
+        <ActionButtons onProductAdded={fetchProductos} />
       </div>
 
       {/* Estado de carga o error */}
       {loading && <p className="text-gray-500">Cargando productos...</p>}
       {error && <p className="text-red-600">{error}</p>}
 
-      {/* Tabla de productos */}
+      {/* Tabla */}
       {!loading && !error && (
         <ProductTable
           productos={currentItems.map((p) => ({
             id: p.id,
-            imagen: p.productoImagenes?.find((img) => img.principal)?.imagen 
-              || p.productoImagenes?.[0]?.imagen 
-              || "https://via.placeholder.com/40",
+            imagen:
+              p.productoImagenes?.find((img) => img.principal)?.imagen ||
+              p.productoImagenes?.[0]?.imagen ||
+              "https://via.placeholder.com/40",
             producto: p.nombre,
             descripcion: p.descripcion,
             precio: p.variantes?.[0]?.precio || 0,
             sku: p.variantes?.[0]?.sku || "Sin SKU",
-            estadoStk: "Disponible", // Falta ajustar por el backend
-            stkTotal: p.variantes?.length || 0, // 
+            estadoStk: "Disponible",
+            stkTotal: p.variantes?.length || 0,
           }))}
           selectedIds={selectedIds}
           onSelect={handleSelect}
           onSelectAll={handleSelectAll}
         />
-
       )}
 
       {/* Paginación */}
@@ -148,6 +162,14 @@ const CategoriasPage: React.FC = () => {
           onPageChange={setCurrentPage}
         />
       </div>
+
+      {/* Modal */}
+      {showAddModal && (
+        <AddProductModal
+          onClose={() => setShowAddModal(false)}
+          onAdd={handleAddProduct}
+        />
+      )}
     </div>
   );
 };
