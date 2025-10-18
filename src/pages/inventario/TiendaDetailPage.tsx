@@ -4,6 +4,10 @@ import LocalDescripcion from "./components/local/LocalDescripcion";
 import { useQuery } from "@tanstack/react-query";
 import { getAlmacenesFromTienda } from "@services/inventario-envios/local/api/tiendas";
 import LocalDataTable from "./components/local/LocalDataTable";
+import { useModal } from "@hooks/useModal";
+import Button from "@components/Button";
+import { Pencil } from "lucide-react";
+import { LocalEditModal } from "./components/local/LocalEditModal";
 
 export default function TiendaDetailPage() {
   const { id } = useParams();
@@ -23,6 +27,8 @@ export default function TiendaDetailPage() {
     queryKey: ["almacenesAsociados", id],
     queryFn: () => getAlmacenesFromTienda(Number(id)),
   });
+
+  const [isEditOpen, openEditModal, closeEditModal] = useModal();
 
   const almacenes = almacenesAsociados?.data ?? [];
   const total = almacenesAsociados?.total ?? 3;
@@ -46,8 +52,20 @@ export default function TiendaDetailPage() {
 
   return (
     <>
-      <LocalDescripcion data={tienda} resourceName="tienda" />
-      <h2>Almacenes asociadas a la tienda</h2>
+      <div className="relative mb-6">
+        <LocalDescripcion data={tienda} resourceName="tienda" />
+        <div className="absolute bottom-4 right-4">
+          <Button
+            text="Editar tienda"
+            variant="secondary"
+            icon={Pencil}
+            onClick={openEditModal}
+          />
+        </div>
+      </div>
+      <h2 className="text-2xl font-semibold text-gray-800 mt-8 mb-3 border-b pb-1">
+        Almacenes asociadas a la tienda
+      </h2>
       <LocalDataTable
         data={almacenes}
         isLoading={isPendingAlmacenes}
@@ -55,6 +73,12 @@ export default function TiendaDetailPage() {
         resourceName="almacenes"
         page={1}
         limit={total}
+      />
+      <LocalEditModal
+        localType="tiendas"
+        isOpen={isEditOpen}
+        closeModal={closeEditModal}
+        localData={tienda ?? null}
       />
     </>
   );

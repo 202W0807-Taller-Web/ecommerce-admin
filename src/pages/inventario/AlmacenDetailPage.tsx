@@ -4,6 +4,11 @@ import LocalDescripcion from "./components/local/LocalDescripcion";
 import LocalDataTable from "./components/local/LocalDataTable";
 import { useQuery } from "@tanstack/react-query";
 import { getTiendasFromAlmacen } from "@services/inventario-envios/local/api/almacenes";
+import StockDataTable from "./components/stock/StockDataTable";
+import Button from "@components/Button";
+import { Pencil } from "lucide-react";
+import { useModal } from "@hooks/useModal";
+import { LocalEditModal } from "./components/local/LocalEditModal";
 
 export default function AlmacenDetailPage() {
   const { id } = useParams();
@@ -12,6 +17,8 @@ export default function AlmacenDetailPage() {
     local: "almacenes",
     id: Number(id),
   });
+
+  const [isEditOpen, openEditModal, closeEditModal] = useModal();
 
   const almacen = data?.data;
 
@@ -46,10 +53,24 @@ export default function AlmacenDetailPage() {
 
   return (
     <>
-      <LocalDescripcion data={almacen} resourceName="almacen" />
-      <h2>Productos en el almacén</h2>
-      <p>Data de otra entidad</p>
-      <h2>Tiendas asociadas al almacén</h2>
+      <div className="relative mb-6">
+        <LocalDescripcion data={almacen} resourceName="almacen" />
+        <div className="absolute bottom-4 right-4">
+          <Button
+            text="Editar almacén"
+            variant="secondary"
+            icon={Pencil}
+            onClick={openEditModal}
+          />
+        </div>
+      </div>
+      <h2 className="text-2xl font-semibold text-gray-800 mt-6 mb-3 border-b pb-1">
+        Productos en el almacén
+      </h2>
+      <StockDataTable limit={3} page={1} />
+      <h2 className="text-2xl font-semibold text-gray-800 mt-8 mb-3 border-b pb-1">
+        Tiendas asociadas al almacén
+      </h2>
       <LocalDataTable
         data={tiendas}
         isLoading={isPendingTiendas}
@@ -57,6 +78,12 @@ export default function AlmacenDetailPage() {
         resourceName="tiendas"
         page={1}
         limit={total}
+      />
+      <LocalEditModal
+        localType="almacenes"
+        isOpen={isEditOpen}
+        closeModal={closeEditModal}
+        localData={almacen ?? null}
       />
     </>
   );
