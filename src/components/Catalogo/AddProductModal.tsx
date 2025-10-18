@@ -17,7 +17,7 @@ export default function AddProductModal({ onClose, onAdd }: AddProductModalProps
   const { data: atributos, loading, error } = useAtributoValores();
 
   useEffect(() => {
-    console.log("🧠 Atributos recibidos desde el hook:", atributos);
+    console.log("Atributos recibidos desde el hook:", atributos);
   }, [atributos]);
 
   const handleFileChange = (file: File | null) => {

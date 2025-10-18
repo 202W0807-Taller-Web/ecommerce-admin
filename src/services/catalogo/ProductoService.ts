@@ -9,11 +9,11 @@ export const getProductos = async () => {
 };
 
 export const createProducto = async (formData: FormData) => {
-  console.log("📦 Enviando producto al backend...");
+  console.log("Enviando producto al backend...");
 
   const res = await fetch(`${API_BASE_URL}/api/productos`, {
     method: "POST",
-    body: formData, // ⚠️ No agregues Content-Type manualmente
+    body: formData, 
   });
 
   if (!res.ok) {
