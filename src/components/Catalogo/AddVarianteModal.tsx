@@ -50,7 +50,7 @@ const AddVarianteModal: React.FC<AddVarianteModalProps> = ({ onClose, onSubmit }
     formData.append("IdsAtributosValores", tallaId.toString());
     formData.append("Imagenes", imagen);
 
-    console.log("📦 Datos listos para enviar al backend:");
+    console.log("Datos listos para enviar al backend:");
     for (const [key, value] of formData.entries()) {
       console.log(`${key}:`, value);
     }
