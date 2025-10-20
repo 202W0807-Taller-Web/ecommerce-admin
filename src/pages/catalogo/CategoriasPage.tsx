@@ -42,11 +42,11 @@ const CategoriasPage: React.FC = () => {
   const handleAddProduct = async (formData: FormData) => {
     try {
       const nuevo = await createProducto(formData);
-      console.log("✅ Producto creado:", nuevo);
+      console.log("Producto creado:", nuevo);
       await fetchProductos();
       setShowAddModal(false);
     } catch (error) {
-      console.error("❌ Error creando producto:", error);
+      console.error("Error creando producto:", error);
       alert("Hubo un error al crear el producto.");
     }
   };
@@ -111,6 +111,7 @@ const CategoriasPage: React.FC = () => {
         Productos en categoría: {categoriaFilter || "Todas"}
       </h2>
 
+      {/* Barra de búsqueda, filtro y acciones */}
       <div className="flex justify-between items-center flex-wrap gap-3 mb-6">
         <SearchBar text={textFilter} onChange={setTextFilter} />
         <CategoryFilter
@@ -118,6 +119,7 @@ const CategoriasPage: React.FC = () => {
           value={categoriaFilter}
           onChange={setCategoriaFilter}
         />
+        {}
         <ActionButtons onProductAdded={fetchProductos} />
       </div>
 
