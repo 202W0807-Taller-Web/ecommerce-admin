@@ -7,6 +7,8 @@ import {
 import SearchBar from "../../components/Catalogo/SearchBar";
 import Pagination from "../../components/Catalogo/Pagination";
 import AddVarianteModal from "../../components/Catalogo/AddVarianteModal";
+import ConfirmDeleteModal from "../../components/Catalogo/ConfirmDeleteModal";
+import { Trash2 } from "lucide-react";
 
 const ITEMS_PER_PAGE = 6;
 
@@ -24,6 +26,8 @@ const ProductosVariantesPage: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showAddModal, setShowAddModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [varianteToDelete, setVarianteToDelete] = useState<any | null>(null);
 
   const fetchVariantes = async () => {
     if (!productoId) return;
@@ -78,6 +82,17 @@ const ProductosVariantesPage: React.FC = () => {
     }
   };
 
+  const handleOpenDeleteModal = (variante: any) => {
+    setVarianteToDelete(variante);
+    setShowDeleteModal(true);
+  };
+
+  const handleConfirmDelete = () => {
+    console.log("Eliminar variante:", varianteToDelete);
+    setShowDeleteModal(false);
+    setVarianteToDelete(null);
+  };
+
   return (
     <div className="p-6 text-gray-800">
       <div className="flex justify-between items-center mb-4">
@@ -101,7 +116,6 @@ const ProductosVariantesPage: React.FC = () => {
       {error && <p className="text-red-600">{error}</p>}
 
       {!loading && !error && (
-        // Contenedor gris alrededor de la tabla
         <div className="bg-gray-50 p-4 rounded-lg border border-gray-200 shadow-sm">
           <table className="min-w-full border border-gray-300 rounded-lg overflow-hidden bg-white">
             <thead className="bg-gray-100 text-gray-700 text-left">
@@ -119,6 +133,7 @@ const ProductosVariantesPage: React.FC = () => {
                 <th className="p-3">Imagen</th>
                 <th className="p-3">Atributos</th>
                 <th className="p-3">Precio</th>
+                <th className="p-3 text-center">Acciones</th>
               </tr>
             </thead>
             <tbody>
@@ -148,11 +163,22 @@ const ProductosVariantesPage: React.FC = () => {
                       {v.atributos?.map((a: any) => a.valor).join(" - ") || "—"}
                     </td>
                     <td className="p-3">S/ {v.precio?.toFixed(2)}</td>
+                    <td className="p-3 text-center">
+                      <button
+                        onClick={() => handleOpenDeleteModal(v)}
+                        className="text-red-600 hover:text-red-800"
+                      >
+                        <Trash2 size={20} />
+                      </button>
+                    </td>
                   </tr>
                 ))
               ) : (
                 <tr>
-                  <td colSpan={4} className="p-6 text-center text-gray-500 italic">
+                  <td
+                    colSpan={5}
+                    className="p-6 text-center text-gray-500 italic"
+                  >
                     No hay variantes disponibles para este producto.
                   </td>
                 </tr>
@@ -174,6 +200,13 @@ const ProductosVariantesPage: React.FC = () => {
         <AddVarianteModal
           onClose={() => setShowAddModal(false)}
           onSubmit={handleAddVariante}
+        />
+      )}
+
+      {showDeleteModal && (
+        <ConfirmDeleteModal
+          onClose={() => setShowDeleteModal(false)}
+          onConfirm={handleConfirmDelete}
         />
       )}
     </div>

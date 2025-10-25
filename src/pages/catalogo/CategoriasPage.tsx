@@ -6,6 +6,7 @@ import ActionButtons from "../../components/Catalogo/ActionButtons";
 import ProductTable from "../../components/Catalogo/ProductTable";
 import Pagination from "../../components/Catalogo/Pagination";
 import AddProductModal from "../../components/Catalogo/AddProductModal";
+import ConfirmDeleteModal from "../../components/Catalogo/ConfirmDeleteModal";
 
 const ITEMS_PER_PAGE = 5;
 
@@ -18,6 +19,8 @@ const CategoriasPage: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showAddModal, setShowAddModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [productoSeleccionado, setProductoSeleccionado] = useState<any>(null);
 
   const fetchProductos = async () => {
     console.log("Intentando cargar productos desde el backend...");
@@ -51,6 +54,25 @@ const CategoriasPage: React.FC = () => {
     }
   };
 
+  // 🔥 Cuando se presiona el tacho de basura
+  const handleDeleteClick = (producto: any) => {
+    setProductoSeleccionado(producto);
+    setShowDeleteModal(true);
+  };
+
+  // 🔥 Cuando se confirma el modal
+  const handleConfirmDelete = () => {
+    if (productoSeleccionado) {
+      console.log("Producto a eliminar:", {
+        id: productoSeleccionado.id,
+        nombre: productoSeleccionado.nombre,
+        descripcion: productoSeleccionado.descripcion,
+      });
+    }
+    setShowDeleteModal(false);
+    setProductoSeleccionado(null);
+  };
+
   const categoriasUnicas = Array.from(
     new Set(
       productos
@@ -63,7 +85,6 @@ const CategoriasPage: React.FC = () => {
         .filter(Boolean)
     )
   );
-
 
   useEffect(() => {
     setCurrentPage(1);
@@ -119,7 +140,6 @@ const CategoriasPage: React.FC = () => {
           value={categoriaFilter}
           onChange={setCategoriaFilter}
         />
-        {}
         <ActionButtons onProductAdded={fetchProductos} />
       </div>
 
@@ -140,10 +160,12 @@ const CategoriasPage: React.FC = () => {
             sku: p.variantes?.[0]?.sku || "Sin SKU",
             estadoStk: "Disponible",
             stkTotal: p.variantes?.length || 0,
+            original: p, // se envía el objeto original
           }))}
           selectedIds={selectedIds}
           onSelect={handleSelect}
           onSelectAll={handleSelectAll}
+          onDelete={handleDeleteClick}
         />
       )}
 
@@ -159,6 +181,14 @@ const CategoriasPage: React.FC = () => {
         <AddProductModal
           onClose={() => setShowAddModal(false)}
           onAdd={handleAddProduct}
+        />
+      )}
+
+      {/* Modal de confirmación de eliminación */}
+      {showDeleteModal && (
+        <ConfirmDeleteModal
+          onClose={() => setShowDeleteModal(false)}
+          onConfirm={handleConfirmDelete}
         />
       )}
     </div>
