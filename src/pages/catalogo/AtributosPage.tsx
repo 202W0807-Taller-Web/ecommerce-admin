@@ -13,8 +13,8 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 
 const AtributosPage: React.FC = () => {
   const { data: atributos, loading, error, refetch } = useAtributos();
-  const { execute: createAtributo } = useCreateAtributo();
-  const { execute: deleteAtributo } = useDeleteAtributo();
+  const { postData: createAtributo } = useCreateAtributo();
+  const { deleteData: deleteAtributo } = useDeleteAtributo();
   const { execute: createValor } = useCreateAtributoValor();
   const { execute: deleteValor } = useDeleteAtributoValor();
 

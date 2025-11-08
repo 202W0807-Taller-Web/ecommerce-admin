@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Outlet, NavLink, useLocation } from "react-router-dom";
 import { Menu, X, Home, Package, Truck, ChevronRight } from "lucide-react";
 import type { NavItem } from "types/ui/NavItem";

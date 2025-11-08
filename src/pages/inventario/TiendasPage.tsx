@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import Input from "../../components/Input";
 import Button from "../../components/Button";
 import FileAction from "../../components/FileAction";
-import Table, { TableHeader, TableCell, StatusBadge, AvatarCell, ActionMenuCell } from "../../components/Table";
+import { TableHeader, TableCell, StatusBadge, ActionMenuCell } from "../../components/Table";
 import Pagination from "../../components/Pagination";
 import { PlusCircle } from "lucide-react";
 import { Search, RefreshCw } from "lucide-react";

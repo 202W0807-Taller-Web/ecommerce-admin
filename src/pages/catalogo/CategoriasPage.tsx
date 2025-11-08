@@ -9,10 +9,35 @@ import AddProductModal from "../../components/Catalogo/AddProductModal";
 import ConfirmDeleteModal from "../../components/Catalogo/ConfirmDeleteModal";
 import Breadcrumbs from "@components/Catalogo/Breadcrumbs";
 
+interface ProductoAtributo {
+  atributoValor?: {
+    valor: string;
+  };
+}
+
+interface ProductoImagen {
+  imagen: string;
+  principal?: boolean;
+}
+
+interface ProductoVariante {
+  precio: number;
+  sku: string;
+}
+
+interface Producto {
+  id: number;
+  nombre: string;
+  descripcion: string;
+  productoAtributos?: ProductoAtributo[];
+  productoImagenes?: ProductoImagen[];
+  variantes?: ProductoVariante[];
+}
+
 const ITEMS_PER_PAGE = 5;
 
 const CategoriasPage: React.FC = () => {
-  const [productos, setProductos] = useState<any[]>([]);
+  const [productos, setProductos] = useState<Producto[]>([]);
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
   const [textFilter, setTextFilter] = useState("");
   const [categoriaFilter, setCategoriaFilter] = useState("");
@@ -21,7 +46,7 @@ const CategoriasPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [showAddModal, setShowAddModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [productoSeleccionado, setProductoSeleccionado] = useState<any>(null);
+  const [productoSeleccionado, setProductoSeleccionado] = useState<Producto | null>(null);
 
   const fetchProductos = async () => {
     console.log("Intentando cargar productos desde el backend...");
@@ -31,9 +56,11 @@ const CategoriasPage: React.FC = () => {
       const data = await getProductos();
       console.log("Productos recibidos:", data);
       setProductos(data);
-    } catch (err: any) {
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err.message || "Error al cargar productos");
+      }
       console.error("Error al cargar productos:", err);
-      setError(err.message || "Error al cargar productos");
     } finally {
       setLoading(false);
     }
@@ -56,7 +83,7 @@ const CategoriasPage: React.FC = () => {
   };
 
   // 🔥 Cuando se presiona el tacho de basura
-  const handleDeleteClick = (producto: any) => {
+  const handleDeleteClick = (producto: Producto) => {
     setProductoSeleccionado(producto);
     setShowDeleteModal(true);
   };
@@ -77,13 +104,13 @@ const CategoriasPage: React.FC = () => {
   const categoriasUnicas = Array.from(
     new Set(
       productos
-        .map(
-          (p) =>
-            p.productoAtributos?.find(
-              (a) => a.atributoValor?.valor
-            )?.atributoValor?.valor
-        )
-        .filter(Boolean)
+        .map((p) => {
+          const categoria = p.productoAtributos?.find(
+            (a) => a.atributoValor?.valor
+          )?.atributoValor?.valor;
+          return categoria || ''; // Return empty string instead of undefined
+        })
+        .filter((categoria) => categoria !== '') // Remove empty strings
     )
   );
 

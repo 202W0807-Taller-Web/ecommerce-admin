@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useMemo } from "react";
 import { X } from "lucide-react";
 import { useAtributos } from "@hooks/catalogo/useAtributos";
 

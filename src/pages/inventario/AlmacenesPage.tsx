@@ -1,11 +1,11 @@
 
-import React, { useState } from "react";
+import { useState } from "react";
 import Input from "../../components/Input";
 import Button from "../../components/Button";
 import FileAction from "../../components/FileAction";
-import Table, { TableHeader, TableCell, StatusBadge, AvatarCell, ActionMenuCell } from "../../components/Table";
+import { TableHeader, TableCell, StatusBadge, ActionMenuCell } from "../../components/Table";
 import Pagination from "../../components/Pagination";
-import { PlusCircle, Edit, Trash2, MoreVertical } from "lucide-react";
+import { PlusCircle } from "lucide-react";
 import { Search } from "lucide-react";
 import { RefreshCw } from "lucide-react";
 
