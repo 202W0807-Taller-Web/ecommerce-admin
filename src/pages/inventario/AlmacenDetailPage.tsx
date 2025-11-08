@@ -9,9 +9,13 @@ import Button from "@components/Button";
 import { Pencil } from "lucide-react";
 import { useModal } from "@hooks/useModal";
 import { LocalEditModal } from "./components/local/LocalEditModal";
+import { useProductosPorLocal } from "./hooks/stock/useProductosPorLocal";
+import FooterTable from "@components/FooterTable";
+import { useState } from "react";
 
 export default function AlmacenDetailPage() {
   const { id } = useParams();
+  const [page, setPage] = useState<number>(1);
 
   const { data, isPending, isError, error } = useLocal({
     local: "almacenes",
@@ -21,6 +25,24 @@ export default function AlmacenDetailPage() {
   const [isEditOpen, openEditModal, closeEditModal] = useModal();
 
   const almacen = data?.data;
+
+  const {
+    data: productosData,
+    isPending: isLoadingProductos,
+    isError: isErrorProductos,
+  } = useProductosPorLocal({
+    id_local: Number(id),
+    page,
+    limit: 3,
+  });
+
+  const productos = productosData?.data ?? [];
+  const pagination = productosData?.pagination ?? {
+    page: 1,
+    per_page: 3,
+    total: 0,
+    total_pages: 0,
+  };
 
   const {
     data: tiendasAsociadas,
@@ -33,6 +55,10 @@ export default function AlmacenDetailPage() {
 
   const tiendas = tiendasAsociadas?.data ?? [];
   const total = tiendasAsociadas?.total ?? 3;
+
+  const handlePageChange = (newPage: number) => {
+    setPage(newPage);
+  };
 
   if (isPending)
     return (
@@ -67,7 +93,21 @@ export default function AlmacenDetailPage() {
       <h2 className="text-2xl font-semibold text-gray-800 mt-6 mb-3 border-b pb-1">
         Productos en el almacén
       </h2>
-      <StockDataTable limit={3} page={1} />
+      <StockDataTable
+        data={productos}
+        variant="por-local"
+        limit={pagination.per_page}
+        page={page}
+        isLoading={isLoadingProductos}
+        isError={isErrorProductos}
+      />
+      <FooterTable
+        page={pagination.page}
+        limit={pagination.per_page}
+        total_pages={pagination.total_pages}
+        total={pagination.total}
+        handlePageChange={handlePageChange}
+      />
       <h2 className="text-2xl font-semibold text-gray-800 mt-8 mb-3 border-b pb-1">
         Tiendas asociadas al almacén
       </h2>

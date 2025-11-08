@@ -29,7 +29,7 @@ export default function AlmacenesPage() {
 
   const { data, isPending, isError } = useLocales({
     local: "almacenes",
-    limit: 2,
+    limit: 5,
     page,
     nombre,
     departamento,

@@ -1,115 +1,184 @@
+import React from "react";
 import { Eye } from "lucide-react";
 import {
   TableHeader,
   TableCell,
   TableCellInfo,
   ActionMenuCell,
+  StatusBadge,
 } from "@components/Table";
-import { StatusBadge } from "@components/Table";
-import type { ProductoGlobal } from "@services/inventario-envios/inventory/types/producto";
+import type {
+  ProductoGlobal,
+  ProductoPorLocal,
+  LocalPorProducto,
+} from "@services/inventario-envios/inventory/types/producto";
 
-interface StockDataTableProps {
-  data?: ProductoGlobal[];
+type StockVariant = "global" | "por-local" | "por-producto";
+
+type Column<T = any> = {
+  label: string;
+  key: string;
+  className?: string;
+  render?: (item: T, index: number) => React.ReactNode;
+};
+
+interface StockDataTableProps<T> {
+  data?: T[];
   page: number;
   limit: number;
   isLoading?: boolean;
   isError?: boolean;
-  getRowKey?: (item: ProductoGlobal) => string | number;
-  getActions?: (item: ProductoGlobal) => any[];
+  variant: StockVariant;
+  getRowKey?: (item: T, index?: number) => string | number;
+  getActions?: (item: T) => any[];
 }
 
-const StockDataTable = ({
+const StockDataTable = <
+  T extends ProductoGlobal | ProductoPorLocal | LocalPorProducto,
+>({
   data,
   page,
   limit,
-  isLoading,
-  isError,
-  getRowKey = item => item.id,
+  isLoading = false,
+  isError = false,
+  variant,
+  getRowKey,
   getActions,
-}: StockDataTableProps) => {
-  // Ejemplo data
+}: StockDataTableProps<T>) => {
+  // fallback visual data (solo para cuando no hay data)
   const defaultData: ProductoGlobal[] = [
     {
       id: 1,
-      nombre: "Camisa Polo Azul",
-      imagen: "https://i.ibb.co/Np8VbVv/producto-ropa.jpg",
-      stk_disponible_global: 25,
-      stk_reservado_global: 5,
-      stk_total_global: 30,
+      nombre: "Producto demo",
+      imagen: "https://i.ibb.co/6Y9G7mP/no-image-placeholder.png",
+      stk_disponible_global: 10,
+      stk_reservado_global: 2,
+      stk_total_global: 12,
       stk_estado_global: "DISPONIBLE",
-    },
-    {
-      id: 2,
-      nombre: "Camisa Polo Rojo",
-      imagen: "https://i.ibb.co/Np8VbVv/producto-ropa.jpg",
-      stk_disponible_global: 25,
-      stk_reservado_global: 5,
-      stk_total_global: 30,
-      stk_estado_global: "BAJO STOCK",
     },
   ];
 
-  const stockData = data ?? defaultData;
+  const stockData = (data ?? defaultData).slice(0) as T[];
 
-  const columns: {
-    label: string;
-    key: keyof ProductoGlobal;
-    className?: string;
-    render?: (item: ProductoGlobal, index: number) => React.ReactNode;
-  }[] = [
+  // Columns dinámicas según variant
+  const getColumns = (): Column<T>[] => {
+    if (variant === "global") {
+      return [
+        { label: "Producto", key: "nombre" },
+        { label: "Stck. Disponible", key: "stk_disponible_global" },
+        { label: "Stck. Reservado", key: "stk_reservado_global" },
+        { label: "Stck. Total", key: "stk_total_global" },
+        {
+          label: "Estado",
+          key: "stk_estado_global",
+          render: (item: any) => {
+            const estado = item.stk_estado_global ?? "SIN ESTADO";
+            const v =
+              estado === "DISPONIBLE"
+                ? "success"
+                : estado === "BAJO STOCK"
+                  ? "warning"
+                  : "danger";
+            return <StatusBadge label={estado} variant={v} />;
+          },
+        },
+      ];
+    }
+
+    if (variant === "por-local") {
+      return [
+        { label: "Producto", key: "producto" },
+        { label: "Stck. Disponible", key: "stk_disponible" },
+        { label: "Stck. Reservado", key: "stk_reservado" },
+        { label: "Stck. Total", key: "stk_total" },
+        {
+          label: "Estado",
+          key: "stk_estado",
+          render: (item: any) => {
+            const estado = item.stk_estado ?? "SIN ESTADO";
+            const v =
+              estado === "DISPONIBLE"
+                ? "success"
+                : estado === "BAJO STOCK"
+                  ? "warning"
+                  : "danger";
+            return <StatusBadge label={estado} variant={v} />;
+          },
+        },
+      ];
+    }
+
+    // por-producto
+    return [
+      { label: "Local", key: "local" },
+      { label: "Stck. Disponible", key: "stk_disponible" },
+      { label: "Stck. Reservado", key: "stk_reservado" },
+      { label: "Stck. Total", key: "stk_total" },
+      {
+        label: "Estado",
+        key: "stk_estado",
+        render: (item: any) => {
+          const estado = item.stk_estado ?? "SIN ESTADO";
+          const v =
+            estado === "DISPONIBLE"
+              ? "success"
+              : estado === "BAJO STOCK"
+                ? "warning"
+                : "danger";
+          return <StatusBadge label={estado} variant={v} />;
+        },
+      },
+    ];
+  };
+
+  const dynamicColumns = getColumns();
+
+  // Columnas base (index + imagen) + dinámicas
+  const columns: Column<T>[] = [
     {
       label: "#",
-      key: "id",
+      key: "index",
       className: "w-12 text-center",
-      render: (_: ProductoGlobal, idx: number) => (page - 1) * limit + idx + 1,
+      render: (_: T, idx: number) => (page - 1) * limit + idx + 1,
     },
     {
       label: "Imagen",
       key: "imagen",
       className: "w-16 text-center",
-      render: (item: ProductoGlobal) => (
+      render: (item: any) => (
         <div className="relative flex justify-center items-center group">
           <img
             src={
-              item.imagen || "https://i.ibb.co/6Y9G7mP/no-image-placeholder.png"
+              item?.imagen ??
+              "https://i.ibb.co/6Y9G7mP/no-image-placeholder.png"
             }
-            alt={item.nombre}
+            alt={
+              (item?.nombre ??
+                item?.producto ??
+                item?.local ??
+                "imagen") as string
+            }
             className="w-8 h-8 rounded-full object-cover transition-transform duration-200 group-hover:scale-110"
           />
         </div>
       ),
     },
-    { label: "Producto", key: "nombre" },
-    {
-      label: "Stck. Disponible",
-      key: "stk_disponible_global",
-      className: "text-right",
-    },
-    {
-      label: "Stck. Reservado",
-      key: "stk_reservado_global",
-      className: "text-right",
-    },
-    {
-      label: "Stck. Total",
-      key: "stk_total_global",
-      className: "text-right",
-    },
-    {
-      label: "Estado",
-      key: "stk_estado_global",
-      className: "text-center",
-      render: (item: ProductoGlobal) => {
-        const variant =
-          item.stk_estado_global === "DISPONIBLE"
-            ? "success"
-            : item.stk_estado_global === "BAJO STOCK"
-              ? "warning"
-              : "danger";
-        return <StatusBadge label={item.stk_estado_global} variant={variant} />;
-      },
-    },
+    ...dynamicColumns,
   ];
+
+  // Default getRowKey
+  const rowKeyFn =
+    getRowKey ??
+    ((item: any, idx?: number) => {
+      // intenta claves conocidas
+      return (
+        item?.id ??
+        item?.id_producto ??
+        item?.id_almacen ??
+        idx ??
+        JSON.stringify(item)
+      );
+    });
 
   return (
     <div className="w-full overflow-auto">
@@ -145,16 +214,16 @@ const StockDataTable = ({
               content="No hay resultados para la búsqueda"
             />
           ) : (
-            stockData.map((item, idx) => (
+            stockData.map((item: any, idx: number) => (
               <tr
-                key={getRowKey(item)}
+                key={rowKeyFn(item, idx)}
                 className={idx % 2 ? "bg-gray-50" : "bg-white"}
               >
                 {columns.map((col, colIdx) => (
                   <TableCell key={colIdx} className={col.className}>
                     {col.render
                       ? col.render(item, idx)
-                      : (item[col.key] as any)}
+                      : (item as any)[col.key]}
                   </TableCell>
                 ))}
 

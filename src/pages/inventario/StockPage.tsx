@@ -43,6 +43,7 @@ export default function StockPage() {
       </FilterForm>
       <StockDataTable
         data={productos}
+        variant="global"
         page={pagination.page}
         limit={pagination.per_page}
         isLoading={isPending}
