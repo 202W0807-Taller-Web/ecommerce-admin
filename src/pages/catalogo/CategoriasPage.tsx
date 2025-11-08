@@ -4,6 +4,7 @@ import SearchBar from "../../components/Catalogo/SearchBar";
 import CategoryFilter from "../../components/Catalogo/CategoryFilter";
 import ActionButtons from "../../components/Catalogo/ActionButtons";
 import ProductTable from "../../components/Catalogo/ProductTable";
+import type { ProductRow } from "../../components/Catalogo/ProductTable";
 import Pagination from "../../components/Catalogo/Pagination";
 import AddProductModal from "../../components/Catalogo/AddProductModal";
 import ConfirmDeleteModal from "../../components/Catalogo/ConfirmDeleteModal";
@@ -46,7 +47,7 @@ const CategoriasPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [showAddModal, setShowAddModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [productoSeleccionado, setProductoSeleccionado] = useState<Producto | null>(null);
+  const [productoSeleccionado, setProductoSeleccionado] = useState<Producto | ProductRow | Record<string, unknown> | null>(null);
 
   const fetchProductos = async () => {
     console.log("Intentando cargar productos desde el backend...");
@@ -83,7 +84,7 @@ const CategoriasPage: React.FC = () => {
   };
 
   // 🔥 Cuando se presiona el tacho de basura
-  const handleDeleteClick = (producto: Producto) => {
+  const handleDeleteClick = (producto: Producto | ProductRow | Record<string, unknown>) => {
     setProductoSeleccionado(producto);
     setShowDeleteModal(true);
   };
@@ -91,10 +92,11 @@ const CategoriasPage: React.FC = () => {
   // 🔥 Cuando se confirma el modal
   const handleConfirmDelete = () => {
     if (productoSeleccionado) {
+      const p = productoSeleccionado as Producto;
       console.log("Producto a eliminar:", {
-        id: productoSeleccionado.id,
-        nombre: productoSeleccionado.nombre,
-        descripcion: productoSeleccionado.descripcion,
+        id: p.id,
+        nombre: p.nombre,
+        descripcion: p.descripcion,
       });
     }
     setShowDeleteModal(false);
