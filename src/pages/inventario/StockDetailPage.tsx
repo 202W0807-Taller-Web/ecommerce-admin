@@ -1,14 +1,20 @@
 import { useParams } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { getProductoById } from "@services/inventario-envios/inventory/api/temp";
 import { useLocalesPorProducto } from "./hooks/stock/useLocalesPorProductos";
 import StockDataTable from "./components/stock/StockDataTable";
 import FooterTable from "@components/FooterTable";
 import { useState } from "react";
+import FileAction from "@components/FileAction";
+import { useModal } from "@hooks/useModal";
+import UploadCsvModal from "@components/UploadCsvModal";
+import { uploadProductosFromCsv } from "@services/inventario-envios/inventory/api/productos";
 
 export default function StockDetailPage() {
+  const queryClient = useQueryClient();
   const { id } = useParams();
   const [page, setPage] = useState<number>(1);
+  const [isUploadOpen, openUploadModal, closeUploadModal] = useModal();
 
   // 🔹 Llamada al producto
   const {
@@ -89,6 +95,14 @@ export default function StockDetailPage() {
         </div>
       </div>
 
+      <div className="flex gap-4 mb-4">
+        <FileAction
+          text="Importar CSV"
+          variant="upload"
+          onClick={openUploadModal}
+        />
+      </div>
+
       <StockDataTable
         data={locales}
         variant="por-producto"
@@ -104,6 +118,18 @@ export default function StockDetailPage() {
         total_pages={pagination.total_pages}
         total={pagination.total}
         handlePageChange={handlePageChange}
+      />
+
+      <UploadCsvModal
+        isOpen={isUploadOpen}
+        closeModal={closeUploadModal}
+        title="Importar stock a locales desde CSV"
+        resourceName="localesPorProducto"
+        uploadFn={uploadProductosFromCsv}
+        onSuccess={() => {
+          setPage(1); // reset to first page to see new data
+          queryClient.invalidateQueries({ queryKey: ["localesPorProducto"] });
+        }}
       />
     </>
   );

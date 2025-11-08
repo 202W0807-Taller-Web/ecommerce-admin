@@ -54,3 +54,16 @@ export const getLocalesPorProducto = async ({
   );
   return response.data;
 };
+
+export const uploadProductosFromCsv = async (file: File) => {
+  const formData = new FormData();
+  formData.append("file", file);
+
+  const response = await API.post("/productos/upload-csv", formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+
+  return response.data;
+};
