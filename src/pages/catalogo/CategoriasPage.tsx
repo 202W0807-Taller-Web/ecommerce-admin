@@ -7,6 +7,7 @@ import ProductTable from "../../components/Catalogo/ProductTable";
 import Pagination from "../../components/Catalogo/Pagination";
 import AddProductModal from "../../components/Catalogo/AddProductModal";
 import ConfirmDeleteModal from "../../components/Catalogo/ConfirmDeleteModal";
+import Breadcrumbs from "@components/Catalogo/Breadcrumbs";
 
 const ITEMS_PER_PAGE = 5;
 
@@ -128,6 +129,7 @@ const CategoriasPage: React.FC = () => {
 
   return (
     <div className="p-6 text-gray-800">
+      <Breadcrumbs items={[{ label: "Productos" }]} />
       <h2 className="text-xl font-semibold mb-4">
         Productos en categoría: {categoriaFilter || "Todas"}
       </h2>

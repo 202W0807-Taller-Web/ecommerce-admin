@@ -9,6 +9,7 @@ import Pagination from "../../components/Catalogo/Pagination";
 import AddVarianteModal from "../../components/Catalogo/AddVarianteModal";
 import ConfirmDeleteModal from "../../components/Catalogo/ConfirmDeleteModal";
 import { Trash2 } from "lucide-react";
+import Breadcrumbs from "../../components/Catalogo/Breadcrumbs";
 
 const ITEMS_PER_PAGE = 6;
 
@@ -93,8 +94,16 @@ const ProductosVariantesPage: React.FC = () => {
     setVarianteToDelete(null);
   };
 
+  const breadcrumbItems = [
+    { label: "Productos", path: "/catalogo/productos" },
+    { label: nombreProducto },
+  ];
+
   return (
     <div className="p-6 text-gray-800">
+
+      <Breadcrumbs items={breadcrumbItems} />
+
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-xl font-semibold">
           Variantes de <span>{nombreProducto}</span>
