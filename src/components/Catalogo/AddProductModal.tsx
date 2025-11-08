@@ -9,10 +9,11 @@ interface AtributoValor {
 
 interface AddProductModalProps {
   onClose: () => void;
-  onAdd: (formData: FormData) => void;
+  onAdd: (formData: FormData) => Promise<any> | void;
+  onNotify?: (message: { type: "success" | "error" | "info"; text: string }) => void;
 }
 
-const AddProductModal: React.FC<AddProductModalProps> = ({ onClose, onAdd }) => {
+const AddProductModal: React.FC<AddProductModalProps> = ({ onClose, onAdd, onNotify }) => {
   const [name, setName] = useState("");
   const [categoryId, setCategoryId] = useState("");
   const [description, setDescription] = useState("");
@@ -21,6 +22,7 @@ const AddProductModal: React.FC<AddProductModalProps> = ({ onClose, onAdd }) => 
   const [atributosSeleccionados, setAtributosSeleccionados] = useState<
     Record<string, string>
   >({});
+  const [submitting, setSubmitting] = useState(false);
 
   const { data: atributos, loading, error } = useAtributoValores();
 
@@ -42,9 +44,10 @@ const AddProductModal: React.FC<AddProductModalProps> = ({ onClose, onAdd }) => 
     }));
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
+    // validation -> usar notificación en lugar de alert
     if (!name || !categoryId || !description) {
-      alert("Por favor complete todos los campos obligatorios.");
+      onNotify?.({ type: "error", text: "Por favor complete todos los campos obligatorios." });
       return;
     }
 
@@ -63,27 +66,32 @@ const AddProductModal: React.FC<AddProductModalProps> = ({ onClose, onAdd }) => 
       formData.append("Imagenes", image);
     }
 
-    onAdd(formData);
-    onClose();
+    try {
+      setSubmitting(true);
+      const result = await onAdd(formData);
+      // notificar éxito si el padre no lo hace (o adicionalmente)
+      onNotify?.({ type: "success", text: "Producto agregado correctamente." });
+      onClose();
+      return result;
+    } catch (err) {
+      console.error("Error agregando producto:", err);
+      onNotify?.({ type: "error", text: "Hubo un error al agregar el producto." });
+    } finally {
+      setSubmitting(false);
+    }
   };
 
-  const atributosAgrupados: Record<string, AtributoValor[]> = 
+  const atributosAgrupados: Record<string, AtributoValor[]> =
     Array.isArray(atributos)
-      ? (atributos as AtributoValor[]).reduce(
-          (acc, curr) => {
-            const nombre = curr.nombreAtributo || "Otros";
-            if (!acc[nombre]) acc[nombre] = [];
-            acc[nombre].push(curr);
-            return acc;
-          },
-          {} as Record<string, AtributoValor[]>
-        )
+      ? (atributos as AtributoValor[]).reduce((acc, curr) => {
+          const nombre = curr.nombreAtributo || "Otros";
+          if (!acc[nombre]) acc[nombre] = [];
+          acc[nombre].push(curr);
+          return acc;
+        }, {} as Record<string, AtributoValor[]>)
       : {};
 
-
-  const categorias = atributos?.filter(
-    (a) => a.nombreAtributo === "Categoría"
-  );
+  const categorias = atributos?.filter((a) => a.nombreAtributo === "Categoría");
 
   const atributosPermitidos = ["Género", "Deporte", "Tipo", "Colección"];
   const atributosFiltrados = Object.entries(atributosAgrupados).filter(([nombre]) =>
@@ -125,11 +133,7 @@ const AddProductModal: React.FC<AddProductModalProps> = ({ onClose, onAdd }) => 
               </option>
             ))}
           </select>
-          {error && (
-            <span className="text-red-500 text-sm">
-              Error al cargar categorías.
-            </span>
-          )}
+          {error && <span className="text-red-500 text-sm">Error al cargar categorías.</span>}
         </div>
 
         {/* Descripción */}
@@ -181,9 +185,7 @@ const AddProductModal: React.FC<AddProductModalProps> = ({ onClose, onAdd }) => 
             >
               Seleccionar archivo
             </label>
-            <span className="text-sm text-gray-600 truncate">
-              {fileName}
-            </span>
+            <span className="text-sm text-gray-600 truncate">{fileName}</span>
           </div>
         </div>
 
@@ -192,14 +194,18 @@ const AddProductModal: React.FC<AddProductModalProps> = ({ onClose, onAdd }) => 
           <button
             onClick={onClose}
             className="px-4 py-2 border border-gray-400 rounded-md bg-gray-200 hover:bg-gray-300 transition"
+            type="button"
+            disabled={submitting}
           >
             Cancelar
           </button>
           <button
             onClick={handleSubmit}
             className="px-4 py-2 bg-[var(--color-primary1)] text-white rounded-md hover:bg-[var(--color-primary2)] transition"
+            type="button"
+            disabled={submitting}
           >
-            Guardar
+            {submitting ? "Guardando..." : "Guardar"}
           </button>
         </div>
       </div>

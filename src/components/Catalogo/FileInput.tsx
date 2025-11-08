@@ -42,14 +42,3 @@ export default function FileInput({ label, onChange }: FileInputProps) {
     </div>
   );
 }
-
-export function FileInput({ onChange }: { onChange: (f: FileList | null) => void }) {
-  return (
-    <input
-      type="file"
-      accept="image/*"
-      onChange={(e) => onChange(e.target.files)}
-      className="w-full text-[var(--color-primary6)]"
-    />
-  );
-}

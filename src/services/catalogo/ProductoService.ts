@@ -98,10 +98,29 @@ export const deleteProducto = async (id: number) => {
     method: "DELETE",
   });
 
+  // Si no es 2xx, leer texto y lanzar error
   if (!res.ok) {
     const text = await res.text();
     throw new Error(`Error al eliminar producto: ${res.status} - ${text}`);
   }
 
-  return res.json();
+  // 204 No Content => éxito sin cuerpo
+  if (res.status === 204) {
+    console.log(`Producto ${id} eliminado correctamente (204).`);
+    return null;
+  }
+
+  // Intentar leer el cuerpo de la respuesta; si está vacío, devolver null
+  const text = await res.text();
+  if (!text) {
+    console.log(`Producto ${id} eliminado correctamente (sin cuerpo).`);
+    return null;
+  }
+
+  // Intentar parsear JSON, si falla devolver el texto
+  try {
+    return JSON.parse(text);
+  } catch {
+    return text;
+  }
 };

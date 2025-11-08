@@ -1,5 +1,5 @@
 // components/catalogo/CrearProductoForm.tsx
-import React, { useRef, useState, useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useCreateProducto } from "@hooks/catalogo/useProductos";
 
 export default function CrearProductoForm({ onSuccess }: { onSuccess?: (p: any) => void }) {
@@ -34,13 +34,29 @@ export default function CrearProductoForm({ onSuccess }: { onSuccess?: (p: any) 
   return (
     <div className="bg-[var(--color-base)] p-4 rounded-lg shadow">
       <label className="block text-sm text-[var(--color-primary6)]">Nombre</label>
-      <input value={nombre} onChange={(e) => setNombre(e.target.value)} className="w-full p-3 rounded border border-[var(--color-primary5)] mb-3 text-[var(--color-primary6)]" />
+      <input
+        value={nombre}
+        onChange={(e) => setNombre(e.target.value)}
+        className="w-full p-3 rounded border border-[var(--color-primary5)] mb-3 text-[var(--color-primary6)]"
+      />
 
       <label className="block text-sm text-[var(--color-primary6)]">Descripción</label>
-      <textarea value={descripcion} onChange={(e) => setDescripcion(e.target.value)} className="w-full p-3 rounded border border-[var(--color-primary5)] mb-3 text-[var(--color-primary6)]" rows={4} />
+      <textarea
+        value={descripcion}
+        onChange={(e) => setDescripcion(e.target.value)}
+        className="w-full p-3 rounded border border-[var(--color-primary5)] mb-3 text-[var(--color-primary6)]"
+        rows={4}
+      />
 
       <label className="block text-sm text-[var(--color-primary6)]">Imágenes</label>
-      <input ref={fileInputRef} type="file" accept="image/*" multiple onChange={(e) => handleFiles(e.target.files)} className="w-full mb-3 text-[var(--color-primary6)]" />
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/*"
+        multiple
+        onChange={(e) => handleFiles(e.target.files)}
+        className="w-full mb-3 text-[var(--color-primary6)]"
+      />
 
       {previews.length > 0 && (
         <div className="grid grid-cols-3 gap-2 mb-3">
@@ -51,7 +67,11 @@ export default function CrearProductoForm({ onSuccess }: { onSuccess?: (p: any) 
       )}
 
       <div className="flex justify-end gap-3">
-        <button onClick={handleSubmit} disabled={loading} className="px-4 py-2 rounded-md text-[var(--color-base)] bg-[var(--color-primary1)] hover:bg-[var(--color-primary2)]">
+        <button
+          onClick={handleSubmit}
+          disabled={loading}
+          className="px-4 py-2 rounded-md text-[var(--color-base)] bg-[var(--color-primary1)] hover:bg-[var(--color-primary2)]"
+        >
           {loading ? "Guardando..." : "Guardar"}
         </button>
       </div>

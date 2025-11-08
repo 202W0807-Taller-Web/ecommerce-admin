@@ -6,4 +6,5 @@ export interface Atributo {
   tipo: string;
   valor: string;
   atributoValores: AtributoValor[];
+  atributoValor?:AtributoValor
 }

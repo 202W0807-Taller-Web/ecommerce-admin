@@ -6,52 +6,38 @@ import { createProducto } from "../../services/catalogo/ProductoService";
 
 interface ActionButtonsProps {
   onProductAdded?: () => void;
+  onNotify?: (message: { type: "success" | "error" | "info"; text: string }) => void;
 }
 
-const ActionButtons: React.FC<ActionButtonsProps> = ({ onProductAdded }) => {
+const ActionButtons: React.FC<ActionButtonsProps> = ({ onProductAdded, onNotify }) => {
   const [showModal, setShowModal] = useState(false);
 
   const handleAdd = async (formData: FormData) => {
     try {
-      console.log("Enviando producto al backend...");
-      const nuevoProducto = await createProducto(formData);
-      console.log("Producto creado:", nuevoProducto);
-
+      await createProducto(formData);
       onProductAdded?.();
-
-      alert("Producto agregado correctamente.");
+      // delegar notificación al padre si se pasó
+      onNotify?.({ type: "success", text: "Producto creado correctamente." });
       setShowModal(false);
     } catch (error) {
       console.error("Error creando producto:", error);
-      alert("Error al crear el producto. Revisa la consola.");
+      onNotify?.({ type: "error", text: "Hubo un error al crear el producto." });
     }
   };
 
   return (
-    <div style={{ display: "flex", gap: 12 }}>
+    <div className="flex items-center gap-3">
       <AddProductButton onClick={() => setShowModal(true)} />
 
       <button
-        style={{
-          display: "flex",
-          alignItems: "center",
-          gap: 6,
-          padding: "8px 12px",
-          borderRadius: 6,
-          border: "1px solid #c2c2c2",
-          backgroundColor: "#fff",
-          cursor: "pointer",
-        }}
-        onClick={() => alert("Funcionalidad de importación en desarrollo")}
+        className="px-3 py-2 rounded-md border border-[var(--color-primary5)] text-[var(--color-primary6)] bg-transparent flex items-center gap-2"
+        onClick={() => console.log("Importar productos (no implementado)")}
       >
-        <Upload size={18} /> Importar productos
+        <Upload size={16} /> Importar
       </button>
 
       {showModal && (
-        <AddProductModal
-          onClose={() => setShowModal(false)}
-          onAdd={handleAdd}
-        />
+        <AddProductModal onClose={() => setShowModal(false)} onAdd={handleAdd} onNotify={onNotify} />
       )}
     </div>
   );
