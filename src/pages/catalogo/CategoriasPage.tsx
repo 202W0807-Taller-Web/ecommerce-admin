@@ -186,10 +186,10 @@ const CategoriasPage: React.FC = () => {
         />
       )}
 
-      {/* Modal de confirmación de eliminación */}
       {showDeleteModal && (
         <ConfirmDeleteModal
-          onClose={() => setShowDeleteModal(false)}
+          message="¿Seguro que desea eliminar este producto?"
+          onCancel={() => setShowDeleteModal(false)}
           onConfirm={handleConfirmDelete}
         />
       )}

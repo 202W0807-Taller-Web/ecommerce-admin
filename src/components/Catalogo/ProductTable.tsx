@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { Pencil, Trash2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import ConfirmDeleteModal from "./ConfirmDeleteModal";
 
 interface Producto {
   id: number;
@@ -16,6 +15,7 @@ interface ProductTableProps {
   selectedIds?: number[];
   onSelect?: (id: number) => void;
   onSelectAll?: (selectAll: boolean) => void;
+  onDelete: (producto: Producto) => void;
 }
 
 export default function ProductTable({
@@ -23,31 +23,18 @@ export default function ProductTable({
   selectedIds = [],
   onSelect = () => {},
   onSelectAll = () => {},
+  onDelete,
 }: ProductTableProps) {
   const navigate = useNavigate();
-  const [productoAEliminar, setProductoAEliminar] = useState<Producto | null>(null);
 
-  const allSelected = selectedIds.length === productos.length && productos.length > 0;
+  const allSelected =
+    selectedIds.length === productos.length && productos.length > 0;
 
   const handleEditClick = (producto: Producto) => {
     console.log(`Navegando a variantes de producto ${producto.id}`);
     navigate(`/catalogo/productos/${producto.id}/variantes`, {
       state: { nombreProducto: producto.producto },
     });
-  };
-
-  const handleDeleteClick = (producto: Producto) => {
-    setProductoAEliminar(producto);
-  };
-
-  const handleConfirmDelete = () => {
-    if (productoAEliminar) {
-      console.log("🗑️ Eliminando producto:", {
-        id: productoAEliminar.id,
-        nombre: productoAEliminar.producto,
-      });
-    }
-    setProductoAEliminar(null);
   };
 
   return (
@@ -63,17 +50,30 @@ export default function ProductTable({
                 className="accent-gray-500 cursor-pointer"
               />
             </th>
-            <th className="py-3 px-4 font-semibold text-gray-700 border-b-2 border-gray-300">Imagen</th>
-            <th className="py-3 px-4 font-semibold text-gray-700 border-b-2 border-gray-300">Producto</th>
-            <th className="py-3 px-4 font-semibold text-gray-700 border-b-2 border-gray-300">Estado</th>
-            <th className="py-3 px-4 font-semibold text-gray-700 border-b-2 border-gray-300">Cantidad</th>
-            <th className="py-3 px-4 font-semibold text-gray-700 border-b-2 border-gray-300">Acción</th>
+            <th className="py-3 px-4 font-semibold text-gray-700 border-b-2 border-gray-300">
+              Imagen
+            </th>
+            <th className="py-3 px-4 font-semibold text-gray-700 border-b-2 border-gray-300">
+              Producto
+            </th>
+            <th className="py-3 px-4 font-semibold text-gray-700 border-b-2 border-gray-300">
+              Estado
+            </th>
+            <th className="py-3 px-4 font-semibold text-gray-700 border-b-2 border-gray-300">
+              Cantidad
+            </th>
+            <th className="py-3 px-4 font-semibold text-gray-700 border-b-2 border-gray-300">
+              Acción
+            </th>
           </tr>
         </thead>
 
         <tbody>
           {productos.map((p) => (
-            <tr key={p.id} className="bg-white rounded-xl shadow-sm hover:bg-gray-50 transition-all">
+            <tr
+              key={p.id}
+              className="bg-white rounded-xl shadow-sm hover:bg-gray-50 transition-all"
+            >
               <td className="py-3 px-4">
                 <input
                   type="checkbox"
@@ -89,15 +89,21 @@ export default function ProductTable({
                   className="w-10 h-10 rounded-full object-cover"
                 />
               </td>
-              <td className="py-3 px-4 text-gray-800 font-medium">{p.producto}</td>
+              <td className="py-3 px-4 text-gray-80OS font-medium">
+                {p.producto}
+              </td>
               <td
                 className={`py-3 px-4 font-medium ${
-                  p.estadoStk === "Disponible" ? "text-green-600" : "text-red-500"
+                  p.estadoStk === "Disponible"
+                    ? "text-green-600"
+                    : "text-red-500"
                 }`}
               >
                 {p.estadoStk}
               </td>
-              <td className="py-3 px-4 text-gray-700 font-semibold">{p.stkTotal}</td>
+              <td className="py-3 px-4 text-gray-700 font-semibold">
+                {p.stkTotal}
+              </td>
               <td className="py-3 px-4 flex items-center space-x-2">
                 <button
                   onClick={() => handleEditClick(p)}
@@ -108,7 +114,7 @@ export default function ProductTable({
                 </button>
 
                 <button
-                  onClick={() => handleDeleteClick(p)}
+                  onClick={() => onDelete(p)}
                   className="p-2 rounded-full hover:bg-gray-100 transition"
                   title="Eliminar producto"
                 >
@@ -120,21 +126,16 @@ export default function ProductTable({
 
           {productos.length === 0 && (
             <tr>
-              <td colSpan={6} className="text-center text-gray-500 py-6 italic">
+              <td
+                colSpan={6}
+                className="text-center text-gray-500 py-6 italic"
+              >
                 No se encontraron productos.
               </td>
             </tr>
           )}
         </tbody>
       </table>
-
-      {productoAEliminar && (
-        <ConfirmDeleteModal
-          message="¿Seguro que desea eliminar este producto?"
-          onConfirm={handleConfirmDelete}
-          onCancel={() => setProductoAEliminar(null)}
-        />
-      )}
     </div>
   );
 }
