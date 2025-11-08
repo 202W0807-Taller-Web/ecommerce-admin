@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Pencil, Trash2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import ConfirmDeleteModal from "./ConfirmDeleteModal"; // importa tu componente modal
+import ConfirmDeleteModal from "./ConfirmDeleteModal";
 
 interface Producto {
   id: number;
@@ -15,25 +15,22 @@ interface ProductTableProps {
   productos?: Producto[];
   selectedIds?: number[];
   onSelect?: (id: number) => void;
-  onSelectAll?: () => void;
+  onSelectAll?: (selectAll: boolean) => void;
 }
 
-const ProductTable: React.FC<ProductTableProps> = ({
+export default function ProductTable({
   productos = [],
   selectedIds = [],
   onSelect = () => {},
   onSelectAll = () => {},
-}) => {
+}: ProductTableProps) {
   const navigate = useNavigate();
   const [productoAEliminar, setProductoAEliminar] = useState<Producto | null>(null);
 
   const allSelected = selectedIds.length === productos.length && productos.length > 0;
 
   const handleEditClick = (producto: Producto) => {
-    console.log(
-      `🟢 Navegando a /catalogo/productos/${producto.id}/variantes con nombre: ${producto.producto}`
-    );
-
+    console.log(`Navegando a variantes de producto ${producto.id}`);
     navigate(`/catalogo/productos/${producto.id}/variantes`, {
       state: { nombreProducto: producto.producto },
     });
@@ -62,7 +59,7 @@ const ProductTable: React.FC<ProductTableProps> = ({
               <input
                 type="checkbox"
                 checked={allSelected}
-                onChange={onSelectAll}
+                onChange={(e) => onSelectAll(e.target.checked)}
                 className="accent-gray-500 cursor-pointer"
               />
             </th>
@@ -76,10 +73,7 @@ const ProductTable: React.FC<ProductTableProps> = ({
 
         <tbody>
           {productos.map((p) => (
-            <tr
-              key={p.id}
-              className="bg-white rounded-xl shadow-sm hover:bg-gray-50 transition-all"
-            >
+            <tr key={p.id} className="bg-white rounded-xl shadow-sm hover:bg-gray-50 transition-all">
               <td className="py-3 px-4">
                 <input
                   type="checkbox"
@@ -143,6 +137,4 @@ const ProductTable: React.FC<ProductTableProps> = ({
       )}
     </div>
   );
-};
-
-export default ProductTable;
+}

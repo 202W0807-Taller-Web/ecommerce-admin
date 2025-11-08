@@ -1,21 +1,17 @@
 import { Plus } from "lucide-react";
+import type { MouseEventHandler } from "react";
 
-export default function AddProductButton({ onClick }) {
+interface AddProductButtonProps {
+  onClick: MouseEventHandler<HTMLButtonElement>;
+}
+
+export default function AddProductButton({ onClick }: AddProductButtonProps) {
   return (
     <button
       onClick={onClick}
-      style={{
-        display: "flex",
-        alignItems: "center",
-        gap: 6,
-        padding: "8px 12px",
-        borderRadius: 6,
-        border: "1px solid #c2c2c2",
-        backgroundColor: "#fff",
-        cursor: "pointer",
-      }}
+      className="flex items-center gap-2 px-3 py-2 rounded-md border border-gray-300 bg-white hover:bg-gray-100 text-gray-800 shadow-sm transition-colors"
     >
-      <Plus /> Agregar producto
+      <Plus className="w-4 h-4" /> Agregar producto
     </button>
   );
 }

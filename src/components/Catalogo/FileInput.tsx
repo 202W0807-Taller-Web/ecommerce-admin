@@ -1,58 +1,29 @@
-import { useState } from "react";
+import { useState, type ChangeEventHandler } from "react";
 
-export default function FileInput({ label, onChange }) {
+interface FileInputProps {
+  label: string;
+  onChange: (file: File | null) => void;
+}
+
+export default function FileInput({ label, onChange }: FileInputProps) {
   const [fileName, setFileName] = useState("Ningún archivo seleccionado");
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange: ChangeEventHandler<HTMLInputElement> = (e) => {
     const file = e.target.files?.[0] || null;
     setFileName(file ? file.name : "Ningún archivo seleccionado");
     onChange(file);
   };
 
   return (
-    <div
-      style={{
-        gridColumn: "1 / -1",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "flex-start",
-        gap: 12,
-        whiteSpace: "nowrap",
-        overflow: "hidden",
-      }}
-    >
-      <label style={{ color: "#444", fontWeight: 500, flexShrink: 0 }}>
+    <div className="col-span-full flex items-center gap-3 overflow-hidden">
+      <label className="text-gray-700 font-medium flex-shrink-0">
         {label}
       </label>
 
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          gap: 10,
-          flex: 1,
-          minWidth: 0,
-        }}
-      >
+      <div className="flex items-center gap-3 flex-1 min-w-0">
         <label
           htmlFor="file-upload"
-          style={{
-            backgroundColor: "#1f2937", // gray-800
-            color: "white",
-            padding: "6px 14px",
-            borderRadius: 6,
-            cursor: "pointer",
-            fontSize: 14,
-            fontWeight: 500,
-            flexShrink: 0,
-            transition: "background-color 0.2s",
-          }}
-          onMouseOver={(e) =>
-            (e.currentTarget.style.backgroundColor = "#374151")
-          }
-          onMouseOut={(e) =>
-            (e.currentTarget.style.backgroundColor = "#1f2937")
-          }
+          className="bg-gray-800 text-white px-4 py-1.5 rounded-md text-sm font-medium cursor-pointer hover:bg-gray-700 transition-colors"
         >
           Seleccionar archivo
         </label>
@@ -61,19 +32,10 @@ export default function FileInput({ label, onChange }) {
           id="file-upload"
           type="file"
           onChange={handleFileChange}
-          style={{ display: "none" }}
+          className="hidden"
         />
 
-        <span
-          style={{
-            fontSize: 14,
-            color: "#555",
-            textOverflow: "ellipsis",
-            overflow: "hidden",
-            whiteSpace: "nowrap",
-            flex: 1,
-          }}
-        >
+        <span className="text-sm text-gray-600 truncate flex-1">
           {fileName}
         </span>
       </div>

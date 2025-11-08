@@ -1,3 +1,14 @@
+import type { ChangeEventHandler } from "react";
+
+interface LabeledInputProps {
+  label: string;
+  value: string | number;
+  onChange: (value: string) => void;
+  type?: string;
+  min?: number;
+  step?: number;
+}
+
 export default function LabeledInput({
   label,
   value,
@@ -5,23 +16,21 @@ export default function LabeledInput({
   type = "text",
   min,
   step,
-}) {
+}: LabeledInputProps) {
+  const handleChange: ChangeEventHandler<HTMLInputElement> = (e) =>
+    onChange(e.target.value);
+
   return (
-    <>
-      <label>{label}</label>
+    <div className="flex flex-col gap-1 w-full">
+      <label className="text-gray-700 font-medium text-sm">{label}</label>
       <input
         type={type}
         value={value}
         min={min}
         step={step}
-        onChange={(e) => onChange(e.target.value)}
-        style={{
-          width: "100%",
-          padding: "6px 8px",
-          borderRadius: 6,
-          border: "1px solid #ccc",
-        }}
+        onChange={handleChange}
+        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 text-sm"
       />
-    </>
+    </div>
   );
 }

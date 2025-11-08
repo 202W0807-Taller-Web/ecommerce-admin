@@ -34,3 +34,32 @@ export const createValorAtributo = async (
   }
   return res.json() as Promise<AtributoValor>;
 };
+
+export const updateValorAtributo = async (
+  atributoId: number,
+  valorId: number,
+  formData: FormData
+): Promise<AtributoValor> => {
+  const res = await fetch(`/api/atributos/${atributoId}/valores/${valorId}`, {
+    method: "PUT",
+    body: formData,
+  });
+  if (!res.ok) {
+    const t = await res.text();
+    throw new Error(`Error actualizar valor atributo: ${res.status} ${t}`);
+  }
+  return res.json() as Promise<AtributoValor>;
+};
+
+export const deleteValorAtributo = async (
+  atributoId: number,
+  valorId: number
+): Promise<void> => {
+  const res = await fetch(`/api/atributos/${atributoId}/valores/${valorId}`, {
+    method: "DELETE",
+  });
+  if (!res.ok) {
+    const t = await res.text();
+    throw new Error(`Error eliminar valor atributo: ${res.status} ${t}`);
+  }
+};  

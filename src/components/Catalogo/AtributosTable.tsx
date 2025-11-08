@@ -3,16 +3,16 @@ import { Pencil } from "lucide-react";
 
 interface Atributo {
   id: number;
-  imagen: string;
   atributo: string;
-  cantidad: number;
+  tipo: string;
+  valor: string;
 }
 
 interface AtributosTableProps {
   atributos: Atributo[];
   selectedIds: number[];
   onSelect: (id: number) => void;
-  onSelectAll: () => void;
+  onSelectAll: (selectAll: boolean) => void;
 }
 
 const AtributosTable: React.FC<AtributosTableProps> = ({
@@ -33,18 +33,18 @@ const AtributosTable: React.FC<AtributosTableProps> = ({
               <input
                 type="checkbox"
                 checked={allSelected}
-                onChange={onSelectAll}
+                onChange={(e) => onSelectAll(e.target.checked)}
                 className="accent-gray-500 cursor-pointer"
               />
-            </th>
-            <th className="py-3 px-4 font-semibold text-gray-700 border-b-2 border-gray-300">
-              Imagen
             </th>
             <th className="py-3 px-4 font-semibold text-gray-700 border-b-2 border-gray-300">
               Atributo
             </th>
             <th className="py-3 px-4 font-semibold text-gray-700 border-b-2 border-gray-300">
-              Cantidad
+              Tipo
+            </th>
+            <th className="py-3 px-4 font-semibold text-gray-700 border-b-2 border-gray-300">
+              Valor
             </th>
             <th className="py-3 px-4 font-semibold text-gray-700 border-b-2 border-gray-300">
               Acción
@@ -66,19 +66,11 @@ const AtributosTable: React.FC<AtributosTableProps> = ({
                   className="accent-gray-500 cursor-pointer"
                 />
               </td>
-              <td className="py-3 px-4">
-                <img
-                  src={a.imagen}
-                  alt={a.atributo}
-                  className="w-10 h-10 rounded-full object-cover"
-                />
-              </td>
               <td className="py-3 px-4 text-gray-800 font-medium">
                 {a.atributo}
               </td>
-              <td className="py-3 px-4 text-gray-700 font-semibold">
-                {a.cantidad}
-              </td>
+              <td className="py-3 px-4 text-gray-700">{a.tipo}</td>
+              <td className="py-3 px-4 text-gray-700">{a.valor}</td>
               <td className="py-3 px-4">
                 <button className="p-2 rounded-full hover:bg-gray-100 transition">
                   <Pencil className="w-5 h-5 text-gray-500 hover:text-gray-700" />

@@ -4,25 +4,25 @@ import AddProductModal from "./AddProductModal";
 import AddProductButton from "./AddProductButton";
 import { createProducto } from "../../services/catalogo/ProductoService";
 
-type ActionButtonsProps = {
+interface ActionButtonsProps {
   onProductAdded?: () => void;
-};
+}
 
-export default function ActionButtons({ onProductAdded }: ActionButtonsProps) {
+const ActionButtons: React.FC<ActionButtonsProps> = ({ onProductAdded }) => {
   const [showModal, setShowModal] = useState(false);
 
   const handleAdd = async (formData: FormData) => {
     try {
-      console.log("📦 Enviando producto al backend...");
+      console.log("Enviando producto al backend...");
       const nuevoProducto = await createProducto(formData);
-      console.log("✅ Producto creado:", nuevoProducto);
+      console.log("Producto creado:", nuevoProducto);
 
       onProductAdded?.();
 
-      alert("✅ Producto agregado correctamente.");
+      alert("Producto agregado correctamente.");
       setShowModal(false);
     } catch (error) {
-      console.error("❌ Error creando producto:", error);
+      console.error("Error creando producto:", error);
       alert("Error al crear el producto. Revisa la consola.");
     }
   };
@@ -48,8 +48,13 @@ export default function ActionButtons({ onProductAdded }: ActionButtonsProps) {
       </button>
 
       {showModal && (
-        <AddProductModal onClose={() => setShowModal(false)} onAdd={handleAdd} />
+        <AddProductModal
+          onClose={() => setShowModal(false)}
+          onAdd={handleAdd}
+        />
       )}
     </div>
   );
-}
+};
+
+export default ActionButtons;

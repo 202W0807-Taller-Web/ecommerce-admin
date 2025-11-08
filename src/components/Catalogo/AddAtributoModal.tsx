@@ -1,22 +1,37 @@
 import React, { useState } from "react";
 
-interface AddAtributoModalProps {
-  onClose: () => void;
+interface Atributo {
+  id?: number;
+  atributo: string;
+  tipo: string;
+  valor: string;
 }
 
-const AddAtributoModal: React.FC<AddAtributoModalProps> = ({ onClose }) => {
+interface AddAtributoModalProps {
+  onClose: () => void;
+  onSubmit: (atributo: Atributo) => void;
+}
+
+const AddAtributoModal: React.FC<AddAtributoModalProps> = ({ onClose, onSubmit }) => {
   const [nombre, setNombre] = useState("");
   const [tipo, setTipo] = useState("");
   const [valor, setValor] = useState("");
   const [estado, setEstado] = useState("Activo");
 
   const handleSubmit = () => {
-    if (!nombre.trim() || !tipo.trim()) return;
+    if (!nombre.trim() || !tipo.trim()) {
+      alert("Por favor completa los campos obligatorios.");
+      return;
+    }
 
-    // Mostrar en consola los valores ingresados
-    console.log({ nombre, tipo, valor, estado });
+    const nuevoAtributo: Atributo = {
+      atributo: nombre,
+      tipo,
+      valor,
+    };
 
-    // Cerrar modal
+    // Enviar al padre
+    onSubmit(nuevoAtributo);
     onClose();
   };
 
@@ -41,7 +56,7 @@ const AddAtributoModal: React.FC<AddAtributoModalProps> = ({ onClose }) => {
           <label className="text-gray-700 font-medium text-right">Tipo:</label>
           <input
             type="text"
-            placeholder="Ej. Texto, Número, Booleano..."
+            placeholder="Ej. Texto, Número..."
             value={tipo}
             onChange={(e) => setTipo(e.target.value)}
             className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-gray-800 outline-none"
@@ -50,7 +65,7 @@ const AddAtributoModal: React.FC<AddAtributoModalProps> = ({ onClose }) => {
           <label className="text-gray-700 font-medium text-right">Valor:</label>
           <input
             type="text"
-            placeholder="Ej. Rojo, 42, M..."
+            placeholder="Ej. Rojo, 42..."
             value={valor}
             onChange={(e) => setValor(e.target.value)}
             className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-gray-800 outline-none"
@@ -67,7 +82,7 @@ const AddAtributoModal: React.FC<AddAtributoModalProps> = ({ onClose }) => {
           </select>
         </div>
 
-        {/* Botones centrados */}
+        {/* Botones */}
         <div className="flex justify-center gap-4 mt-6">
           <button
             onClick={onClose}
