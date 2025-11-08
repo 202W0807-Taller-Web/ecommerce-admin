@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { getProductos, createProducto } from "../../services/catalogo/ProductoService";
+import { getProductos, createProducto, deleteProducto } from "../../services/catalogo/ProductoService";
 import SearchBar from "../../components/Catalogo/SearchBar";
 import CategoryFilter from "../../components/Catalogo/CategoryFilter";
 import ActionButtons from "../../components/Catalogo/ActionButtons";
@@ -90,17 +90,21 @@ const CategoriasPage: React.FC = () => {
   };
 
   // 🔥 Cuando se confirma el modal
-  const handleConfirmDelete = () => {
-    if (productoSeleccionado) {
-      const p = productoSeleccionado as Producto;
-      console.log("Producto a eliminar:", {
-        id: p.id,
-        nombre: p.nombre,
-        descripcion: p.descripcion,
-      });
+  const handleConfirmDelete = async () => {
+    if (!productoSeleccionado) return;
+
+    const p = productoSeleccionado as Producto;
+    try {
+      await deleteProducto(p.id);
+      // refrescar lista
+      await fetchProductos();
+    } catch (err: unknown) {
+      console.error("Error eliminando producto:", err);
+      alert("Error al eliminar el producto. Revisa la consola.");
+    } finally {
+      setShowDeleteModal(false);
+      setProductoSeleccionado(null);
     }
-    setShowDeleteModal(false);
-    setProductoSeleccionado(null);
   };
 
   const categoriasUnicas = Array.from(

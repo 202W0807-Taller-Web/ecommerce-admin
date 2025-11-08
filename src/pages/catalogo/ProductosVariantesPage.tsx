@@ -103,7 +103,7 @@ const ProductosVariantesPage: React.FC = () => {
 
     try {
       console.log("Eliminando variante:", varianteToDelete.id);
-      await deleteVariante(varianteToDelete.id);
+      await deleteVariante(productoId, varianteToDelete.id);
       await fetchVariantes();
       setShowDeleteModal(false);
       setVarianteToDelete(null);
