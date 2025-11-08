@@ -98,3 +98,25 @@ export const deleteLocalById = async (
   const response = await API.delete(`/locales/${id}`);
   return response.data;
 };
+
+export const downloadLocalesByTipo = async (id: number, file_name: string) => {
+  const response = await API.get(`/locales/download-csv/${id}`, {
+    responseType: "blob",
+  });
+
+  // Crear un objeto URL temporal y forzar la descarga
+  const blob = new Blob([response.data], { type: "text/csv;charset=utf-8" });
+  const url = window.URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+
+  // Nombre del archivo (puedes hacerlo dinámico)
+  link.setAttribute("download", `${file_name}.csv`);
+
+  document.body.appendChild(link);
+  link.click();
+
+  // Limpieza
+  link.remove();
+  window.URL.revokeObjectURL(url);
+}

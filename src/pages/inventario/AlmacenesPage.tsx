@@ -11,7 +11,9 @@ import LocalFilterForm from "./components/local/LocalFilterForm";
 import { LocalCreateModal } from "./components/local/LocalCreateModal";
 import { LocalEditModal } from "./components/local/LocalEditModal";
 import type { LocalListItem } from "@services/inventario-envios/local/types/local";
+import { downloadAlmacenes } from "@services/inventario-envios/local/api/almacenes";
 import { useDeleteLocal } from "./hooks/local/useDeleteLocal";
+import FileAction from "@components/FileAction";
 
 export default function AlmacenesPage() {
   const navigate = useNavigate();
@@ -71,12 +73,15 @@ export default function AlmacenesPage() {
     <>
       <h1 className="text-3xl font-bold mb-4">Almacenes</h1>
       <LocalFilterForm disabled={isPending} filters={almacenesFilter} />
-      <Button
-        text="Añadir almacén"
-        variant="secondary"
-        icon={PlusCircle}
-        onClick={openCreateModal}
-      />
+      <div className="flex gap-4">
+        <FileAction text="Descargar CSV" variant="download" onClick={downloadAlmacenes}/>
+        <Button
+          text="Añadir almacén"
+          variant="secondary"
+          icon={PlusCircle}
+          onClick={openCreateModal}
+        />
+      </div>
       <LocalDataTable
         data={almacenes}
         page={pagination.page}
