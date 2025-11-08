@@ -64,6 +64,7 @@ const StockDataTable = <
   const getColumns = (): Column<T>[] => {
     if (variant === "global") {
       return [
+        { label: "Id", key: "id" },
         { label: "Producto", key: "nombre" },
         { label: "Stck. Disponible", key: "stk_disponible_global" },
         { label: "Stck. Reservado", key: "stk_reservado_global" },
@@ -87,6 +88,7 @@ const StockDataTable = <
 
     if (variant === "por-local") {
       return [
+        { label: "Id", key: "id_producto" },
         { label: "Producto", key: "producto" },
         { label: "Stck. Disponible", key: "stk_disponible" },
         { label: "Stck. Reservado", key: "stk_reservado" },
@@ -110,6 +112,7 @@ const StockDataTable = <
 
     // por-producto
     return [
+      { label: "Id", key: "id_almacen" },
       { label: "Local", key: "local" },
       { label: "Stck. Disponible", key: "stk_disponible" },
       { label: "Stck. Reservado", key: "stk_reservado" },
