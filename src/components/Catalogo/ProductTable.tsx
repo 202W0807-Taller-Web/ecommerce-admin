@@ -1,20 +1,24 @@
 import { Pencil, Trash2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
-interface Producto {
+interface ProductRow {
   id: number;
   imagen: string;
   producto: string;
+  descripcion?: string;
+  precio?: number;
+  sku?: string;
   estadoStk: string;
   stkTotal: number;
+  original?: any;
 }
 
 interface ProductTableProps {
-  productos?: Producto[];
+  productos?: ProductRow[];
   selectedIds?: number[];
   onSelect?: (id: number) => void;
   onSelectAll?: (selectAll: boolean) => void;
-  onDelete: (producto: Producto) => void;
+  onDelete: (producto: any) => void; // acepta el objeto original o el row
 }
 
 export default function ProductTable({
@@ -29,7 +33,7 @@ export default function ProductTable({
   const allSelected =
     selectedIds.length === productos.length && productos.length > 0;
 
-  const handleEditClick = (producto: Producto) => {
+  const handleEditClick = (producto: ProductRow) => {
     console.log(`Navegando a variantes de producto ${producto.id}`);
     navigate(`/catalogo/productos/${producto.id}/variantes`, {
       state: { nombreProducto: producto.producto },
@@ -88,7 +92,7 @@ export default function ProductTable({
                   className="w-10 h-10 rounded-full object-cover"
                 />
               </td>
-              <td className="py-3 px-4 text-gray-80OS font-medium">
+              <td className="py-3 px-4 text-gray-800 font-medium">
                 {p.producto}
               </td>
               <td
@@ -113,7 +117,7 @@ export default function ProductTable({
                 </button>
 
                 <button
-                  onClick={() => onDelete(p)}
+                  onClick={() => onDelete(p.original ?? p)}
                   className="p-2 rounded-full hover:bg-gray-100 transition"
                   title="Eliminar producto"
                 >
