@@ -1,31 +1,60 @@
 import FilterForm from "@components/FilterForm";
 import StockDataTable from "./components/stock/StockDataTable";
-import Input from "@components/Input";
-import Select from "@components/Select";
 import MovStockDataTable from "./components/stock/MovStockDataTable";
+import SelectCategoria from "./components/SelectCategoria";
+import { useProductosGlobal } from "./hooks/stock/useProductosGlobal";
+import FooterTable from "@components/FooterTable";
+import { useStockFilterUrl } from "./hooks/stock/useStockFilterUrl";
 
 export default function StockPage() {
+  const { page, categoria, setPage, setCategoria } = useStockFilterUrl();
+
+  const { data, isPending, isError } = useProductosGlobal({
+    page,
+    categoria,
+    limit: 4,
+  });
+
+  const productos = data?.data ?? [];
+  const pagination = data?.pagination ?? {
+    page: 1,
+    per_page: 4,
+    total: 0,
+    total_pages: 0,
+  };
+
+  const handleFilterSubmit = (filters: Record<string, string>) => {
+    setCategoria(filters.categoria || "");
+  };
+
+  const handleFilterReset = () => {
+    setCategoria("");
+  };
+
   return (
     <>
       <h1 className="text-3xl font-bold mb-4">Stock de productos</h1>
-      <FilterForm>
-        <Input
-          type="text"
-          name="nombre"
-          label="Nombre"
-          placeholder="Nombre de producto"
-        />
-        <Select
-          label="Categoría"
-          placeholder="Seleccione una categoría"
-          options={[
-            { value: "tecnologia", label: "Calzado" },
-            { value: "moda", label: "Ropa hombre" },
-            { value: "hogar", label: "Ropa mujer" },
-          ]}
-        />
+      <FilterForm
+        disabled={isPending}
+        onSubmit={handleFilterSubmit}
+        onReset={handleFilterReset}
+      >
+        <SelectCategoria defaultValue={categoria} />
       </FilterForm>
-      <StockDataTable page={1} limit={3} />
+      <StockDataTable
+        data={productos}
+        page={pagination.page}
+        limit={pagination.per_page}
+        isLoading={isPending}
+        isError={isError}
+      />
+      <FooterTable
+        page={pagination.page}
+        limit={pagination.per_page}
+        total_pages={pagination.total_pages}
+        total={pagination.total}
+        handlePageChange={setPage}
+      />
       <h2 className="text-2xl font-semibold text-gray-800 mt-6 mb-3 border-b pb-1">
         Historial de movimiento
       </h2>

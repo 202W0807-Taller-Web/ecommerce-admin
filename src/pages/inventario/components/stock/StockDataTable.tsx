@@ -6,27 +6,16 @@ import {
   ActionMenuCell,
 } from "@components/Table";
 import { StatusBadge } from "@components/Table";
-
-export interface StockListItem {
-  id: number;
-  imagen?: string;
-  sku: string;
-  producto: string;
-  categoria: string;
-  stock_disponible: number;
-  stock_reservado: number;
-  stock_total: number;
-  estado: "DISPONIBLE" | "BAJO STOCK" | "CERO";
-}
+import type { ProductoGlobal } from "@services/inventario-envios/inventory/types/producto";
 
 interface StockDataTableProps {
-  data?: StockListItem[];
+  data?: ProductoGlobal[];
   page: number;
   limit: number;
   isLoading?: boolean;
   isError?: boolean;
-  getRowKey?: (item: StockListItem) => string | number;
-  getActions?: (item: StockListItem) => any[];
+  getRowKey?: (item: ProductoGlobal) => string | number;
+  getActions?: (item: ProductoGlobal) => any[];
 }
 
 const StockDataTable = ({
@@ -39,39 +28,24 @@ const StockDataTable = ({
   getActions,
 }: StockDataTableProps) => {
   // Ejemplo data
-  const defaultData: StockListItem[] = [
+  const defaultData: ProductoGlobal[] = [
     {
       id: 1,
-      sku: "SKU-001",
-      producto: "Camisa Polo Azul",
-      categoria: "Ropa Hombre",
+      nombre: "Camisa Polo Azul",
       imagen: "https://i.ibb.co/Np8VbVv/producto-ropa.jpg",
-      stock_disponible: 25,
-      stock_reservado: 5,
-      stock_total: 30,
-      estado: "DISPONIBLE",
+      stk_disponible_global: 25,
+      stk_reservado_global: 5,
+      stk_total_global: 30,
+      stk_estado_global: "DISPONIBLE",
     },
     {
       id: 2,
-      sku: "SKU-002",
-      producto: "Zapatillas Urbanas",
-      categoria: "Calzado",
-      imagen: "https://i.ibb.co/6FRm7Y3/zapatillas.jpg",
-      stock_disponible: 4,
-      stock_reservado: 1,
-      stock_total: 5,
-      estado: "BAJO STOCK",
-    },
-    {
-      id: 3,
-      sku: "SKU-003",
-      producto: "Pantalón Jeans Negro",
-      categoria: "Ropa Hombre",
-      imagen: "https://i.ibb.co/8Nv94DH/jeans.jpg",
-      stock_disponible: 0,
-      stock_reservado: 0,
-      stock_total: 0,
-      estado: "CERO",
+      nombre: "Camisa Polo Rojo",
+      imagen: "https://i.ibb.co/Np8VbVv/producto-ropa.jpg",
+      stk_disponible_global: 25,
+      stk_reservado_global: 5,
+      stk_total_global: 30,
+      stk_estado_global: "BAJO STOCK",
     },
   ];
 
@@ -79,62 +53,60 @@ const StockDataTable = ({
 
   const columns: {
     label: string;
-    key: keyof StockListItem;
+    key: keyof ProductoGlobal;
     className?: string;
-    render?: (item: StockListItem, index: number) => React.ReactNode;
+    render?: (item: ProductoGlobal, index: number) => React.ReactNode;
   }[] = [
     {
       label: "#",
       key: "id",
       className: "w-12 text-center",
-      render: (_: StockListItem, idx: number) => (page - 1) * limit + idx + 1,
+      render: (_: ProductoGlobal, idx: number) => (page - 1) * limit + idx + 1,
     },
     {
       label: "Imagen",
       key: "imagen",
       className: "w-16 text-center",
-      render: (item: StockListItem) => (
+      render: (item: ProductoGlobal) => (
         <div className="relative flex justify-center items-center group">
           <img
             src={
               item.imagen || "https://i.ibb.co/6Y9G7mP/no-image-placeholder.png"
             }
-            alt={item.producto}
+            alt={item.nombre}
             className="w-8 h-8 rounded-full object-cover transition-transform duration-200 group-hover:scale-110"
           />
         </div>
       ),
     },
-    { label: "SKU", key: "sku" },
-    { label: "Producto", key: "producto" },
-    { label: "Categoría", key: "categoria" },
+    { label: "Producto", key: "nombre" },
     {
       label: "Stck. Disponible",
-      key: "stock_disponible",
+      key: "stk_disponible_global",
       className: "text-right",
     },
     {
       label: "Stck. Reservado",
-      key: "stock_reservado",
+      key: "stk_reservado_global",
       className: "text-right",
     },
     {
       label: "Stck. Total",
-      key: "stock_total",
+      key: "stk_total_global",
       className: "text-right",
     },
     {
       label: "Estado",
-      key: "estado",
+      key: "stk_estado_global",
       className: "text-center",
-      render: (item: StockListItem) => {
+      render: (item: ProductoGlobal) => {
         const variant =
-          item.estado === "DISPONIBLE"
+          item.stk_estado_global === "DISPONIBLE"
             ? "success"
-            : item.estado === "BAJO STOCK"
+            : item.stk_estado_global === "BAJO STOCK"
               ? "warning"
               : "danger";
-        return <StatusBadge label={item.estado} variant={variant} />;
+        return <StatusBadge label={item.stk_estado_global} variant={variant} />;
       },
     },
   ];
