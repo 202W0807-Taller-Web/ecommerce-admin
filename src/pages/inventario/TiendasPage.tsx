@@ -11,11 +11,17 @@ import Button from "@components/Button";
 import { PlusCircle, Eye, Pencil, Trash2 } from "lucide-react";
 import { LocalEditModal } from "./components/local/LocalEditModal";
 import type { LocalListItem } from "@services/inventario-envios/local/types/local";
-import { downloadTiendas } from "@services/inventario-envios/local/api/tiendas";
+import {
+  downloadTiendas,
+  uploadTiendas,
+} from "@services/inventario-envios/local/api/tiendas";
 import { useDeleteLocal } from "./hooks/local/useDeleteLocal";
 import FileAction from "@components/FileAction";
+import UploadCsvModal from "@components/UploadCsvModal";
+import { useQueryClient } from "@tanstack/react-query";
 
 export default function AlmacenesPage() {
+  const queryClient = useQueryClient();
   const navigate = useNavigate();
   const tiendasFilter = useLocalesFilterUrl();
   const { page, nombre, departamento, provincia, distrito, setPage } =
@@ -35,6 +41,7 @@ export default function AlmacenesPage() {
 
   const [isCreateOpen, openCreateModal, closeCreateModal] = useModal();
   const [isEditOpen, openEditModal, closeEditModal] = useModal();
+  const [isUploadOpen, openUploadModal, closeUploadModal] = useModal();
   const [selectedLocal, setSelectedLocal] = useState<LocalListItem | null>(
     null
   );
@@ -74,7 +81,16 @@ export default function AlmacenesPage() {
       <h1 className="text-3xl font-bold mb-4">Tiendas</h1>
       <LocalFilterForm disabled={isPending} filters={tiendasFilter} />
       <div className="flex gab-4">
-        <FileAction text="Descargar CSV" variant="download" onClick={downloadTiendas} />
+        <FileAction
+          text="Descargar CSV"
+          variant="download"
+          onClick={downloadTiendas}
+        />
+        <FileAction
+          text="Subir CSV"
+          variant="upload"
+          onClick={openUploadModal}
+        />
         <Button
           text="Añadir tienda"
           variant="secondary"
@@ -124,6 +140,17 @@ export default function AlmacenesPage() {
         isOpen={isEditOpen}
         closeModal={closeEditModal}
         localData={selectedLocal}
+      />
+      <UploadCsvModal
+        isOpen={isUploadOpen}
+        closeModal={closeUploadModal}
+        title="Importar tiendas desde CSV"
+        resourceName="tiendas"
+        uploadFn={uploadTiendas}
+        onSuccess={() => {
+          setPage(1); // reset to first page to see new data
+          queryClient.invalidateQueries({ queryKey: ["tiendas"] });
+        }}
       />
     </>
   );

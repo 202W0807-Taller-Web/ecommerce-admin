@@ -75,6 +75,11 @@ const LocalDataTable = ({
       ),
     },
     {
+      label: "Direccion",
+      key: "direccion",
+      render: (local: LocalListItem) => local.direccion ?? "",
+    },
+    {
       label: "Distrito",
       key: "distrito",
       render: (local: LocalListItem) => local.distrito?.nombre ?? "",

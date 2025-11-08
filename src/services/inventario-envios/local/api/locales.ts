@@ -119,4 +119,16 @@ export const downloadLocalesByTipo = async (id: number, file_name: string) => {
   // Limpieza
   link.remove();
   window.URL.revokeObjectURL(url);
-}
+};
+
+export const uploadLocalesByTipo = async (id: number, file: File) => {
+  const formData = new FormData();
+  formData.append("file", file);
+
+  const response = await API.post(`/locales/upload-csv/${id}`, formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+  return response.data;
+};

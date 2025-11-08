@@ -6,6 +6,7 @@ import {
   updateLocalById,
   deleteLocalById,
   downloadLocalesByTipo,
+  uploadLocalesByTipo,
 } from "./locales";
 import type { Root, RootSingleData } from "../../types/root";
 import type { LocalListItem, LocalBody, LocalUpdateBody } from "../types/local";
@@ -57,5 +58,9 @@ export const getAlmacenesFromTienda = async (
 };
 
 export const downloadTiendas = () => {
-  return downloadLocalesByTipo(TIPO_LOCAL_TIENDA, "tiendas")
-}
+  return downloadLocalesByTipo(TIPO_LOCAL_TIENDA, "tiendas");
+};
+
+export const uploadTiendas = (file: File) => {
+  return uploadLocalesByTipo(TIPO_LOCAL_TIENDA, file);
+};
