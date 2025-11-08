@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { X } from "lucide-react";
+import { useAtributos } from "@hooks/catalogo/useAtributos";
 
 interface AddVarianteModalProps {
   onClose: () => void;
@@ -10,136 +11,44 @@ const AddVarianteModal: React.FC<AddVarianteModalProps> = ({ onClose, onSubmit }
   const [sku, setSku] = useState("");
   const [precio, setPrecio] = useState("");
   const [imagen, setImagen] = useState<File | null>(null);
+  const [colorSeleccionado, setColorSeleccionado] = useState("");
+  const [tallaSeleccionada, setTallaSeleccionada] = useState("");
 
-  const [grupos, setGrupos] = useState([
-    {
-      key: "categoria",
-      label: "Categoría",
-      activo: false,
-      seleccionado: "",
-      opciones: [
-        { id: 1, label: "Ropa" },
-        { id: 2, label: "Calzado" },
-        { id: 3, label: "Accesorios" },
-      ],
-    },
-    {
-      key: "genero",
-      label: "Género",
-      activo: false,
-      seleccionado: "",
-      opciones: [
-        { id: 4, label: "Hombre" },
-        { id: 5, label: "Mujer" },
-        { id: 6, label: "Niños" },
-      ],
-    },
-    {
-      key: "deporte",
-      label: "Deporte",
-      activo: false,
-      seleccionado: "",
-      opciones: [
-        { id: 7, label: "Urbano" },
-        { id: 8, label: "Fútbol" },
-        { id: 9, label: "Correr" },
-        { id: 10, label: "Entrenar" },
-        { id: 11, label: "Tenis" },
-        { id: 12, label: "Básquet" },
-        { id: 13, label: "Vóleibol" },
-        { id: 14, label: "Acuático" },
-      ],
-    },
-    {
-      key: "tipo",
-      label: "Tipo",
-      activo: false,
-      seleccionado: "",
-      opciones: [
-        { id: 15, label: "Zapatilla" },
-        { id: 16, label: "Chimpunes" },
-        { id: 17, label: "Sandalias" },
-        { id: 18, label: "Polos" },
-        { id: 19, label: "Shorts" },
-        { id: 20, label: "Pantalones" },
-        { id: 21, label: "Casacas" },
-        { id: 22, label: "Ropa de baño" },
-        { id: 23, label: "Bolsas y mochilas" },
-        { id: 24, label: "Gorras" },
-        { id: 25, label: "Medias" },
-        { id: 26, label: "Guantes" },
-      ],
-    },
-    {
-      key: "colecciones",
-      label: "Colecciones",
-      activo: false,
-      seleccionado: "",
-      opciones: [{ id: 27, label: "Colección 2025" }],
-    },
-    {
-      key: "color",
-      label: "Color",
-      activo: false,
-      seleccionado: "",
-      opciones: [
-        { id: 28, label: "Negro" },
-        { id: 29, label: "Blanco" },
-        { id: 30, label: "Azul" },
-        { id: 31, label: "Verde" },
-        { id: 32, label: "Plomo" },
-        { id: 33, label: "Morado" },
-        { id: 34, label: "Rosado" },
-        { id: 35, label: "Rojo" },
-        { id: 36, label: "Celeste" },
-        { id: 37, label: "Naranja" },
-        { id: 38, label: "Amarillo" },
-        { id: 39, label: "Multicolor" },
-      ],
-    },
-    {
-      key: "talla",
-      label: "Talla",
-      activo: false,
-      seleccionado: "",
-      opciones: [
-        { id: 40, label: "S" },
-        { id: 41, label: "M" },
-        { id: 42, label: "L" },
-        { id: 43, label: "XL" },
-      ],
-    },
-  ]);
+  const { data: atributos, loading, error } = useAtributos();
 
-  const toggleGrupo = (idx: number) => {
-    const copy = [...grupos];
-    copy[idx].activo = !copy[idx].activo;
-    if (!copy[idx].activo) copy[idx].seleccionado = "";
-    setGrupos(copy);
-  };
+  const colores = useMemo(() => {
+    const colorAtributo = atributos?.find(
+      (attr) => attr.nombre.toLowerCase() === "color"
+    );
+    return colorAtributo?.atributoValores.map((av) => ({
+      id: av.id,
+      label: av.valor,
+    })) || [];
+  }, [atributos]);
 
-  const changeSeleccion = (idx: number, value: string) => {
-    const copy = [...grupos];
-    copy[idx].seleccionado = value;
-    setGrupos(copy);
-  };
+  const tallas = useMemo(() => {
+    const tallaAtributo = atributos?.find(
+      (attr) => attr.nombre.toLowerCase() === "talla"
+    );
+    return tallaAtributo?.atributoValores.map((av) => ({
+      id: av.id,
+      label: av.valor,
+    })) || [];
+  }, [atributos]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!sku.trim() || !precio.trim() || !imagen) {
-      alert("Por favor completa SKU, Precio e Imagen.");
+    if (!sku.trim() || !precio.trim() || !imagen || !colorSeleccionado || !tallaSeleccionada) {
+      alert("Por favor completa todos los campos requeridos.");
       return;
     }
 
     const formData = new FormData();
     formData.append("Sku", sku.trim());
     formData.append("Precio", precio.trim());
-    grupos.forEach((g) => {
-      if (g.activo && g.seleccionado) {
-        formData.append("IdsAtributosValores", g.seleccionado);
-      }
-    });
+    formData.append("IdsAtributosValores", colorSeleccionado);
+    formData.append("IdsAtributosValores", tallaSeleccionada);
     formData.append("Imagenes", imagen);
 
     console.log("📦 Datos enviados:");
@@ -149,6 +58,32 @@ const AddVarianteModal: React.FC<AddVarianteModalProps> = ({ onClose, onSubmit }
 
     onSubmit(formData);
   };
+
+  if (loading) {
+    return (
+      <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-50">
+        <div className="bg-white rounded-xl shadow-lg p-6">
+          <p>Cargando atributos...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-50">
+        <div className="bg-white rounded-xl shadow-lg p-6">
+          <p className="text-red-600">Error al cargar atributos: {error}</p>
+          <button
+            onClick={onClose}
+            className="mt-4 px-4 py-2 bg-gray-700 text-white rounded-lg"
+          >
+            Cerrar
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-50">
@@ -200,6 +135,48 @@ const AddVarianteModal: React.FC<AddVarianteModalProps> = ({ onClose, onSubmit }
               />
             </div>
 
+            {/* Color */}
+            <div>
+              <label className="block text-sm font-medium">Color</label>
+              <select
+                value={colorSeleccionado}
+                onChange={(e) => setColorSeleccionado(e.target.value)}
+                className="w-full border border-gray-300 rounded-lg px-3 py-2 mt-1"
+                disabled={colores.length === 0}
+              >
+                <option value="">Seleccione un color</option>
+                {colores.map((color) => (
+                  <option key={color.id} value={String(color.id)}>
+                    {color.label}
+                  </option>
+                ))}
+              </select>
+              {colores.length === 0 && (
+                <p className="text-sm text-gray-500 mt-1">No hay colores disponibles</p>
+              )}
+            </div>
+
+            {/* Talla */}
+            <div>
+              <label className="block text-sm font-medium">Talla</label>
+              <select
+                value={tallaSeleccionada}
+                onChange={(e) => setTallaSeleccionada(e.target.value)}
+                className="w-full border border-gray-300 rounded-lg px-3 py-2 mt-1"
+                disabled={tallas.length === 0}
+              >
+                <option value="">Seleccione una talla</option>
+                {tallas.map((talla) => (
+                  <option key={talla.id} value={String(talla.id)}>
+                    {talla.label}
+                  </option>
+                ))}
+              </select>
+              {tallas.length === 0 && (
+                <p className="text-sm text-gray-500 mt-1">No hay tallas disponibles</p>
+              )}
+            </div>
+
             {/* Imagen */}
             <div>
               <label className="block text-sm font-medium">Imagen</label>
@@ -209,44 +186,6 @@ const AddVarianteModal: React.FC<AddVarianteModalProps> = ({ onClose, onSubmit }
                 onChange={(e) => setImagen(e.target.files?.[0] ?? null)}
                 className="w-full border border-gray-300 rounded-lg px-3 py-2 mt-1"
               />
-            </div>
-
-            {/* Atributos */}
-            <div className="border-t border-gray-200 pt-4 mt-4">
-              <h3 className="text-lg font-semibold mb-2">
-                Atributos
-              </h3>
-
-              <div className="space-y-3">
-                {grupos.map((g, idx) => (
-                  <div key={g.key} className="flex items-center gap-3">
-                    <input
-                      type="checkbox"
-                      checked={g.activo}
-                      onChange={() => toggleGrupo(idx)}
-                      className="w-4 h-4"
-                    />
-                    <label className="text-sm font-medium w-36">{g.label}</label>
-                    <select
-                      disabled={!g.activo}
-                      value={g.seleccionado}
-                      onChange={(e) => changeSeleccion(idx, e.target.value)}
-                      className={`flex-1 border rounded-lg px-3 py-2 ${
-                        !g.activo
-                          ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                          : ""
-                      }`}
-                    >
-                      <option value="">Seleccione valor</option>
-                      {g.opciones.map((opt) => (
-                        <option key={opt.id} value={String(opt.id)}>
-                          {opt.label}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                ))}
-              </div>
             </div>
 
             {/* Botones */}
