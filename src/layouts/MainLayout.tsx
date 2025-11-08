@@ -27,7 +27,7 @@ const staticNavItems: NavItem[] = [
     label: "Catálogo",
     icon: <Truck />,
     children: [
-      { label: "Categorías", path: "/catalogo/categorias" },
+      { label: "Productos y variantes", path: "/catalogo/productos" },
       { label: "Atributos", path: "/catalogo/atributos" },
       { label: "Reseñas", path: "/catalogo/reseñas" },
     ],
