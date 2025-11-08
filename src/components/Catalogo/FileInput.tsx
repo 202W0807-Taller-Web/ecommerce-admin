@@ -23,7 +23,7 @@ export default function FileInput({ label, onChange }: FileInputProps) {
       <div className="flex items-center gap-3 flex-1 min-w-0">
         <label
           htmlFor="file-upload"
-          className="bg-gray-800 text-white px-4 py-1.5 rounded-md text-sm font-medium cursor-pointer hover:bg-gray-700 transition-colors"
+          className="bg-[var(--color-primary1)] text-white px-4 py-1.5 rounded-md text-sm font-medium cursor-pointer hover:bg-[var(--color-primary2)] transition-colors"
         >
           Seleccionar archivo
         </label>
@@ -40,5 +40,16 @@ export default function FileInput({ label, onChange }: FileInputProps) {
         </span>
       </div>
     </div>
+  );
+}
+
+export function FileInput({ onChange }: { onChange: (f: FileList | null) => void }) {
+  return (
+    <input
+      type="file"
+      accept="image/*"
+      onChange={(e) => onChange(e.target.files)}
+      className="w-full text-[var(--color-primary6)]"
+    />
   );
 }

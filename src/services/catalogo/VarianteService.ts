@@ -58,19 +58,54 @@ export const createVariante = async (
   return res.json() as Promise<Variante>;
 };
 
-export const deleteVariante = async (varianteId: number): Promise<void> => {
-  const endpoint = `/api/variantes/${varianteId}`;
-  console.log(`Eliminando variante desde: ${API_BASE_URL}${endpoint}`);
+export const deleteVariante = async (
+  productoIdOrVarianteId: number,
+  maybeVarianteId?: number
+): Promise<void> => {
 
-  const res = await fetch(`${API_BASE_URL}${endpoint}`, {
-    method: "DELETE",
-  });
+  let productoId: number | undefined;
+  let varianteId: number;
 
-  if (!res.ok) {
-    const t = await res.text();
-    console.error(`Error ${res.status}: ${t}`);
-    throw new Error(`Error al eliminar variante: ${res.status} ${t}`);
+  if (typeof maybeVarianteId === "number") {
+    productoId = productoIdOrVarianteId;
+    varianteId = maybeVarianteId;
+  } else {
+    varianteId = productoIdOrVarianteId;
+    productoId = undefined;
   }
 
-  console.log(`Variante ${varianteId} eliminada`);
+  const tryProductEndpoint = async () => {
+    if (typeof productoId !== "number") return false;
+    const endpoint = `/api/variantes/productos/${productoId}/variantes/${varianteId}`;
+    
+    const res = await fetch(`${API_BASE_URL}${endpoint}`, { method: "DELETE" });
+    if (res.ok) {
+      console.log(`Variante ${varianteId} del producto ${productoId} eliminada (product-scoped)`);
+      return true;
+    }
+    const t = await res.text();
+    console.warn(`Intento product-scoped falló: ${res.status} ${t}`);
+    return false;
+  };
+
+  const tryGenericEndpoint = async () => {
+    const endpoint = `/api/variantes/${varianteId}`;
+    
+    const res = await fetch(`${API_BASE_URL}${endpoint}`, { method: "DELETE" });
+    if (res.ok) {
+      console.log(`Variante ${varianteId} eliminada (genérica)`);
+      return true;
+    }
+    const t = await res.text();
+    throw new Error(`Error al eliminar variante: ${res.status} ${t}`);
+  };
+
+  if (typeof productoId === "number") {
+    const ok = await tryProductEndpoint();
+    if (ok) return;
+    await tryGenericEndpoint();
+    return;
+  }
+
+  await tryGenericEndpoint();
 };

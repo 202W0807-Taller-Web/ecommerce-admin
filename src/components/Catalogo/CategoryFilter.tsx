@@ -1,36 +1,26 @@
-import type { ChangeEventHandler } from "react";
-
-interface CategoryFilterProps {
-  categorias: string[];
-  value: string;
-  onChange: (value: string) => void;
-}
+import React from "react";
 
 export default function CategoryFilter({
   categorias,
   value,
   onChange,
-}: CategoryFilterProps) {
-  const handleChange: ChangeEventHandler<HTMLSelectElement> = (e) =>
-    onChange(e.target.value);
-
+}: {
+  categorias: string[];
+  value: string;
+  onChange: (s: string) => void;
+}) {
   return (
     <select
       value={value}
-      onChange={handleChange}
-      className="px-3 py-2 rounded-md border border-gray-300 bg-white cursor-pointer text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+      onChange={(e) => onChange(e.target.value)}
+      className="p-2 rounded border border-[var(--color-primary5)] bg-transparent text-[var(--color-primary6)]"
     >
       <option value="">Todas las categorías</option>
-      {categorias
-        .filter(
-          (cat): cat is string =>
-            typeof cat === "string" && cat.trim() !== ""
-        )
-        .map((cat) => (
-          <option key={cat} value={cat}>
-            {cat.charAt(0).toUpperCase() + cat.slice(1)}
-          </option>
-        ))}
+      {categorias.map((c) => (
+        <option key={c} value={c}>
+          {c}
+        </option>
+      ))}
     </select>
   );
 }

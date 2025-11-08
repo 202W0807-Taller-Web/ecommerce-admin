@@ -103,7 +103,7 @@ const ProductosVariantesPage: React.FC = () => {
 
     try {
       console.log("Eliminando variante:", varianteToDelete.id);
-      await deleteVariante(varianteToDelete.id);
+      await deleteVariante(productoId, varianteToDelete.id);
       await fetchVariantes();
       setShowDeleteModal(false);
       setVarianteToDelete(null);
@@ -121,7 +121,7 @@ const ProductosVariantesPage: React.FC = () => {
   ];
 
   return (
-    <div className="p-6 text-gray-800">
+    <div className="p-6 text-[var(--color-primary6)]">
       <Breadcrumbs items={breadcrumbItems} />
 
       <div className="flex justify-between items-center mb-4">
@@ -195,7 +195,7 @@ const ProductosVariantesPage: React.FC = () => {
                         <div className="flex items-center justify-center space-x-3">
                           <button
                             /* botón lápiz presente pero SIN funcionalidad por ahora */
-                            className="text-gray-600 hover:text-gray-800 p-1 rounded"
+                            className="text-gray-600 hover:text-[var(--color-primary6)] p-1 rounded"
                             title="Editar variante"
                           >
                             <Pencil size={18} />

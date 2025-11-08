@@ -18,17 +18,17 @@ export default function ProductRow({
   onSelect,
 }: ProductRowProps) {
   return (
-    <tr className="border-b hover:bg-gray-50 transition-colors">
+    <tr className="border-b hover:bg-[rgba(0,0,0,0.02)] transition-colors">
       <td className="p-3 text-center">
         <input
           type="checkbox"
           checked={isSelected}
           onChange={() => onSelect(product.id)}
-          className="w-4 h-4 text-blue-600 border-gray-400 rounded focus:ring-blue-500 cursor-pointer"
+          className="w-4 h-4 accent-[var(--color-primary1)]"
         />
       </td>
-      <td className="p-3">{product.producto}</td>
-      <td className="p-3">{product.categoria}</td>
+      <td className="p-3 text-[var(--color-primary6)]">{product.producto}</td>
+      <td className="p-3 text-[var(--color-primary5)]">{product.categoria}</td>
       <td className="p-3 text-center">{product.stkDisponible}</td>
       <td className="p-3 text-center">{product.stkTotal}</td>
     </tr>

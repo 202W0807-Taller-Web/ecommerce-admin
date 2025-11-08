@@ -76,7 +76,7 @@ const AddVarianteModal: React.FC<AddVarianteModalProps> = ({ onClose, onSubmit }
           <p className="text-red-600">Error al cargar atributos: {error}</p>
           <button
             onClick={onClose}
-            className="mt-4 px-4 py-2 bg-gray-700 text-white rounded-lg"
+            className="mt-4 px-4 py-2 bg-[var(--color-primary2)] text-white rounded-lg"
           >
             Cerrar
           </button>
@@ -99,7 +99,7 @@ const AddVarianteModal: React.FC<AddVarianteModalProps> = ({ onClose, onSubmit }
         <div className="flex justify-between items-center p-6 border-b border-gray-200">
           <h2 className="text-xl font-semibold">Agregar variante</h2>
           <button onClick={onClose}>
-            <X className="text-gray-600 hover:text-gray-800" />
+            <X className="text-gray-600 hover:text-[var(--color-primary6)]" />
           </button>
         </div>
 
@@ -193,13 +193,13 @@ const AddVarianteModal: React.FC<AddVarianteModalProps> = ({ onClose, onSubmit }
               <button
                 type="button"
                 onClick={onClose}
-                className="px-4 py-2 bg-gray-300 text-gray-800 rounded-lg hover:bg-gray-400"
+                className="px-4 py-2 bg-gray-300 text-[var(--color-primary6)] rounded-lg hover:bg-gray-400"
               >
                 Cancelar
               </button>
               <button
                 type="submit"
-                className="px-4 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-800"
+                className="px-4 py-2 bg-[var(--color-primary1)] text-white rounded-lg hover:bg-[var(--color-primary2)]"
               >
                 Guardar variante
               </button>

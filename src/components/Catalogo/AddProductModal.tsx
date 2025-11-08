@@ -93,29 +93,29 @@ const AddProductModal: React.FC<AddProductModalProps> = ({ onClose, onAdd }) => 
   return (
     <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
       <div className="bg-white p-6 rounded-lg w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-lg">
-        <h3 className="text-center font-semibold text-lg text-gray-800 mb-4">
+        <h3 className="text-center font-semibold text-lg text-[var(--color-primary6)] mb-4">
           Agregar nuevo producto
         </h3>
 
         {/* Nombre */}
         <div>
-          <label className="block text-gray-800 mb-1">Nombre:</label>
+          <label className="block text-[var(--color-primary6)] mb-1">Nombre:</label>
           <input
             type="text"
             placeholder="Ingrese el nombre del producto"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-800"
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--color-primary1)]"
           />
         </div>
 
         {/* Categoría */}
         <div>
-          <label className="block text-gray-800 mb-1">Categoría:</label>
+          <label className="block text-[var(--color-primary6)] mb-1">Categoría:</label>
           <select
             value={categoryId}
             onChange={(e) => setCategoryId(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md bg-white focus:outline-none focus:ring-2 focus:ring-gray-800"
+            className="w-full px-3 py-2 border border-gray-300 rounded-md bg-white focus:outline-none focus:ring-2 focus:ring-[var(--color-primary1)]"
             disabled={loading}
           >
             <option value="">Seleccione una categoría</option>
@@ -134,12 +134,12 @@ const AddProductModal: React.FC<AddProductModalProps> = ({ onClose, onAdd }) => 
 
         {/* Descripción */}
         <div>
-          <label className="block text-gray-800 mb-1">Descripción:</label>
+          <label className="block text-[var(--color-primary6)] mb-1">Descripción:</label>
           <textarea
             placeholder="Ingrese la descripción del producto"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-800"
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--color-primary1)]"
             rows={3}
           />
         </div>
@@ -148,11 +148,11 @@ const AddProductModal: React.FC<AddProductModalProps> = ({ onClose, onAdd }) => 
         <div className="grid grid-cols-2 gap-4">
           {atributosFiltrados.map(([nombre, valores]) => (
             <div key={nombre}>
-              <label className="block text-gray-800 mb-1">{nombre}:</label>
+              <label className="block text-[var(--color-primary6)] mb-1">{nombre}:</label>
               <select
                 value={atributosSeleccionados[nombre] || ""}
                 onChange={(e) => handleAtributoChange(nombre, e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md bg-white focus:outline-none focus:ring-2 focus:ring-gray-800"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md bg-white focus:outline-none focus:ring-2 focus:ring-[var(--color-primary1)]"
               >
                 <option value="">{`Seleccione ${nombre.toLowerCase()}`}</option>
                 {valores.map((v) => (
@@ -167,7 +167,7 @@ const AddProductModal: React.FC<AddProductModalProps> = ({ onClose, onAdd }) => 
 
         {/* Imagen */}
         <div>
-          <label className="block text-gray-800 mb-1 mt-2">Subir imagen:</label>
+          <label className="block text-[var(--color-primary6)] mb-1 mt-2">Subir imagen:</label>
           <div className="flex items-center gap-3 whitespace-nowrap overflow-hidden">
             <input
               type="file"
@@ -177,7 +177,7 @@ const AddProductModal: React.FC<AddProductModalProps> = ({ onClose, onAdd }) => 
             />
             <label
               htmlFor="file-upload"
-              className="cursor-pointer px-4 py-2 border border-gray-400 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 transition flex-shrink-0"
+              className="cursor-pointer px-4 py-2 border border-gray-400 bg-gray-200 text-[var(--color-primary6)] rounded-md hover:bg-gray-300 transition flex-shrink-0"
             >
               Seleccionar archivo
             </label>
@@ -197,7 +197,7 @@ const AddProductModal: React.FC<AddProductModalProps> = ({ onClose, onAdd }) => 
           </button>
           <button
             onClick={handleSubmit}
-            className="px-4 py-2 bg-gray-800 text-white rounded-md hover:bg-gray-700 transition"
+            className="px-4 py-2 bg-[var(--color-primary1)] text-white rounded-md hover:bg-[var(--color-primary2)] transition"
           >
             Guardar
           </button>

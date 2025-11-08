@@ -1,5 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { getProductos, createProducto } from "../../services/catalogo/ProductoService";
+import {
+  getProductos,
+  createProducto,
+  deleteProducto,
+} from "../../services/catalogo/ProductoService";
 import SearchBar from "../../components/Catalogo/SearchBar";
 import CategoryFilter from "../../components/Catalogo/CategoryFilter";
 import ActionButtons from "../../components/Catalogo/ActionButtons";
@@ -9,33 +13,9 @@ import Pagination from "../../components/Catalogo/Pagination";
 import AddProductModal from "../../components/Catalogo/AddProductModal";
 import ConfirmDeleteModal from "../../components/Catalogo/ConfirmDeleteModal";
 import Breadcrumbs from "@components/Catalogo/Breadcrumbs";
+import EditProductModal from "../../components/Catalogo/EditProductModal";
 
-interface ProductoAtributo {
-  atributoValor?: {
-    valor: string;
-  };
-}
-
-interface ProductoImagen {
-  imagen: string;
-  principal?: boolean;
-}
-
-interface ProductoVariante {
-  precio: number;
-  sku: string;
-}
-
-interface Producto {
-  id: number;
-  nombre: string;
-  descripcion: string;
-  productoAtributos?: ProductoAtributo[];
-  productoImagenes?: ProductoImagen[];
-  variantes?: ProductoVariante[];
-}
-
-const ITEMS_PER_PAGE = 5;
+const ITEMS_PER_PAGE = 8;
 
 const CategoriasPage: React.FC = () => {
   const [productos, setProductos] = useState<Producto[]>([]);
@@ -49,19 +29,21 @@ const CategoriasPage: React.FC = () => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [productoSeleccionado, setProductoSeleccionado] = useState<Producto | ProductRow | Record<string, unknown> | null>(null);
 
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [productoParaEditar, setProductoParaEditar] = useState<Producto | null>(null);
+
+  // notificaciones inline
+  const [notification, setNotification] = useState<{ type: "success" | "error" | "info"; text: string } | null>(null);
+
   const fetchProductos = async () => {
-    console.log("Intentando cargar productos desde el backend...");
     setLoading(true);
     setError(null);
     try {
-      const data = await getProductos();
-      console.log("Productos recibidos:", data);
-      setProductos(data);
-    } catch (err: unknown) {
-      if (err instanceof Error) {
-        setError(err.message || "Error al cargar productos");
-      }
-      console.error("Error al cargar productos:", err);
+      const res = await getProductos();
+      setProductos(res ?? []);
+    } catch (err) {
+      console.error(err);
+      setError("No se pudieron cargar los productos.");
     } finally {
       setLoading(false);
     }
@@ -73,46 +55,81 @@ const CategoriasPage: React.FC = () => {
 
   const handleAddProduct = async (formData: FormData) => {
     try {
-      const nuevo = await createProducto(formData);
-      console.log("Producto creado:", nuevo);
+      await createProducto(formData);
       await fetchProductos();
       setShowAddModal(false);
+      setNotification({ type: "success", text: "Producto creado correctamente." });
     } catch (error) {
       console.error("Error creando producto:", error);
-      alert("Hubo un error al crear el producto.");
+      setNotification({ type: "error", text: "Hubo un error al crear el producto." });
     }
   };
 
-  // 🔥 Cuando se presiona el tacho de basura
   const handleDeleteClick = (producto: Producto | ProductRow | Record<string, unknown>) => {
     setProductoSeleccionado(producto);
     setShowDeleteModal(true);
   };
 
-  // 🔥 Cuando se confirma el modal
-  const handleConfirmDelete = () => {
-    if (productoSeleccionado) {
-      const p = productoSeleccionado as Producto;
-      console.log("Producto a eliminar:", {
-        id: p.id,
-        nombre: p.nombre,
-        descripcion: p.descripcion,
-      });
+  const handleConfirmDelete = async () => {
+    if (!productoSeleccionado) {
+      setShowDeleteModal(false);
+      return;
     }
-    setShowDeleteModal(false);
-    setProductoSeleccionado(null);
+
+    const p = productoSeleccionado as Producto;
+    if (typeof p.id !== "number") {
+      setNotification({ type: "error", text: "ID de producto inválido." });
+      setShowDeleteModal(false);
+      setProductoSeleccionado(null);
+      return;
+    }
+
+    try {
+      await deleteProducto(p.id);
+      await fetchProductos();
+      setNotification({ type: "success", text: "Producto eliminado correctamente." });
+    } catch (err) {
+      console.error("Error eliminando producto:", err);
+      setNotification({ type: "error", text: "Hubo un error al eliminar el producto." });
+    } finally {
+      setShowDeleteModal(false);
+      setProductoSeleccionado(null);
+    }
+  };
+
+  const handleEditClick = (producto: ProductRow | Producto | Record<string, unknown>) => {
+    const p = (producto as Producto) ?? null;
+    if (!p || typeof (p as Producto).id !== "number") {
+      const maybeOriginal = (producto as ProductRow).original as Producto | undefined;
+      if (maybeOriginal && typeof maybeOriginal.id === "number") {
+        setProductoParaEditar(maybeOriginal);
+        setShowEditModal(true);
+        return;
+      }
+      return;
+    }
+    setProductoParaEditar(p);
+    setShowEditModal(true);
+  };
+
+  const handleCloseEdit = () => {
+    setShowEditModal(false);
+    setProductoParaEditar(null);
+  };
+
+  const handleAfterUpdate = async (updated?: Producto) => {
+    await fetchProductos();
+    if (updated) setNotification({ type: "success", text: "Producto actualizado correctamente." });
   };
 
   const categoriasUnicas = Array.from(
     new Set(
       productos
         .map((p) => {
-          const categoria = p.productoAtributos?.find(
-            (a) => a.atributoValor?.valor
-          )?.atributoValor?.valor;
-          return categoria || ''; // Return empty string instead of undefined
+          const val = p.productoAtributos?.[0]?.atributoValor?.valor ?? "";
+          return val;
         })
-        .filter((categoria) => categoria !== '') // Remove empty strings
+        .filter((categoria) => categoria !== "")
     )
   );
 
@@ -121,19 +138,11 @@ const CategoriasPage: React.FC = () => {
   }, [textFilter, categoriaFilter]);
 
   const productosFiltrados = productos.filter((p) => {
-    const categoria =
-      p.productoAtributos?.find((a) => a.atributoValor?.valor)?.atributoValor
-        ?.valor || "";
-
-    const cumpleTexto = p.nombre
-      .toLowerCase()
-      .includes(textFilter.toLowerCase());
-
-    const cumpleCategoria = categoriaFilter
-      ? categoria.toLowerCase() === categoriaFilter.toLowerCase()
-      : true;
-
-    return cumpleTexto && cumpleCategoria;
+    const matchesText =
+      p.nombre?.toLowerCase().includes(textFilter.toLowerCase()) ||
+      p.descripcion?.toLowerCase().includes(textFilter.toLowerCase());
+    const matchesCategoria = categoriaFilter ? (p.productoAtributos?.[0]?.atributoValor?.valor ?? "") === categoriaFilter : true;
+    return matchesText && matchesCategoria;
   });
 
   const totalPages = Math.ceil(productosFiltrados.length / ITEMS_PER_PAGE);
@@ -144,26 +153,28 @@ const CategoriasPage: React.FC = () => {
   );
 
   const handleSelect = (id: number) => {
-    setSelectedIds((prev) =>
-      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
-    );
+    setSelectedIds((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]));
   };
 
-  const handleSelectAll = () => {
-    const allSelected =
-      selectedIds.length === currentItems.length && currentItems.length > 0;
-    if (allSelected) setSelectedIds([]);
-    else setSelectedIds(currentItems.map((p) => p.id));
+  const handleSelectAll = (selectAll: boolean) => {
+    if (selectAll) setSelectedIds(currentItems.map((i) => i.id));
+    else setSelectedIds([]);
   };
 
   return (
-    <div className="p-6 text-gray-800">
+    <div className="p-6 text-[var(--color-primary6)]">
       <Breadcrumbs items={[{ label: "Productos" }]} />
       <h2 className="text-xl font-semibold mb-4">
         Productos en categoría: {categoriaFilter || "Todas"}
       </h2>
 
-      {/* Barra de búsqueda, filtro y acciones */}
+      {/* notificación inline */}
+      {notification && (
+        <div className={`mb-4 p-3 rounded ${notification.type === "success" ? "bg-green-50 text-green-800" : notification.type === "error" ? "bg-red-50 text-red-800" : "bg-blue-50 text-blue-800"}`}>
+          {notification.text}
+        </div>
+      )}
+
       <div className="flex justify-between items-center flex-wrap gap-3 mb-6">
         <SearchBar text={textFilter} onChange={setTextFilter} />
         <CategoryFilter
@@ -191,12 +202,13 @@ const CategoriasPage: React.FC = () => {
             sku: p.variantes?.[0]?.sku || "Sin SKU",
             estadoStk: "Disponible",
             stkTotal: p.variantes?.length || 0,
-            original: p, // se envía el objeto original
+            original: p,
           }))}
           selectedIds={selectedIds}
           onSelect={handleSelect}
           onSelectAll={handleSelectAll}
           onDelete={handleDeleteClick}
+          onEdit={handleEditClick}
         />
       )}
 
@@ -220,6 +232,15 @@ const CategoriasPage: React.FC = () => {
           message="¿Seguro que desea eliminar este producto?"
           onCancel={() => setShowDeleteModal(false)}
           onConfirm={handleConfirmDelete}
+        />
+      )}
+
+      {showEditModal && productoParaEditar && (
+        <EditProductModal
+          producto={productoParaEditar}
+          onClose={handleCloseEdit}
+          onUpdated={handleAfterUpdate}
+          onNotify={(n) => setNotification(n)}
         />
       )}
     </div>
