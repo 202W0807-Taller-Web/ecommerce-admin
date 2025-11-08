@@ -3,6 +3,7 @@ import { useParams, useLocation } from "react-router-dom";
 import {
   getVariantesByProductoId,
   createVariante,
+  deleteVariante,
 } from "../../services/catalogo/VarianteService";
 import SearchBar from "../../components/Catalogo/SearchBar";
 import Pagination from "../../components/Catalogo/Pagination";
@@ -88,20 +89,30 @@ const ProductosVariantesPage: React.FC = () => {
     setShowDeleteModal(true);
   };
 
-  const handleConfirmDelete = () => {
-    console.log("Eliminar variante:", varianteToDelete);
-    setShowDeleteModal(false);
-    setVarianteToDelete(null);
+  const handleConfirmDelete = async () => {
+    if (!varianteToDelete) return;
+
+    try {
+      console.log("Eliminando variante:", varianteToDelete.id);
+      await deleteVariante(varianteToDelete.id);
+      await fetchVariantes();
+      setShowDeleteModal(false);
+      setVarianteToDelete(null);
+    } catch (err) {
+      console.error("Error al eliminar la variante:", err);
+      alert("Hubo un error al eliminar la variante. Inténtalo de nuevo.");
+      setShowDeleteModal(false);
+      setVarianteToDelete(null);
+    }
   };
 
   const breadcrumbItems = [
-    { label: "Productos", path: "/catalogo/productos" },
+    { label: "Inicio", path: "/catalogo/productos" },
     { label: nombreProducto },
   ];
 
   return (
     <div className="p-6 text-gray-800">
-
       <Breadcrumbs items={breadcrumbItems} />
 
       <div className="flex justify-between items-center mb-4">
@@ -112,7 +123,6 @@ const ProductosVariantesPage: React.FC = () => {
 
       <div className="flex justify-between items-center flex-wrap gap-3 mb-6">
         <SearchBar text={textFilter} onChange={setTextFilter} />
-
         <button
           onClick={() => setShowAddModal(true)}
           className="bg-white text-black border px-4 py-2 rounded-lg hover:bg-gray-200"
@@ -214,7 +224,8 @@ const ProductosVariantesPage: React.FC = () => {
 
       {showDeleteModal && (
         <ConfirmDeleteModal
-          onClose={() => setShowDeleteModal(false)}
+          message="¿Seguro que desea eliminar esta variante?"
+          onCancel={() => setShowDeleteModal(false)}
           onConfirm={handleConfirmDelete}
         />
       )}
