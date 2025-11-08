@@ -5,8 +5,12 @@ import SelectCategoria from "./components/SelectCategoria";
 import { useProductosGlobal } from "./hooks/stock/useProductosGlobal";
 import FooterTable from "@components/FooterTable";
 import { useStockFilterUrl } from "./hooks/stock/useStockFilterUrl";
+import { Eye } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 export default function StockPage() {
+  const navigate = useNavigate();
+
   const { page, categoria, setPage, setCategoria } = useStockFilterUrl();
 
   const { data, isPending, isError } = useProductosGlobal({
@@ -48,6 +52,13 @@ export default function StockPage() {
         limit={pagination.per_page}
         isLoading={isPending}
         isError={isError}
+        getActions={item => [
+          {
+            label: "Ver detalles",
+            icon: <Eye className="w-4 h-4 text-blue-600" />,
+            onClick: () => navigate(`/inventario/productos/${item.id}`),
+          },
+        ]}
       />
       <FooterTable
         page={pagination.page}

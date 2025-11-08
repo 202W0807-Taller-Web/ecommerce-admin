@@ -80,7 +80,7 @@ export default function AlmacenesPage() {
     <>
       <h1 className="text-3xl font-bold mb-4">Almacenes</h1>
       <LocalFilterForm disabled={isPending} filters={almacenesFilter} />
-      <div className="flex gap-4">
+      <div className="flex gap-4 mb-4">
         <FileAction
           text="Descargar CSV"
           variant="download"

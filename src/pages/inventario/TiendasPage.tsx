@@ -80,14 +80,14 @@ export default function AlmacenesPage() {
     <>
       <h1 className="text-3xl font-bold mb-4">Tiendas</h1>
       <LocalFilterForm disabled={isPending} filters={tiendasFilter} />
-      <div className="flex gab-4">
+      <div className="flex gap-4 mb-4">
         <FileAction
           text="Descargar CSV"
           variant="download"
           onClick={downloadTiendas}
         />
         <FileAction
-          text="Subir CSV"
+          text="Importar CSV"
           variant="upload"
           onClick={openUploadModal}
         />

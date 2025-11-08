@@ -10,6 +10,7 @@ import AlmacenesPage from "./pages/inventario/AlmacenesPage";
 import TiendasPage from "./pages/inventario/TiendasPage";
 import TiendaDetailPage from "./pages/inventario/TiendaDetailPage";
 import StockPage from "./pages/inventario/StockPage";
+import StockDetailPage from "@pages/inventario/StockDetailPage";
 
 const router = createBrowserRouter([
   {
@@ -35,6 +36,10 @@ const router = createBrowserRouter([
       {
         path: "inventario/productos",
         element: <StockPage />,
+      },
+      {
+        path: "inventario/productos/:id",
+        element: <StockDetailPage />,
       },
     ],
   },

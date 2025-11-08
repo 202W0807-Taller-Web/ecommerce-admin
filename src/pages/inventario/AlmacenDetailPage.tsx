@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useLocal } from "./hooks/local/useLocal";
 import LocalDescripcion from "./components/local/LocalDescripcion";
 import LocalDataTable from "./components/local/LocalDataTable";
@@ -6,7 +6,7 @@ import { useQuery } from "@tanstack/react-query";
 import { getTiendasFromAlmacen } from "@services/inventario-envios/local/api/almacenes";
 import StockDataTable from "./components/stock/StockDataTable";
 import Button from "@components/Button";
-import { Pencil } from "lucide-react";
+import { Eye, Pencil } from "lucide-react";
 import { useModal } from "@hooks/useModal";
 import { LocalEditModal } from "./components/local/LocalEditModal";
 import { useProductosPorLocal } from "./hooks/stock/useProductosPorLocal";
@@ -14,6 +14,7 @@ import FooterTable from "@components/FooterTable";
 import { useState } from "react";
 
 export default function AlmacenDetailPage() {
+  const navigate = useNavigate();
   const { id } = useParams();
   const [page, setPage] = useState<number>(1);
 
@@ -100,6 +101,14 @@ export default function AlmacenDetailPage() {
         page={page}
         isLoading={isLoadingProductos}
         isError={isErrorProductos}
+        getActions={item => [
+          {
+            label: "Ver detalles",
+            icon: <Eye className="w-4 h-4 text-blue-600" />,
+            onClick: () =>
+              navigate(`/inventario/productos/${item.id_producto}`),
+          },
+        ]}
       />
       <FooterTable
         page={pagination.page}
