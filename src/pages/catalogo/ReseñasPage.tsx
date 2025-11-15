@@ -1,198 +1,135 @@
 import React, { useState } from "react";
-import { Search } from "lucide-react";
-import ReseñaRow from "../../components/Reseña/ReseñaRow";
+import { Search, Eye, Star } from "lucide-react";
 
-type Producto = {
-  id: number;
-  nombre: string;
-  imagen: string;
-  nroReseñas: number;
-  valoracion: number;
-};
-
-const productos: Producto[] = [
-  {
-    id: 1,
-    nombre: "Zapatillas Nike Air Zoom Pegasus 40",
-    imagen:
-      "https://sudamericasport.com.pe/cdn/shop/files/000000097889--1_2000x2000.jpg?v=1697053367",
-    nroReseñas: 240,
-    valoracion: 4.6,
-  },
-  {
-    id: 2,
-    nombre: "Balón de Fútbol Adidas Al Rihla Pro",
-    imagen:
-      "https://cloud.mideporte.pe/wp-content/uploads/2023/05/H57786_1.webp",
-    nroReseñas: 180,
-    valoracion: 4.8,
-  },
-  {
-    id: 3,
-    nombre: "Guantes de Entrenamiento Under Armour",
-    imagen:
-      "https://home.ripley.com.pe/Attachment/WOP_5/2020264152558/2020264152558_2.jpg",
-    nroReseñas: 96,
-    valoracion: 4.3,
-  },
-  {
-    id: 4,
-    nombre: "Botella Deportiva Reutilizable Hydro Flask",
-    imagen: "https://media.falabella.com.pe/falabellaPE/20227113_1/public",
-    nroReseñas: 132,
-    valoracion: 4.7,
-  },
-  {
-    id: 5,
-    nombre: "Mochila Deportiva Nike Brasilia",
-    imagen:
-      "https://www.nike.com.pe/on/demandware.static/-/Sites-catalog-equinox/default/dw88fc3d66/images/hi-res/196154143929_1_20240208120000-mrtPeru.jpeg",
-    nroReseñas: 210,
-    valoracion: 4.5,
-  },
-];
+interface ReviewProduct {
+  id: string;
+  name: string;
+  image: string;
+  reviewsCount: number;
+  rating: number;
+}
 
 const ReseñasPage: React.FC = () => {
-  const [busqueda, setBusqueda] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
 
-  const productosFiltrados = productos.filter((p) =>
-    p.nombre.toLowerCase().includes(busqueda.toLowerCase())
+  const products: ReviewProduct[] = [
+    {
+      id: "1",
+      name: "Pelota de Fútbol Adidas",
+      image: "/img/products/pelota.png",
+      reviewsCount: 34,
+      rating: 4.8,
+    },
+    {
+      id: "2",
+      name: "Guantes de Box Everlast",
+      image: "/img/products/guantes.png",
+      reviewsCount: 19,
+      rating: 4.6,
+    },
+    {
+      id: "3",
+      name: "Bicicleta de Montaña Trek",
+      image: "/img/products/bicicleta.png",
+      reviewsCount: 12,
+      rating: 4.9,
+    },
+    {
+      id: "4",
+      name: "Raqueta de Tenis Wilson Pro",
+      image: "/img/products/raqueta.png",
+      reviewsCount: 22,
+      rating: 4.7,
+    },
+    {
+      id: "5",
+      name: "Zapatillas Running Nike Air",
+      image: "/img/products/zapatillas.png",
+      reviewsCount: 41,
+      rating: 4.8,
+    },
+  ];
+
+  const filteredProducts = products.filter((p) =>
+    p.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (
-    <div
-      style={{
-        backgroundColor: "#f3f4f6",
-        minHeight: "100vh",
-        padding: "24px",
-      }}
-    >
-      <h2
-        style={{
-          fontSize: 22,
-          fontWeight: 600,
-          color: "#2c2c2c",
-          marginBottom: 16,
-        }}
-      >
-        Gestionar reseñas
-      </h2>
+    <div className="w-full px-8 py-6">
+      <h1 className="text-2xl font-semibold mb-6">Gestionar reseñas</h1>
 
       {/* Barra de búsqueda */}
-      <div
-        style={{
-          position: "relative",
-          marginBottom: 24,
-          width: "100%",
-          maxWidth: 320,
-        }}
-      >
-        <Search
-          size={18}
-          color="#9ca3af"
-          style={{
-            position: "absolute",
-            left: 10,
-            top: "50%",
-            transform: "translateY(-50%)",
-          }}
-        />
+      <div className="relative w-80 mb-6">
+        <Search className="absolute left-3 top-2.5 text-gray-500" size={18} />
         <input
           type="text"
           placeholder="Buscar producto"
-          value={busqueda}
-          onChange={(e) => setBusqueda(e.target.value)}
-          style={{
-            width: "100%",
-            padding: "8px 12px 8px 34px",
-            borderRadius: 8,
-            border: "1px solid #d1d5db",
-            fontSize: 14,
-            backgroundColor: "white",
-          }}
+          className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md outline-none focus:border-gray-400"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
         />
       </div>
 
       {/* Tabla */}
-      <div
-        style={{
-          borderRadius: 12,
-          overflow: "hidden",
-        }}
-      >
-        <table
+      <div className="bg-white rounded-lg shadow-sm border border-gray-200">
+
+        {/* Encabezados */}
+        <div
+          className="grid px-6 py-3 border-b border-gray-200 text-sm font-medium text-gray-600"
           style={{
-            width: "100%",
-            borderCollapse: "collapse",
-            backgroundColor: "#f3f4f6",
+            gridTemplateColumns: "70px 2fr 1fr 1fr 1fr 80px",
           }}
         >
-          <thead>
-            <tr
-              style={{
-                backgroundColor: "#f3f4f6",
-                borderBottom: "1px solid #2c2c2c", 
-              }}
-            >
-              <th
-                style={{
-                  textAlign: "left",
-                  padding: "14px 16px",
-                  fontWeight: 600,
-                  fontSize: 14,
-                  color: "#2c2c2c",
-                }}
-              >
-                Producto
-              </th>
-              <th
-                style={{
-                  textAlign: "center",
-                  padding: 14,
-                  fontWeight: 600,
-                  fontSize: 14,
-                  color: "#2c2c2c",
-                }}
-              >
-                Nro. reseñas
-              </th>
-              <th
-                style={{
-                  textAlign: "center",
-                  padding: 14,
-                  fontWeight: 600,
-                  fontSize: 14,
-                  color: "#2c2c2c",
-                }}
-              >
-                Valoración
-              </th>
-              <th
-                style={{
-                  textAlign: "center",
-                  padding: 14,
-                  fontWeight: 600,
-                  fontSize: 14,
-                  color: "#2c2c2c",
-                }}
-              >
-                Acción
-              </th>
-            </tr>
-          </thead>
+          <p></p>
+          <p>Producto</p>
+          <p>Nro. reseñas</p>
+          <p>Número de reseñas</p>
+          <p>Valoración</p>
+          <p>Acción</p>
+        </div>
 
-          <tbody>
-            {productosFiltrados.map((p) => (
-              <ReseñaRow
-                key={p.id}
-                imagen={p.imagen}
-                nombre={p.nombre}
-                nroReseñas={p.nroReseñas}
-                valoracion={p.valoracion}
+        {/* Filas */}
+        {filteredProducts.map((product) => (
+          <div
+            key={product.id}
+            className="grid items-center px-6 py-4 text-sm border-b border-gray-100"
+            style={{
+              gridTemplateColumns: "70px 2fr 1fr 1fr 1fr 80px",
+            }}
+          >
+            {/* Imagen */}
+            <div className="flex justify-center">
+              <img
+                src={product.image}
+                alt={product.name}
+                className="w-12 h-12 object-contain"
               />
-            ))}
-          </tbody>
-        </table>
+            </div>
+
+            {/* Producto */}
+            <span className="font-medium">{product.name}</span>
+
+            {/* Nro. reseñas */}
+            <p>{product.reviewsCount}</p>
+
+            {/* Número de reseñas */}
+            <p>{product.reviewsCount}</p>
+
+            {/* Valoración */}
+            <div className="flex items-center gap-1">
+              <span>{product.rating.toFixed(1)}</span>
+              <Star size={16} className="text-yellow-400 fill-yellow-400" />
+            </div>
+
+            {/* Acción */}
+            <button
+              className="hover:opacity-70 transition"
+              onClick={() => window.location.href = `/catalogo/reseñas/${product.id}`}
+            >
+              <Eye size={20} className="text-gray-800" />
+            </button>
+          </div>
+        ))}
       </div>
     </div>
   );
