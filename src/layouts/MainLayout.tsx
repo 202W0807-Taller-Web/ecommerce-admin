@@ -30,6 +30,7 @@ const staticNavItems: NavItem[] = [
       { label: "Productos y variantes", path: "/catalogo/productos" },
       { label: "Atributos", path: "/catalogo/atributos" },
       { label: "Reseñas", path: "/catalogo/reseñas" },
+      { label: "Promociones", path: "/catalogo/promociones" },
     ],
   },
 ];

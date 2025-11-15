@@ -1,5 +1,6 @@
 import { fetchUrl } from "./api";
 import type { Variante } from "../../types/catalogo/Variantes";
+import type { Producto } from "../../types/catalogo/Productos";
 
 
 const API_BASE_URL =
@@ -14,9 +15,10 @@ export const getVariantesByProductoId = async (
     const endpoint = `/api/variantes/productos/${productoId}/variantes`;
     console.log(`📡 Obteniendo variantes desde: ${endpoint}`);
     return await fetchUrl<Variante[]>(endpoint);
-  } catch (err) {
+  } catch (err: unknown) {
     console.warn(
-      "⚠️ No se pudo obtener variantes directamente, intentando desde productos..."
+      "⚠️ No se pudo obtener variantes directamente, intentando desde productos...",
+      err
     );
     return await getVariantesFromProductos(productoId);
   }
@@ -27,7 +29,11 @@ export const getVariantesFromProductos = async (
 ): Promise<Variante[]> => {
   const endpoint = `/api/productos`;
   console.log(`📡 Obteniendo productos desde: ${endpoint}`);
-  const productos = await fetchUrl<any[]>(endpoint);
+  interface ProductoWithVariantes extends Producto {
+    variantes?: Variante[];
+  }
+
+  const productos = await fetchUrl<ProductoWithVariantes[]>(endpoint);
   const producto = productos.find((p) => p.id === productoId);
   if (!producto) {
     console.warn(`❌ Producto con ID ${productoId} no encontrado`);
@@ -58,19 +64,55 @@ export const createVariante = async (
   return res.json() as Promise<Variante>;
 };
 
-export const deleteVariante = async (varianteId: number): Promise<void> => {
-  const endpoint = `/api/variantes/${varianteId}`;
-  console.log(`Eliminando variante desde: ${API_BASE_URL}${endpoint}`);
 
-  const res = await fetch(`${API_BASE_URL}${endpoint}`, {
-    method: "DELETE",
-  });
+export const deleteVariante = async (
+  productoIdOrVarianteId: number,
+  maybeVarianteId?: number
+): Promise<void> => {
 
-  if (!res.ok) {
-    const t = await res.text();
-    console.error(`Error ${res.status}: ${t}`);
-    throw new Error(`Error al eliminar variante: ${res.status} ${t}`);
+  let productoId: number | undefined;
+  let varianteId: number;
+
+  if (typeof maybeVarianteId === "number") {
+    productoId = productoIdOrVarianteId;
+    varianteId = maybeVarianteId;
+  } else {
+    varianteId = productoIdOrVarianteId;
+    productoId = undefined;
   }
 
-  console.log(`Variante ${varianteId} eliminada`);
+  const tryProductEndpoint = async () => {
+    if (typeof productoId !== "number") return false;
+    const endpoint = `/api/variantes/productos/${productoId}/variantes/${varianteId}`;
+    console.log(`Intentando eliminar variante (product-scoped): ${API_BASE_URL}${endpoint}`);
+    const res = await fetch(`${API_BASE_URL}${endpoint}`, { method: "DELETE" });
+    if (res.ok) {
+      console.log(`Variante ${varianteId} del producto ${productoId} eliminada (product-scoped)`);
+      return true;
+    }
+    const t = await res.text();
+    console.warn(`Intento product-scoped falló: ${res.status} ${t}`);
+    return false;
+  };
+
+  const tryGenericEndpoint = async () => {
+    const endpoint = `/api/variantes/${varianteId}`;
+    console.log(`Intentando eliminar variante (genérica): ${API_BASE_URL}${endpoint}`);
+    const res = await fetch(`${API_BASE_URL}${endpoint}`, { method: "DELETE" });
+    if (res.ok) {
+      console.log(`Variante ${varianteId} eliminada (genérica)`);
+      return true;
+    }
+    const t = await res.text();
+    throw new Error(`Error al eliminar variante: ${res.status} ${t}`);
+  };
+
+  if (typeof productoId === "number") {
+    const ok = await tryProductEndpoint();
+    if (ok) return;
+    await tryGenericEndpoint();
+    return;
+  }
+
+  await tryGenericEndpoint();
 };

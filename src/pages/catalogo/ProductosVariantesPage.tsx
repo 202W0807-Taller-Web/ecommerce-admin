@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useParams, useLocation } from "react-router-dom";
+import type { Variante } from "../../types/catalogo/Variantes";
 import {
   getVariantesByProductoId,
   createVariante,
@@ -9,7 +10,7 @@ import SearchBar from "../../components/Catalogo/SearchBar";
 import Pagination from "../../components/Catalogo/Pagination";
 import AddVarianteModal from "../../components/Catalogo/AddVarianteModal";
 import ConfirmDeleteModal from "../../components/Catalogo/ConfirmDeleteModal";
-import { Trash2 } from "lucide-react";
+import { Trash2, Pencil } from "lucide-react";
 import Breadcrumbs from "../../components/Catalogo/Breadcrumbs";
 
 const ITEMS_PER_PAGE = 6;
@@ -19,9 +20,16 @@ const ProductosVariantesPage: React.FC = () => {
   const location = useLocation();
   const productoId = Number(id);
 
-  const nombreProducto = (location.state as any)?.nombreProducto || "Producto";
+  const locationState = location.state as { nombreProducto?: string } | undefined;
+  const nombreProducto = locationState?.nombreProducto ?? "Producto";
 
-  const [variantes, setVariantes] = useState<any[]>([]);
+  type ExtendedVariante = Variante & {
+    atributos?: { valor: string }[];
+    imagenes?: string[];
+    original?: Record<string, unknown>;
+  };
+
+  const [variantes, setVariantes] = useState<ExtendedVariante[]>([]);
   const [textFilter, setTextFilter] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
@@ -29,28 +37,28 @@ const ProductosVariantesPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [showAddModal, setShowAddModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [varianteToDelete, setVarianteToDelete] = useState<any | null>(null);
+  const [varianteToDelete, setVarianteToDelete] = useState<ExtendedVariante | null>(null);
 
-  const fetchVariantes = async () => {
+  const fetchVariantes = useCallback(async () => {
     if (!productoId) return;
     setLoading(true);
     setError(null);
     try {
       const data = await getVariantesByProductoId(productoId);
-      setVariantes(data);
-    } catch (err: any) {
-      setError(err.message || "Error al cargar variantes");
+      setVariantes(data as ExtendedVariante[]);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : String(err) || "Error al cargar variantes");
     } finally {
       setLoading(false);
     }
-  };
-
-  useEffect(() => {
-    fetchVariantes();
   }, [productoId]);
 
+  useEffect(() => {
+    void fetchVariantes();
+  }, [fetchVariantes]);
+
   const variantesFiltradas = variantes.filter((v) =>
-    v.atributos?.some((a: any) =>
+    v.atributos?.some((a) =>
       a.valor.toLowerCase().includes(textFilter.toLowerCase())
     )
   );
@@ -79,12 +87,13 @@ const ProductosVariantesPage: React.FC = () => {
       await createVariante(productoId, formData);
       setShowAddModal(false);
       await fetchVariantes();
-    } catch (err) {
+    } catch (err: unknown) {
+      console.error(err);
       alert("Error al crear la variante. Revisa la consola.");
     }
   };
 
-  const handleOpenDeleteModal = (variante: any) => {
+  const handleOpenDeleteModal = (variante: ExtendedVariante) => {
     setVarianteToDelete(variante);
     setShowDeleteModal(true);
   };
@@ -94,11 +103,11 @@ const ProductosVariantesPage: React.FC = () => {
 
     try {
       console.log("Eliminando variante:", varianteToDelete.id);
-      await deleteVariante(varianteToDelete.id);
+      await deleteVariante(productoId, varianteToDelete.id);
       await fetchVariantes();
       setShowDeleteModal(false);
       setVarianteToDelete(null);
-    } catch (err) {
+    } catch (err: unknown) {
       console.error("Error al eliminar la variante:", err);
       alert("Hubo un error al eliminar la variante. Inténtalo de nuevo.");
       setShowDeleteModal(false);
@@ -171,24 +180,35 @@ const ProductosVariantesPage: React.FC = () => {
                         onChange={() => handleSelect(v.id)}
                       />
                     </td>
-                    <td className="p-3">
-                      <img
-                        src={v.imagenes?.[0]}
-                        alt="Variante"
-                        className="w-16 h-16 object-cover rounded-md border"
-                      />
-                    </td>
-                    <td className="p-3">
-                      {v.atributos?.map((a: any) => a.valor).join(" - ") || "—"}
-                    </td>
-                    <td className="p-3">S/ {v.precio?.toFixed(2)}</td>
+                        <td className="p-3">
+                          <img
+                            src={v.imagenes?.[0]}
+                            alt="Variante"
+                            className="w-16 h-16 object-cover rounded-md border"
+                          />
+                        </td>
+                        <td className="p-3">
+                          {v.atributos?.map((a) => a.valor).join(" - ") || "—"}
+                        </td>
+                        <td className="p-3">S/ {v.precio?.toFixed(2)}</td>
                     <td className="p-3 text-center">
-                      <button
-                        onClick={() => handleOpenDeleteModal(v)}
-                        className="text-red-600 hover:text-red-800"
-                      >
-                        <Trash2 size={20} />
-                      </button>
+                        <div className="flex items-center justify-center space-x-3">
+                          <button
+                            /* botón lápiz presente pero SIN funcionalidad por ahora */
+                            className="text-gray-600 hover:text-gray-800 p-1 rounded"
+                            title="Editar variante"
+                          >
+                            <Pencil size={18} />
+                          </button>
+
+                          <button
+                            onClick={() => handleOpenDeleteModal(v)}
+                            className="text-red-600 hover:text-red-800"
+                            title="Eliminar variante"
+                          >
+                            <Trash2 size={20} />
+                          </button>
+                        </div>
                     </td>
                   </tr>
                 ))

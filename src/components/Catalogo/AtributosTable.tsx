@@ -53,11 +53,12 @@ const AtributosTable: React.FC<AtributosTableProps> = ({
   });
 
   // Seleccionar automáticamente el primer atributo cuando cambie la lista
+  // Incluimos `selectedAtributo` en las dependencias para satisfacer eslint
   useEffect(() => {
     if (atributos.length > 0 && !selectedAtributo) {
       setSelectedAtributo(atributos[0]);
     }
-  }, [atributos]);
+  }, [atributos, selectedAtributo]);
 
   const handleCreateAtributo = () => {
     if (nuevoAtributo.trim()) {

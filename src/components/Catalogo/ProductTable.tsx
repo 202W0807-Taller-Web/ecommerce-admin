@@ -1,7 +1,8 @@
-import { Pencil, Trash2 } from "lucide-react";
+import { Eye, Pencil, Trash2 } from "lucide-react";
+import type { Producto } from "../../types/catalogo/Productos";
 import { useNavigate } from "react-router-dom";
 
-interface ProductRow {
+export interface ProductRow {
   id: number;
   imagen: string;
   producto: string;
@@ -10,7 +11,7 @@ interface ProductRow {
   sku?: string;
   estadoStk: string;
   stkTotal: number;
-  original?: any;
+  original?: Producto | Record<string, unknown>;
 }
 
 interface ProductTableProps {
@@ -18,7 +19,7 @@ interface ProductTableProps {
   selectedIds?: number[];
   onSelect?: (id: number) => void;
   onSelectAll?: (selectAll: boolean) => void;
-  onDelete: (producto: any) => void; // acepta el objeto original o el row
+  onDelete: (producto: ProductRow | Producto) => void;
 }
 
 export default function ProductTable({
@@ -33,7 +34,7 @@ export default function ProductTable({
   const allSelected =
     selectedIds.length === productos.length && productos.length > 0;
 
-  const handleEditClick = (producto: ProductRow) => {
+  const handleViewClick = (producto: ProductRow) => {
     console.log(`Navegando a variantes de producto ${producto.id}`);
     navigate(`/catalogo/productos/${producto.id}/variantes`, {
       state: { nombreProducto: producto.producto },
@@ -107,22 +108,32 @@ export default function ProductTable({
               <td className="py-3 px-4 text-gray-700 font-semibold">
                 {p.stkTotal}
               </td>
-              <td className="py-3 px-4 flex items-center space-x-2">
-                <button
-                  onClick={() => handleEditClick(p)}
-                  className="p-2 rounded-full hover:bg-gray-100 transition"
-                  title="Ver variantes"
-                >
-                  <Pencil className="w-5 h-5 text-gray-500 hover:text-gray-700" />
-                </button>
+              <td className="py-3 px-4 text-center">
+                <div className="flex items-center justify-center space-x-2">
+                  <button
+                    onClick={() => handleViewClick(p)}
+                    className="p-2 rounded-full hover:bg-gray-100 transition"
+                    title="Ver variantes"
+                  >
+                    <Eye className="w-5 h-5 text-gray-500 hover:text-gray-700" />
+                  </button>
 
-                <button
-                  onClick={() => onDelete(p.original ?? p)}
-                  className="p-2 rounded-full hover:bg-gray-100 transition"
-                  title="Eliminar producto"
-                >
-                  <Trash2 className="w-5 h-5 text-red-500 hover:text-red-700" />
-                </button>
+                  <button
+                    /* botón lápiz presente pero SIN funcionalidad por ahora */
+                    className="p-2 rounded-full hover:bg-gray-100 transition"
+                    title="Editar producto"
+                  >
+                    <Pencil className="w-5 h-5 text-gray-500 hover:text-gray-700" />
+                  </button>
+
+                  <button
+                    onClick={() => onDelete((p.original as Producto) ?? p)}
+                    className="p-2 rounded-full hover:bg-gray-100 transition"
+                    title="Eliminar producto"
+                  >
+                    <Trash2 className="w-5 h-5 text-red-500 hover:text-red-700" />
+                  </button>
+                </div>
               </td>
             </tr>
           ))}
