@@ -18,9 +18,9 @@ const TestPromociones: React.FC = () => {
   const { data: promocionById } = usePromocionById(promoId);
 
   // --- Hooks POST / PUT / DELETE ---
-  const { postData: createPromocionFn, loading: creating, error: errorCreate } = useCreatePromocion();
-  const { putData: updatePromocionFn, loading: updating, error: errorUpdate } = useUpdatePromocion();
-  const { deleteData: deletePromocionFn, loading: deleting, error: errorDelete, success: deleteSuccess } = useDeletePromocion();
+  const { postData: createPromocionFn, error: errorCreate } = useCreatePromocion();
+  const { putData: updatePromocionFn, error: errorUpdate } = useUpdatePromocion();
+  const { deleteData: deletePromocionFn, error: errorDelete, success: deleteSuccess } = useDeletePromocion();
 
   // --- Handlers ---
   const handleCreate = async () => {

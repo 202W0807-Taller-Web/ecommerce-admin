@@ -9,7 +9,6 @@ import Pagination from "../../components/Catalogo/Pagination";
 import AddProductModal from "../../components/Catalogo/AddProductModal";
 import ConfirmDeleteModal from "../../components/Catalogo/ConfirmDeleteModal";
 import Breadcrumbs from "@components/Catalogo/Breadcrumbs";
-import TestPromociones from "../../tests/TestPROMOCIONESHooks";
 
 interface ProductoAtributo {
   atributoValor?: {
@@ -178,8 +177,6 @@ const CategoriasPage: React.FC = () => {
         />
         <ActionButtons onProductAdded={fetchProductos} />
       </div>
-
-      <TestPromociones/>
 
       {loading && <p className="text-gray-500">Cargando productos...</p>}
       {error && <p className="text-red-600">{error}</p>}
