@@ -35,7 +35,7 @@ interface Producto {
   variantes?: ProductoVariante[];
 }
 
-const ITEMS_PER_PAGE = 5;
+const ITEMS_PER_PAGE = 10;
 
 const CategoriasPage: React.FC = () => {
   const [productos, setProductos] = useState<Producto[]>([]);

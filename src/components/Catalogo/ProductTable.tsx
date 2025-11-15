@@ -42,11 +42,11 @@ export default function ProductTable({
   };
 
   return (
-    <div className="w-full bg-gray-50 p-6 rounded-2xl shadow-sm">
-      <table className="w-full border-separate border-spacing-y-2">
-        <thead>
-          <tr className="text-left bg-gray-100">
-            <th className="py-3 px-4 font-semibold text-gray-700 border-b-2 border-gray-300">
+    <div className="bg-gray-50 p-4 rounded-lg border border-gray-200 shadow-sm w-full">
+      <table className="min-w-full border border-gray-300 rounded-lg overflow-hidden bg-white">
+        <thead className="bg-gray-100 text-gray-700 text-left">
+          <tr>
+            <th className="p-3 font-semibold text-gray-700 border-b-2 border-gray-300">
               <input
                 type="checkbox"
                 checked={allSelected}
@@ -54,30 +54,17 @@ export default function ProductTable({
                 className="accent-gray-500 cursor-pointer"
               />
             </th>
-            <th className="py-3 px-4 font-semibold text-gray-700 border-b-2 border-gray-300">
-              Imagen
-            </th>
-            <th className="py-3 px-4 font-semibold text-gray-700 border-b-2 border-gray-300">
-              Producto
-            </th>
-            <th className="py-3 px-4 font-semibold text-gray-700 border-b-2 border-gray-300">
-              Estado
-            </th>
-            <th className="py-3 px-4 font-semibold text-gray-700 border-b-2 border-gray-300">
-              Cantidad
-            </th>
-            <th className="py-3 px-4 font-semibold text-gray-700 border-b-2 border-gray-300">
-              Acción
-            </th>
+            <th className="p-3 font-semibold text-gray-700 border-b-2 border-gray-300">Imagen</th>
+            <th className="p-3 font-semibold text-gray-700 border-b-2 border-gray-300">Producto</th>
+            <th className="p-3 font-semibold text-gray-700 border-b-2 border-gray-300">Estado</th>
+            <th className="p-3 font-semibold text-gray-700 border-b-2 border-gray-300">Cantidad</th>
+            <th className="p-3 font-semibold text-gray-700 border-b-2 border-gray-300">Acción</th>
           </tr>
         </thead>
 
         <tbody>
           {productos.map((p) => (
-            <tr
-              key={p.id}
-              className="bg-white rounded-xl shadow-sm hover:bg-gray-50 transition-all"
-            >
+            <tr key={p.id} className="border-t border-gray-200 hover:bg-gray-50">
               <td className="py-3 px-4">
                 <input
                   type="checkbox"
@@ -86,29 +73,17 @@ export default function ProductTable({
                   className="accent-gray-500 cursor-pointer"
                 />
               </td>
-              <td className="py-3 px-4">
+              <td className="p-3">
                 <img
                   src={p.imagen}
                   alt={p.producto}
                   className="w-10 h-10 rounded-full object-cover"
                 />
               </td>
-              <td className="py-3 px-4 text-gray-800 font-medium">
-                {p.producto}
-              </td>
-              <td
-                className={`py-3 px-4 font-medium ${
-                  p.estadoStk === "Disponible"
-                    ? "text-green-600"
-                    : "text-red-500"
-                }`}
-              >
-                {p.estadoStk}
-              </td>
-              <td className="py-3 px-4 text-gray-700 font-semibold">
-                {p.stkTotal}
-              </td>
-              <td className="py-3 px-4 text-center">
+              <td className="p-3 text-gray-800 font-medium">{p.producto}</td>
+              <td className={`p-3 font-medium ${p.estadoStk === "Disponible" ? "text-green-600" : "text-red-500"}`}>{p.estadoStk}</td>
+              <td className="p-3 text-gray-700 font-semibold">{p.stkTotal}</td>
+              <td className="p-3 text-center">
                 <div className="flex items-center justify-center space-x-2">
                   <button
                     onClick={() => handleViewClick(p)}

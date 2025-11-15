@@ -37,9 +37,10 @@ const ActionButtons: React.FC<ActionButtonsProps> = ({ onProductAdded }) => {
           alignItems: "center",
           gap: 6,
           padding: "8px 12px",
-          borderRadius: 6,
-          border: "1px solid #c2c2c2",
-          backgroundColor: "#fff",
+          borderRadius: 8,
+          border: "none",
+          backgroundColor: "#C0A648",
+          color: "#fff",
           cursor: "pointer",
         }}
         onClick={() => alert("Funcionalidad de importación en desarrollo")}
