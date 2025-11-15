@@ -12,6 +12,7 @@ import CategoriasPage from "./pages/catalogo/CategoriasPage";
 import ProductosVariantesPage from "./pages/catalogo/ProductosVariantesPage";
 import AtributosPage from "./pages/catalogo/AtributosPage";
 import ReseñasPage from "./pages/catalogo/ReseñasPage";
+import PromocionesPage from "./pages/catalogo/PromocionesPage";
 
 const router = createBrowserRouter([
     {
@@ -48,6 +49,10 @@ const router = createBrowserRouter([
             {
                 path: 'catalogo/atributos',
                 element: <AtributosPage/>,
+            },
+            {
+                path: 'catalogo/promociones',
+                element: <PromocionesPage/>,
             },
         ]
     }
