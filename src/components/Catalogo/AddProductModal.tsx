@@ -9,10 +9,11 @@ interface AtributoValor {
 
 interface AddProductModalProps {
   onClose: () => void;
-  onAdd: (formData: FormData) => void;
+  onAdd: (formData: FormData) => Promise<any> | void;
+  onNotify?: (message: { type: "success" | "error" | "info"; text: string }) => void;
 }
 
-const AddProductModal: React.FC<AddProductModalProps> = ({ onClose, onAdd }) => {
+const AddProductModal: React.FC<AddProductModalProps> = ({ onClose, onAdd, onNotify }) => {
   const [name, setName] = useState("");
   const [categoryId, setCategoryId] = useState("");
   const [description, setDescription] = useState("");
@@ -21,6 +22,7 @@ const AddProductModal: React.FC<AddProductModalProps> = ({ onClose, onAdd }) => 
   const [atributosSeleccionados, setAtributosSeleccionados] = useState<
     Record<string, string>
   >({});
+  const [submitting, setSubmitting] = useState(false);
 
   const { data: atributos, loading, error } = useAtributoValores();
 
@@ -42,9 +44,10 @@ const AddProductModal: React.FC<AddProductModalProps> = ({ onClose, onAdd }) => 
     }));
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
+    // validation -> usar notificación en lugar de alert
     if (!name || !categoryId || !description) {
-      alert("Por favor complete todos los campos obligatorios.");
+      onNotify?.({ type: "error", text: "Por favor complete todos los campos obligatorios." });
       return;
     }
 
@@ -63,27 +66,32 @@ const AddProductModal: React.FC<AddProductModalProps> = ({ onClose, onAdd }) => 
       formData.append("Imagenes", image);
     }
 
-    onAdd(formData);
-    onClose();
+    try {
+      setSubmitting(true);
+      const result = await onAdd(formData);
+      // notificar éxito si el padre no lo hace (o adicionalmente)
+      onNotify?.({ type: "success", text: "Producto agregado correctamente." });
+      onClose();
+      return result;
+    } catch (err) {
+      console.error("Error agregando producto:", err);
+      onNotify?.({ type: "error", text: "Hubo un error al agregar el producto." });
+    } finally {
+      setSubmitting(false);
+    }
   };
 
-  const atributosAgrupados: Record<string, AtributoValor[]> = 
+  const atributosAgrupados: Record<string, AtributoValor[]> =
     Array.isArray(atributos)
-      ? (atributos as AtributoValor[]).reduce(
-          (acc, curr) => {
-            const nombre = curr.nombreAtributo || "Otros";
-            if (!acc[nombre]) acc[nombre] = [];
-            acc[nombre].push(curr);
-            return acc;
-          },
-          {} as Record<string, AtributoValor[]>
-        )
+      ? (atributos as AtributoValor[]).reduce((acc, curr) => {
+          const nombre = curr.nombreAtributo || "Otros";
+          if (!acc[nombre]) acc[nombre] = [];
+          acc[nombre].push(curr);
+          return acc;
+        }, {} as Record<string, AtributoValor[]>)
       : {};
 
-
-  const categorias = atributos?.filter(
-    (a) => a.nombreAtributo === "Categoría"
-  );
+  const categorias = atributos?.filter((a) => a.nombreAtributo === "Categoría");
 
   const atributosPermitidos = ["Género", "Deporte", "Tipo", "Colección"];
   const atributosFiltrados = Object.entries(atributosAgrupados).filter(([nombre]) =>
@@ -93,29 +101,29 @@ const AddProductModal: React.FC<AddProductModalProps> = ({ onClose, onAdd }) => 
   return (
     <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
       <div className="bg-white p-6 rounded-lg w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-lg">
-        <h3 className="text-center font-semibold text-lg text-gray-800 mb-4">
+        <h3 className="text-center font-semibold text-lg text-[var(--color-primary6)] mb-4">
           Agregar nuevo producto
         </h3>
 
         {/* Nombre */}
         <div>
-          <label className="block text-gray-800 mb-1">Nombre:</label>
+          <label className="block text-[var(--color-primary6)] mb-1">Nombre:</label>
           <input
             type="text"
             placeholder="Ingrese el nombre del producto"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-800"
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--color-primary1)]"
           />
         </div>
 
         {/* Categoría */}
         <div>
-          <label className="block text-gray-800 mb-1">Categoría:</label>
+          <label className="block text-[var(--color-primary6)] mb-1">Categoría:</label>
           <select
             value={categoryId}
             onChange={(e) => setCategoryId(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md bg-white focus:outline-none focus:ring-2 focus:ring-gray-800"
+            className="w-full px-3 py-2 border border-gray-300 rounded-md bg-white focus:outline-none focus:ring-2 focus:ring-[var(--color-primary1)]"
             disabled={loading}
           >
             <option value="">Seleccione una categoría</option>
@@ -125,21 +133,17 @@ const AddProductModal: React.FC<AddProductModalProps> = ({ onClose, onAdd }) => 
               </option>
             ))}
           </select>
-          {error && (
-            <span className="text-red-500 text-sm">
-              Error al cargar categorías.
-            </span>
-          )}
+          {error && <span className="text-red-500 text-sm">Error al cargar categorías.</span>}
         </div>
 
         {/* Descripción */}
         <div>
-          <label className="block text-gray-800 mb-1">Descripción:</label>
+          <label className="block text-[var(--color-primary6)] mb-1">Descripción:</label>
           <textarea
             placeholder="Ingrese la descripción del producto"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-800"
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--color-primary1)]"
             rows={3}
           />
         </div>
@@ -148,11 +152,11 @@ const AddProductModal: React.FC<AddProductModalProps> = ({ onClose, onAdd }) => 
         <div className="grid grid-cols-2 gap-4">
           {atributosFiltrados.map(([nombre, valores]) => (
             <div key={nombre}>
-              <label className="block text-gray-800 mb-1">{nombre}:</label>
+              <label className="block text-[var(--color-primary6)] mb-1">{nombre}:</label>
               <select
                 value={atributosSeleccionados[nombre] || ""}
                 onChange={(e) => handleAtributoChange(nombre, e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md bg-white focus:outline-none focus:ring-2 focus:ring-gray-800"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md bg-white focus:outline-none focus:ring-2 focus:ring-[var(--color-primary1)]"
               >
                 <option value="">{`Seleccione ${nombre.toLowerCase()}`}</option>
                 {valores.map((v) => (
@@ -167,7 +171,7 @@ const AddProductModal: React.FC<AddProductModalProps> = ({ onClose, onAdd }) => 
 
         {/* Imagen */}
         <div>
-          <label className="block text-gray-800 mb-1 mt-2">Subir imagen:</label>
+          <label className="block text-[var(--color-primary6)] mb-1 mt-2">Subir imagen:</label>
           <div className="flex items-center gap-3 whitespace-nowrap overflow-hidden">
             <input
               type="file"
@@ -177,13 +181,11 @@ const AddProductModal: React.FC<AddProductModalProps> = ({ onClose, onAdd }) => 
             />
             <label
               htmlFor="file-upload"
-              className="cursor-pointer px-4 py-2 border border-gray-400 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 transition flex-shrink-0"
+              className="cursor-pointer px-4 py-2 border border-gray-400 bg-gray-200 text-[var(--color-primary6)] rounded-md hover:bg-gray-300 transition flex-shrink-0"
             >
               Seleccionar archivo
             </label>
-            <span className="text-sm text-gray-600 truncate">
-              {fileName}
-            </span>
+            <span className="text-sm text-gray-600 truncate">{fileName}</span>
           </div>
         </div>
 
@@ -192,14 +194,18 @@ const AddProductModal: React.FC<AddProductModalProps> = ({ onClose, onAdd }) => 
           <button
             onClick={onClose}
             className="px-4 py-2 border border-gray-400 rounded-md bg-gray-200 hover:bg-gray-300 transition"
+            type="button"
+            disabled={submitting}
           >
             Cancelar
           </button>
           <button
             onClick={handleSubmit}
-            className="px-4 py-2 bg-gray-800 text-white rounded-md hover:bg-gray-700 transition"
+            className="px-4 py-2 bg-[var(--color-primary1)] text-white rounded-md hover:bg-[var(--color-primary2)] transition"
+            type="button"
+            disabled={submitting}
           >
-            Guardar
+            {submitting ? "Guardando..." : "Guardar"}
           </button>
         </div>
       </div>

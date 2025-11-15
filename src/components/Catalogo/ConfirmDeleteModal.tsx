@@ -1,39 +1,36 @@
-import React from "react";
 
-interface ConfirmDeleteModalProps {
-  message: string;
-  onConfirm: () => void;
-  onCancel: () => void;
-}
-
-const ConfirmDeleteModal: React.FC<ConfirmDeleteModalProps> = ({
+export default function ConfirmDeleteModal({
   message,
-  onConfirm,
   onCancel,
-}) => {
+  onConfirm,
+}: {
+  message: string;
+  onCancel: () => void;
+  onConfirm: () => void;
+}) {
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black/40 z-50">
-      <div className="bg-white rounded-lg shadow-lg p-6 w-[400px] text-center">
-        <h3 className="text-lg font-semibold mb-4 text-gray-800">
-          {message}
-        </h3>
-        <div className="flex justify-center gap-4">
-          <button
-            onClick={onConfirm}
-            className="bg-gray-700 text-white px-4 py-2 rounded-lg hover:bg-gray-800 transition"
-          >
-            Sí
-          </button>
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      {/* overlay separado para atenuar el fondo */}
+      <div className="absolute inset-0 bg-black/40" />
+
+      {/* modal encima del overlay - fondo semi-transparente */}
+      <div className="relative w-full max-w-sm bg-white/80 backdrop-blur-sm rounded-lg p-5 shadow z-10 border border-[var(--color-primary5)]/10">
+        <p className="text-[var(--color-primary6)] mb-4">{message}</p>
+        <div className="flex justify-end gap-3">
           <button
             onClick={onCancel}
-            className="bg-gray-300 text-gray-800 px-4 py-2 rounded-lg hover:bg-gray-400 transition"
+            className="px-3 py-2 rounded-md border border-[var(--color-primary5)] hover:bg-[var(--color-primary5)] hover:text-white text-[var(--color-primary6)] transition"
           >
-            No
+            Cancelar
+          </button>
+          <button
+            onClick={onConfirm}
+            className="px-3 py-2 rounded-md text-white bg-[var(--color-primary1)] hover:bg-[var(--color-primary2)]"
+          >
+            Eliminar
           </button>
         </div>
       </div>
     </div>
   );
-};
-
-export default ConfirmDeleteModal;
+}

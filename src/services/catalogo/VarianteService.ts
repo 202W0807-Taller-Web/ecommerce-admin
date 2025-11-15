@@ -64,7 +64,6 @@ export const createVariante = async (
   return res.json() as Promise<Variante>;
 };
 
-
 export const deleteVariante = async (
   productoIdOrVarianteId: number,
   maybeVarianteId?: number
@@ -84,7 +83,7 @@ export const deleteVariante = async (
   const tryProductEndpoint = async () => {
     if (typeof productoId !== "number") return false;
     const endpoint = `/api/variantes/productos/${productoId}/variantes/${varianteId}`;
-    console.log(`Intentando eliminar variante (product-scoped): ${API_BASE_URL}${endpoint}`);
+    
     const res = await fetch(`${API_BASE_URL}${endpoint}`, { method: "DELETE" });
     if (res.ok) {
       console.log(`Variante ${varianteId} del producto ${productoId} eliminada (product-scoped)`);
@@ -97,7 +96,7 @@ export const deleteVariante = async (
 
   const tryGenericEndpoint = async () => {
     const endpoint = `/api/variantes/${varianteId}`;
-    console.log(`Intentando eliminar variante (genérica): ${API_BASE_URL}${endpoint}`);
+    
     const res = await fetch(`${API_BASE_URL}${endpoint}`, { method: "DELETE" });
     if (res.ok) {
       console.log(`Variante ${varianteId} eliminada (genérica)`);

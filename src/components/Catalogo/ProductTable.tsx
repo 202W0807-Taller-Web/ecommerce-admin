@@ -20,6 +20,7 @@ interface ProductTableProps {
   onSelect?: (id: number) => void;
   onSelectAll?: (selectAll: boolean) => void;
   onDelete: (producto: ProductRow | Producto) => void;
+  onEdit?: (producto: ProductRow | Producto) => void;
 }
 
 export default function ProductTable({
@@ -28,6 +29,7 @@ export default function ProductTable({
   onSelect = () => {},
   onSelectAll = () => {},
   onDelete,
+  onEdit = () => {},
 }: ProductTableProps) {
   const navigate = useNavigate();
 
@@ -35,78 +37,135 @@ export default function ProductTable({
     selectedIds.length === productos.length && productos.length > 0;
 
   const handleViewClick = (producto: ProductRow) => {
-    console.log(`Navegando a variantes de producto ${producto.id}`);
     navigate(`/catalogo/productos/${producto.id}/variantes`, {
       state: { nombreProducto: producto.producto },
     });
   };
 
   return (
-    <div className="bg-gray-50 p-4 rounded-lg border border-gray-200 shadow-sm w-full">
-      <table className="min-w-full border border-gray-300 rounded-lg overflow-hidden bg-white">
-        <thead className="bg-gray-100 text-gray-700 text-left">
-          <tr>
-            <th className="p-3 font-semibold text-gray-700 border-b-2 border-gray-300">
+    <div className="w-full bg-[var(--color-base)] p-6 rounded-2xl shadow-sm">
+      {/* uso table-fixed y colgroup para alinear y dar anchos estables */}
+      <table className="w-full table-fixed border-separate border-spacing-y-2">
+        <colgroup>
+          <col style={{ width: "4%" }} />
+          <col style={{ width: "10%" }} />
+          <col style={{ width: "28%" }} />
+          <col style={{ width: "34%" }} />
+          <col style={{ width: "8%" }} />
+          <col style={{ width: "8%" }} />
+          <col style={{ width: "8%" }} />
+        </colgroup>
+
+        <thead>
+          <tr className="text-left" style={{ backgroundColor: "rgba(0,0,0,0.03)" }}>
+            <th className="py-3 px-4 font-semibold text-[var(--color-primary5)] border-b-2 border-[rgba(0,0,0,0.06)]">
               <input
                 type="checkbox"
                 checked={allSelected}
                 onChange={(e) => onSelectAll(e.target.checked)}
-                className="accent-gray-500 cursor-pointer"
+                className="accent-[var(--color-primary1)] cursor-pointer"
               />
             </th>
-            <th className="p-3 font-semibold text-gray-700 border-b-2 border-gray-300">Imagen</th>
-            <th className="p-3 font-semibold text-gray-700 border-b-2 border-gray-300">Producto</th>
-            <th className="p-3 font-semibold text-gray-700 border-b-2 border-gray-300">Estado</th>
-            <th className="p-3 font-semibold text-gray-700 border-b-2 border-gray-300">Cantidad</th>
-            <th className="p-3 font-semibold text-gray-700 border-b-2 border-gray-300">Acción</th>
+
+            <th className="py-3 px-4 font-semibold text-[var(--color-primary5)] border-b-2 border-[rgba(0,0,0,0.06)] text-center">
+              Imagen
+            </th>
+
+            <th className="py-3 px-4 font-semibold text-[var(--color-primary5)] border-b-2 border-[rgba(0,0,0,0.06)]">
+              Nombre
+            </th>
+
+            <th className="py-3 px-4 font-semibold text-[var(--color-primary5)] border-b-2 border-[rgba(0,0,0,0.06)]">
+              Descripción
+            </th>
+
+            <th className="py-3 px-4 font-semibold text-[var(--color-primary5)] border-b-2 border-[rgba(0,0,0,0.06)] text-center">
+              Variantes
+            </th>
+
+            <th className="py-3 px-4 font-semibold text-[var(--color-primary5)] border-b-2 border-[rgba(0,0,0,0.06)] text-center">
+              Stock
+            </th>
+
+            <th className="py-3 px-4 font-semibold text-[var(--color-primary5)] border-b-2 border-[rgba(0,0,0,0.06)] text-center">
+              Acción
+            </th>
           </tr>
         </thead>
 
         <tbody>
           {productos.map((p) => (
-            <tr key={p.id} className="border-t border-gray-200 hover:bg-gray-50">
-              <td className="py-3 px-4">
+            <tr
+              key={p.id}
+              className="bg-[var(--color-base)] hover:bg-[rgba(0,0,0,0.02)] transition-all"
+            >
+              <td className="py-3 px-4 align-middle text-center">
                 <input
                   type="checkbox"
                   checked={selectedIds.includes(p.id)}
                   onChange={() => onSelect(p.id)}
-                  className="accent-gray-500 cursor-pointer"
+                  className="accent-[var(--color-primary1)] cursor-pointer"
                 />
               </td>
-              <td className="p-3">
+
+              <td className="py-3 px-4 text-center align-middle">
                 <img
                   src={p.imagen}
                   alt={p.producto}
-                  className="w-10 h-10 rounded-full object-cover"
+                  className="w-12 h-12 rounded-md object-cover mx-auto"
                 />
               </td>
-              <td className="p-3 text-gray-800 font-medium">{p.producto}</td>
-              <td className={`p-3 font-medium ${p.estadoStk === "Disponible" ? "text-green-600" : "text-red-500"}`}>{p.estadoStk}</td>
-              <td className="p-3 text-gray-700 font-semibold">{p.stkTotal}</td>
-              <td className="p-3 text-center">
+
+              <td className="py-3 px-4 text-[var(--color-primary6)] font-medium align-middle">
+                <div className="flex flex-col">
+                  <span className="truncate">{p.producto}</span>
+                </div>
+              </td>
+
+              <td className="py-3 px-4 text-[var(--color-primary5)] align-middle">
+                {p.descripcion ? (
+                  <span className="block text-sm truncate" title={p.descripcion}>
+                    {p.descripcion}
+                  </span>
+                ) : (
+                  <span className="text-[var(--color-primary4)] text-sm">Sin descripción</span>
+                )}
+              </td>
+
+              <td className="py-3 px-4 text-[var(--color-primary6)] font-semibold text-center align-middle">
+                {p.stkTotal}
+              </td>
+
+              <td className="py-3 px-4 text-center align-middle">
+                <span className="inline-block px-2 py-1 rounded-full text-sm font-semibold bg-green-500 text-white">
+                  Disponible
+                </span>
+              </td>
+
+              <td className="py-3 px-4 text-center align-middle">
                 <div className="flex items-center justify-center space-x-2">
                   <button
                     onClick={() => handleViewClick(p)}
-                    className="p-2 rounded-full hover:bg-gray-100 transition"
+                    className="p-2 rounded-full hover:bg-[var(--color-primary4)]/20 transition"
                     title="Ver variantes"
                   >
-                    <Eye className="w-5 h-5 text-gray-500 hover:text-gray-700" />
+                    <Eye className="w-5 h-5 text-[var(--color-primary6)]" />
                   </button>
 
                   <button
-                    /* botón lápiz presente pero SIN funcionalidad por ahora */
-                    className="p-2 rounded-full hover:bg-gray-100 transition"
+                    onClick={() => onEdit((p.original as Producto) ?? p)}
+                    className="p-2 rounded-full hover:bg-[var(--color-primary4)]/20 transition"
                     title="Editar producto"
                   >
-                    <Pencil className="w-5 h-5 text-gray-500 hover:text-gray-700" />
+                    <Pencil className="w-5 h-5 text-[var(--color-primary6)]" />
                   </button>
 
                   <button
                     onClick={() => onDelete((p.original as Producto) ?? p)}
-                    className="p-2 rounded-full hover:bg-gray-100 transition"
+                    className="p-2 rounded-full hover:bg-[var(--color-primary4)]/20 transition"
                     title="Eliminar producto"
                   >
-                    <Trash2 className="w-5 h-5 text-red-500 hover:text-red-700" />
+                    <Trash2 className="w-5 h-5 text-red" />
                   </button>
                 </div>
               </td>
@@ -116,8 +175,8 @@ export default function ProductTable({
           {productos.length === 0 && (
             <tr>
               <td
-                colSpan={6}
-                className="text-center text-gray-500 py-6 italic"
+                colSpan={7}
+                className="text-center text-[var(--color-primary4)] py-6 italic"
               >
                 No se encontraron productos.
               </td>

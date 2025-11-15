@@ -38,7 +38,7 @@ const AddAtributoModal: React.FC<AddAtributoModalProps> = ({ onClose, onSubmit }
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black/40 z-50">
       <div className="bg-white p-6 rounded-2xl shadow-lg w-[500px] max-w-[90%]">
-        <h3 className="text-lg font-semibold mb-4 text-gray-800 text-center">
+        <h3 className="text-lg font-semibold mb-4 text-[var(--color-primary6)] text-center">
           Agregar nuevo atributo
         </h3>
 
@@ -50,7 +50,7 @@ const AddAtributoModal: React.FC<AddAtributoModalProps> = ({ onClose, onSubmit }
             placeholder="Ej. Color, Tamaño..."
             value={nombre}
             onChange={(e) => setNombre(e.target.value)}
-            className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-gray-800 outline-none"
+            className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-[var(--color-primary1)] outline-none"
           />
 
           <label className="text-gray-700 font-medium text-right">Tipo:</label>
@@ -59,7 +59,7 @@ const AddAtributoModal: React.FC<AddAtributoModalProps> = ({ onClose, onSubmit }
             placeholder="Ej. Texto, Número..."
             value={tipo}
             onChange={(e) => setTipo(e.target.value)}
-            className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-gray-800 outline-none"
+            className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-[var(--color-primary1)] outline-none"
           />
 
           <label className="text-gray-700 font-medium text-right">Valor:</label>
@@ -68,14 +68,14 @@ const AddAtributoModal: React.FC<AddAtributoModalProps> = ({ onClose, onSubmit }
             placeholder="Ej. Rojo, 42..."
             value={valor}
             onChange={(e) => setValor(e.target.value)}
-            className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-gray-800 outline-none"
+            className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-[var(--color-primary1)] outline-none"
           />
 
           <label className="text-gray-700 font-medium text-right">Estado:</label>
           <select
             value={estado}
             onChange={(e) => setEstado(e.target.value)}
-            className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-gray-800 outline-none"
+            className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-[var(--color-primary1)] outline-none"
           >
             <option value="Activo">Activo</option>
             <option value="Inactivo">Inactivo</option>
@@ -92,7 +92,7 @@ const AddAtributoModal: React.FC<AddAtributoModalProps> = ({ onClose, onSubmit }
           </button>
           <button
             onClick={handleSubmit}
-            className="bg-gray-800 text-white rounded-lg px-4 py-2 hover:bg-gray-700"
+            className="bg-[var(--color-primary1)] text-white rounded-lg px-4 py-2 hover:bg-[var(--color-primary2)]"
           >
             Guardar
           </button>
