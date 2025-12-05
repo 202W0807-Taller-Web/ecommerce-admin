@@ -278,22 +278,6 @@ export default function AlmacenesPage() {
                         onClick: () =>
                           console.log(`Eliminar almacén: ${a.nombre}`),
                       },
-                      {
-                        label: "Asignar tiendas",
-                        icon: (
-                          <Store className="w-4 h-4 text-secondary-color" />
-                        ),
-                        onClick: () =>
-                          console.log(`Asignar tiendas a: ${a.nombre}`),
-                      },
-                      {
-                        label: "Asignar productos",
-                        icon: (
-                          <PackagePlus className="w-4 h-4 text-green-600" />
-                        ),
-                        onClick: () =>
-                          console.log(`Asignar productos a: ${a.nombre}`),
-                      },
                     ]}
                   />
                 </tr>

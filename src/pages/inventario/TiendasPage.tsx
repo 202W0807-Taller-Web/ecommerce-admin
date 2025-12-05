@@ -257,7 +257,11 @@ export default function TiendasPage() {
                     />
                   </TableCell>
                   <TableCell>{t.nombre}</TableCell>
-                  <TableCell>{t.almacen}</TableCell>
+                  <TableCell className=""><span className="bg-gray-300 py-1 px-2 rounded-3xl">
+                    {t.almacen}</span>
+                    <span className="bg-gray-300 py-1 px-2 rounded-3xl">
+                    {"Principal"}</span>
+                  </TableCell>
                   <TableCell>
                     <StatusBadge
                       label={t.estado}
