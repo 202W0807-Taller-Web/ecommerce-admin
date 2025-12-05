@@ -5,45 +5,45 @@ import { createBrowserRouter } from "react-router-dom";
 import MainLayout from "./layouts/MainLayout";
 
 // Inventarios
+import AlmacenDetailPage from "./pages/inventario/AlmacenDetailPage";
 import AlmacenesPage from "./pages/inventario/AlmacenesPage";
-import AlmacenesDetailsPage from "./pages/inventario/AlmacenesDetailsPage";
 import TiendasPage from "./pages/inventario/TiendasPage";
-import TiendasDetailPage from "./pages/inventario/TiendasDetailPage";
-import ProductosPage from "./pages/inventario/StockPage";
-import StockDetailsPage from "./pages/inventario/StockDetailsPage";
+import TiendaDetailPage from "./pages/inventario/TiendaDetailPage";
+import StockPage from "./pages/inventario/StockPage";
+import StockDetailPage from "@pages/inventario/StockDetailPage";
 
 const router = createBrowserRouter([
-    {
-        path: '/',
-        element: <MainLayout/>,
-        children: [
-            {
-                path: 'inventario/almacenes',
-                element: <AlmacenesPage/>,
-            },
-            {
-                path: 'inventario/almacenes/:id',
-                element: <AlmacenesDetailsPage/>,
-            },
-            {
-                path: 'inventario/tiendas',
-                element: <TiendasPage/>,
-            },
-            {
-                path: 'inventario/tiendas/:id',
-                element: <TiendasDetailPage/>,
-            },
-            {
-                path: 'inventario/stock',
-                element: <ProductosPage/>,
-            },
-            {
-                path: 'inventario/stock/:id',
-                element: <StockDetailsPage/>,
-            },
-        ]
-    }
-]); 
+  {
+    path: "/",
+    element: <MainLayout />,
+    children: [
+      {
+        path: "inventario/almacenes",
+        element: <AlmacenesPage />,
+      },
+      {
+        path: "inventario/almacenes/:id",
+        element: <AlmacenDetailPage />,
+      },
+      {
+        path: "inventario/tiendas",
+        element: <TiendasPage />,
+      },
+      {
+        path: "inventario/tiendas/:id",
+        element: <TiendaDetailPage />,
+      },
+      {
+        path: "inventario/productos",
+        element: <StockPage />,
+      },
+      {
+        path: "inventario/productos/:id",
+        element: <StockDetailPage />,
+      },
+    ],
+  },
+]);
 // KAFKA
 // ordenes y devoluciones
 // necesitan estados de envio (finalizado)
@@ -51,7 +51,5 @@ const router = createBrowserRouter([
 
 // nos mandas la confirmacion de la orden (para reservar y para confirmar)
 // otra para devolucion, descuenta automatico
-
-
 
 export default router;

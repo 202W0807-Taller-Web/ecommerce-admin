@@ -18,11 +18,13 @@ const Button: React.FC<ButtonProps> = ({
   ...props
 }) => {
   const baseStyles =
-    "cursor-pointer inline-flex items-center justify-center gap-2 rounded-md py-3 px-7 text-[16px] font-medium transition-colors";
+    "cursor-pointer inline-flex items-center justify-center gap-2 rounded-md py-3 px-7 text-[16px] font-medium transition-colors disabled:cursor-not-allowed";
 
   const variants: Record<typeof variant, string> = {
-    primary: "bg-primary1 hover:bg-primary3 text-white border",
-    secondary: "bg-primary2 hover:bg-primary4 text-white border",
+    primary:
+      "bg-primary1 hover:bg-primary3 text-white border disabled:bg-primary2",
+    secondary:
+      "bg-primary2 hover:bg-primary4 text-white border disabled:bg-primary4",
     outline: "bg-white border border-gray-400 text-gray-400 hover:bg-gray-100",
   };
 
