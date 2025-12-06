@@ -54,7 +54,7 @@ export default function DetalleOrdenPage() {
       console.log("3. Backend respondió: ¡Éxito!");
       
       setIsModalOpen(false); // Cierra el modal.
-      navigate('/ordenes/ordenes'); // Redirige a la lista de órdenes.
+      navigate('/ordenes'); // Redirige a la lista de órdenes.
 
     } catch (error) {
       console.error("Error al anular la orden:", error);

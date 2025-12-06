@@ -29,8 +29,8 @@ const navItems: NavItem[] = [
     label: "Ordenes y devoluciones",
     icon: <FileText />, // Asegúrate de importar el icono
     children: [
-      { label: "Órdenes", path: "/ordenes/ordenes" },
-      { label: "Devoluciones", path: "/ordenes/devoluciones" },
+      { label: "Órdenes", path: "/ordenes" },
+      { label: "Devoluciones", path: "/devoluciones" },
     ],
   },
 ];
