@@ -16,7 +16,7 @@ import AlmacenDetailPage from "./pages/inventario/AlmacenDetailPage";
 import AlmacenesPage from "./pages/inventario/AlmacenesPage";
 import TiendasPage from "./pages/inventario/TiendasPage";
 import TiendaDetailPage from "./pages/inventario/TiendaDetailPage";
-import StockDetailsPage from "./pages/inventario/StockDetailsPage";
+import StockPage from "./pages/inventario/StockPage";
 import StockDetailPage from "@pages/inventario/StockDetailPage";
 
 import CategoriasPage from "./pages/catalogo/CategoriasPage";
@@ -49,7 +49,7 @@ const router = createBrowserRouter([
       },
       {
         path: "inventario/productos",
-        element: <StockDetailsPage />,
+        element: <StockPage />,
       },
       {
         path: "inventario/productos/:id",
