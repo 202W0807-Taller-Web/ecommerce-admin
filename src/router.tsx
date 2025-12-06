@@ -8,6 +8,7 @@ import { AuthProvider } from "./context/AuthContext";
 // Auth Pages
 import Login from "./pages/auth/Login";
 import Register from "./pages/auth/Register";
+import Settings from "./pages/auth/Settings";
 
 // Protected Pages
 // Inventarios
@@ -20,7 +21,7 @@ import StockDetailPage from "@pages/inventario/StockDetailPage";
 
 const router = createBrowserRouter([
   // ============================
-  // 🔒 PROTECTED ROUTES (tu base)
+  // 🔒 PROTECTED ROUTES
   // ============================
   {
     element: (
@@ -57,6 +58,12 @@ const router = createBrowserRouter([
           {
             path: "inventario/productos/:id",
             element: <StockDetailPage />,
+          },
+
+          // Configuraciones
+          {
+            path: "configuraciones",
+            element: <Settings />,
           },
 
           // Página 404 interna

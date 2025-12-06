@@ -1,10 +1,11 @@
 // src/layouts/MainLayout.tsx
-import {useEffect} from "react";
-import { Outlet, Link, useLocation } from "react-router-dom";
+import { useEffect } from "react";
+import { Outlet, Link, useLocation, useNavigate } from "react-router-dom";
 import { useState } from "react";
-import { Menu, X, Home, Package, Truck, ChevronRight } from "lucide-react";
+import { Menu, X, Home, Package, Truck, ChevronRight, Settings, LogOut } from "lucide-react";
 import type { NavItem } from "types/ui/NavItem";
 import Logo from "@components/Logo";
+import { useAuth } from "@hooks/useAuth";
 
 const navItems: NavItem[] = [
   { label: "Home", path: "/", icon: <Home /> },
@@ -28,7 +29,10 @@ const navItems: NavItem[] = [
 ];
 
 const MainLayout = () => {
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [userDropdownOpen, setUserDropdownOpen] = useState(false);
   const location = useLocation();
   const [openAccordions, setOpenAccordions] = useState<string[]>(() => {
     // Abre el acordeón si la ruta actual es hija de algún módulo
@@ -56,6 +60,16 @@ const MainLayout = () => {
     setOpenAccordions(prev => Array.from(new Set([...prev, ...activeParents])));
   }, [location.pathname]);
 
+  const handleLogout = async () => {
+    await logout();
+    setUserDropdownOpen(false);
+  };
+
+  const handleSettings = () => {
+    navigate("/configuraciones");
+    setUserDropdownOpen(false);
+  };
+
   const toggleAccordion = (label: string) => {
     setOpenAccordions((prev) =>
       prev.includes(label)
@@ -65,12 +79,12 @@ const MainLayout = () => {
   };
 
   return (
-    <div className="flex min-h-screen bg-gray-100 w-full">
+    <div className="flex h-screen bg-gray-100 w-full overflow-hidden">
       {/* Sidebar */}
       <aside
         className={`fixed inset-y-0 left-0 z-40 w-64 max-w-full transform bg-white shadow-lg transition-transform lg:translate-x-0 lg:static lg:inset-0 ${
           sidebarOpen ? "translate-x-0" : "-translate-x-full"
-        } font-inter py-8`}
+        } font-inter`}
       >
         <div className="flex flex-col h-full">
           <div className="flex items-center justify-between px-4 py-3">
@@ -152,18 +166,44 @@ const MainLayout = () => {
           </nav>
 
           {/* User Info */}
-          <div className="p-4">
-            <div className="flex items-center space-x-3">
+          <div className="p-4 relative">
+            <div 
+              className="flex items-center space-x-3 cursor-pointer"
+              onClick={() => setUserDropdownOpen(!userDropdownOpen)}
+            >
               <img
                 src="https://i.pravatar.cc/40"
                 alt="User"
                 className="w-10 h-10 rounded-full"
               />
               <div>
-                <p className="text-sm font-medium text-gray-800">Juan Pérez</p>
-                <p className="text-xs text-gray-500">juan.perez@email.com</p>
+                <p className="text-sm font-medium text-gray-800 hover:text-gray-600 truncate maxlines-1">{user?.nombres} {user?.apellido_p} {user?.apellido_m}</p>
+                <p className="text-xs text-gray-500">{user?.correo}</p>
               </div>
             </div>
+            
+            {/* Dropdown Menu */}
+            {userDropdownOpen && (
+              <div className="absolute bottom-full left-4 mb-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200 z-50">
+                {/* Notch pointing down */}
+                <div className="absolute -bottom-2 left-2 w-0 h-0 border-l-[10px] border-l-transparent border-r-[10px] border-r-transparent border-t-[10px] border-t-white"></div>
+                
+                <button 
+                  className="flex items-center w-full px-6 py-3 text-sm text-gray-700 hover:bg-gray-100 rounded-t-lg"
+                  onClick={handleSettings}
+                >
+                  <Settings className="w-4 h-4 mr-3" />
+                  Configuración
+                </button>
+                <button 
+                  className="flex items-center w-full px-6 py-3 text-sm text-red-600 hover:bg-red-50 rounded-b-lg"
+                  onClick={handleLogout}
+                >
+                  <LogOut className="w-4 h-4 mr-3" />
+                  Logout
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </aside>

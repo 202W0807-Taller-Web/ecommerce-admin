@@ -34,12 +34,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       console.log("res:", res);
       if (res.isAuthenticated) {
         const userRes = await authApi.getCurrentUser();
+        console.log("user-getC:", res.user);
         if (userRes.success && (userRes.user?.rolInt === 2 || userRes.user?.rolInt === '2')) {
           setUser(userRes.user || null);
           setIsAuth(true);
           setIsAdmin(true);
         } else {
           // If user is not admin, clear auth state
+          console.log("User is not admin", userRes.user?.rolInt);
           await authApi.logout();
           setIsAuth(false);
           setUser(null);
