@@ -10,11 +10,18 @@ import Login from "./pages/auth/Login";
 import Register from "./pages/auth/Register";
 
 // Protected Pages
+// Inventarios
+import AlmacenDetailPage from "./pages/inventario/AlmacenDetailPage";
 import AlmacenesPage from "./pages/inventario/AlmacenesPage";
 import TiendasPage from "./pages/inventario/TiendasPage";
-import ProductosPage from "./pages/inventario/ProductosPage";
+import TiendaDetailPage from "./pages/inventario/TiendaDetailPage";
+//import StockPage from "./pages/inventario/StockPage"; <- no existe
+import StockDetailPage from "@pages/inventario/StockDetailPage";
 
 const router = createBrowserRouter([
+  // ============================
+  // 🔒 PROTECTED ROUTES (tu base)
+  // ============================
   {
     element: (
       <AuthProvider>
@@ -26,19 +33,33 @@ const router = createBrowserRouter([
         path: "/",
         element: <MainLayout />,
         children: [
+          // Inventarios (unificados)
           {
             path: "inventario/almacenes",
             element: <AlmacenesPage />,
+          },
+          {
+            path: "inventario/almacenes/:id",
+            element: <AlmacenDetailPage />,
           },
           {
             path: "inventario/tiendas",
             element: <TiendasPage />,
           },
           {
-            path: "inventario/productos",
-            element: <ProductosPage />,
+            path: "inventario/tiendas/:id",
+            element: <TiendaDetailPage />,
           },
-          // Add more protected routes here
+          // {
+          //   path: "inventario/productos",
+          //   element: <StockPage />,
+          // },
+          {
+            path: "inventario/productos/:id",
+            element: <StockDetailPage />,
+          },
+
+          // Página 404 interna
           {
             path: "*",
             element: <div>Página no encontrada</div>,
@@ -47,6 +68,10 @@ const router = createBrowserRouter([
       },
     ],
   },
+
+  // ============================
+  // 🔓 AUTH ROUTES
+  // ============================
   {
     path: "/auth",
     element: (
@@ -66,5 +91,13 @@ const router = createBrowserRouter([
     ],
   },
 ]);
+
+// KAFKA
+// ordenes y devoluciones
+// necesitan estados de envio (finalizado)
+// orden, productoOrden, Historial orden
+
+// nos mandas la confirmacion de la orden (para reservar y para confirmar)
+// otra para devolucion, descuenta automatico
 
 export default router;

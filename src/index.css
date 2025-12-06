@@ -13,3 +13,35 @@
     --color-primary5: #413f39;
     --color-primary6: #333027;
 }
+
+select, ::picker(select) {
+  appearance: base-select;
+}
+
+select {
+  & option {
+    padding: 5px 10px;
+
+    &:hover {
+      background: theme(--color-primary2);
+      color: white;
+    }
+  }
+
+  & option:checked {
+    background: theme(--color-primary3);
+    color: white
+  }
+
+  & ::checkmark {
+    content: "";
+  }
+
+  &::picker-icon {
+    display: none;
+  }
+
+  &:open {
+    border-color: theme(--color-primary3);
+  }
+}
