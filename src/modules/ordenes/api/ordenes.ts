@@ -11,16 +11,17 @@ export const getOrdenes = async (params: {
   fechaInicio: string;
   fechaFin: string;
 }) => {
-
   const queryParams = new URLSearchParams({
     page: String(params.page),
     limit: String(params.pageSize),
   });
-  
+
   if (params.busquedaId) queryParams.append("busquedaId", params.busquedaId);
-  if (params.busquedaCliente) queryParams.append("busquedaCliente", params.busquedaCliente);
+  if (params.busquedaCliente)
+    queryParams.append("busquedaCliente", params.busquedaCliente);
   if (params.estado) queryParams.append("estado", params.estado);
-  if (params.tipoDevolucion) queryParams.append("tiene_devolucion", params.tipoDevolucion);
+  if (params.tipoDevolucion)
+    queryParams.append("tiene_devolucion", params.tipoDevolucion);
   if (params.fechaInicio) queryParams.append("fechaInicio", params.fechaInicio);
   if (params.fechaFin) queryParams.append("fechaFin", params.fechaFin);
 
@@ -43,7 +44,14 @@ export const getOrdenes = async (params: {
     return {
       data: MAPPED_DATA,
       totalItems: apiData.total,
-      estados: ["CREADO","PAGADO", "CONFIRMADO", "PROCESADO","ENTREGADO", "CANCELADO"],
+      estados: [
+        "CREADO",
+        "PAGADO",
+        "CONFIRMADO",
+        "PROCESADO",
+        "ENTREGADO",
+        "CANCELADO",
+      ],
       tiposDevolucion: [
         { label: "SI", value: "true" },
         { label: "NO", value: "false" },
@@ -56,9 +64,9 @@ export const getOrdenes = async (params: {
 };
 
 export const confirmarOrden = async (idOrden: string, usuario: string) => {
-    console.log("Confirmando orden:", idOrden, usuario);
-    await API_UPDATE.patch(`/api/orders/${idOrden}/confirmar`, { usuario });
-    return true;
+  console.log("Confirmando orden:", idOrden, usuario);
+  await API_UPDATE.patch(`/api/orders/${idOrden}/confirmar`, { usuario });
+  return true;
 };
 
 export const getOrdenById = async (idOrden: string) => {

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 
 // Interfaces y datos de ejemplo para los productos
 interface Producto {
@@ -39,7 +39,7 @@ const ReemplazoModal: React.FC<ReemplazoModalProps> = ({ isOpen, onClose, onSubm
     <div className="w-1/2">
       <h3 className="text-lg font-semibold text-center mb-2">{title}</h3>
       <table className="w-full text-sm border-collapse">
-        <thead style={{ backgroundColor: '#C9B35E' }}>
+        <thead style={{ backgroundColor: "#C9B35E" }}>
           <tr>
             <th className="p-2 text-left">ID ITEM</th>
             <th className="p-2 text-left">NOMBRE</th>
@@ -51,7 +51,7 @@ const ReemplazoModal: React.FC<ReemplazoModalProps> = ({ isOpen, onClose, onSubm
             <tr 
               key={item.id} 
               onClick={() => handleSelect(item.id)}
-              className={`border-b cursor-pointer ${itemsSeleccionados.includes(item.id) ? 'bg-yellow-100' : ''}`}
+              className={`border-b cursor-pointer ${itemsSeleccionados.includes(item.id) ? "bg-yellow-100" : ""}`}
             >
               <td className="p-2">{item.id}</td>
               <td className="p-2">{item.nombre}</td>
@@ -72,7 +72,7 @@ const ReemplazoModal: React.FC<ReemplazoModalProps> = ({ isOpen, onClose, onSubm
           <ProductTable title="Reemplazo agregado" data={reemplazoAgregadoData} />
         </div>
         <div className="flex justify-center">
-          <button onClick={() => onSubmit(itemsSeleccionados)} className="mt-8 py-3 px-16 text-white font-bold rounded-md" style={{ backgroundColor: '#C9B35E' }}>
+          <button onClick={() => onSubmit(itemsSeleccionados)} className="mt-8 py-3 px-16 text-white font-bold rounded-md" style={{ backgroundColor: "#C9B35E" }}>
             Realizar reemplazo
           </button>
         </div>

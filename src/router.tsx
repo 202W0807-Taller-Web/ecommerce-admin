@@ -5,11 +5,16 @@ import { createBrowserRouter } from "react-router-dom";
 import MainLayout from "./layouts/MainLayout";
 
 //Ordenes-Devoluciones
-import DevolucionesPage from './pages/devoluciones/DevolucionesPage';
-import DevolucionDetallePage from './pages/devoluciones/DevolucionDetallePage';
-import CrearDevolucionPage from './pages/devoluciones/CrearDevolucionPage';
-import OrdenesPage from './pages/ordenes/OrdenesPage';
-import DetalleOrden from './pages/ordenes/DetalleOrden';
+import DevolucionesPage from "./pages/devoluciones/DevolucionesPage";
+import DevolucionDetallePage from "./pages/devoluciones/DevolucionDetallePage";
+import CrearDevolucionPage from "./pages/devoluciones/CrearDevolucionPage";
+import OrdenesPage from "./pages/ordenes/OrdenesPage";
+import DetalleOrden from "./pages/ordenes/DetalleOrden";
+
+// Envios
+import EnviosPage from "./pages/envios/EnviosPage";
+import CrearEnvioPage from "./pages/envios/CrearEnvioPage";
+import DetalleEnvioPage from "./pages/envios/DetalleEnvioPage";
 
 // Inventarios
 import AlmacenDetailPage from "./pages/inventario/AlmacenDetailPage";
@@ -98,8 +103,16 @@ const router = createBrowserRouter([
         element: <OrdenesPage />,
       },
       {
-        path: "ordenes/:idOrden",
-        element: <DetalleOrden />,
+        path: "envios/ordenes",
+        element: <EnviosPage />,
+      },
+      {
+        path: "envios/crear",
+        element: <CrearEnvioPage />,
+      },
+      {
+        path: "envios/ordenes/:id",
+        element: <DetalleEnvioPage />,
       },
     ],
   },
