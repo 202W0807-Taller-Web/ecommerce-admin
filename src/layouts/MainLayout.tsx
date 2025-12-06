@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Outlet, NavLink, useLocation } from "react-router-dom";
-import { Menu, X, Home, Package, Truck, ChevronRight } from "lucide-react";
+import { Menu, X, Home, Package, Truck, ChevronRight, FileText } from "lucide-react";
 import type { NavItem } from "types/ui/NavItem";
 import Logo from "@components/Logo";
 
