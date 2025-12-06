@@ -3,11 +3,19 @@ import type { LucideIcon } from "lucide-react";
 
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label?: string;
+  type?: string;
+  placeholder?: string;
+  disabled?: boolean;
+  value?: string;
+  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+
   leftIcon?: LucideIcon;
   rightIcon?: LucideIcon;
+
   helperText?: string;
   error?: string;
   success?: string;
+
   variant?: "default" | "invalid" | "success";
 }
 

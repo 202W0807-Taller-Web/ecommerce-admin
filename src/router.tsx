@@ -19,6 +19,13 @@ import TiendaDetailPage from "./pages/inventario/TiendaDetailPage";
 import StockDetailsPage from "./pages/inventario/StockDetailsPage";
 import StockDetailPage from "@pages/inventario/StockDetailPage";
 
+import CategoriasPage from "./pages/catalogo/CategoriasPage";
+import ProductosVariantesPage from "./pages/catalogo/ProductosVariantesPage";
+import AtributosPage from "./pages/catalogo/AtributosPage";
+import ReseñasPage from "./pages/catalogo/ReseñasPage";
+import PromocionesPage from "./pages/catalogo/PromocionesPage";
+import DetalleReseñasPage from "@pages/catalogo/DetalleReseñasPage";
+
 const router = createBrowserRouter([
   {
     path: "/",
@@ -48,6 +55,32 @@ const router = createBrowserRouter([
         path: "inventario/productos/:id",
         element: <StockDetailPage />,
       },
+      {
+        path: "catalogo/productos",
+        element: <CategoriasPage/>,
+      },
+      {
+        path: "catalogo/productos/:id/variantes",
+        element: <ProductosVariantesPage/>,
+      },
+
+      {
+        path: "catalogo/reseñas",
+        element: <ReseñasPage/>,
+      },
+      {
+        path: "catalogo/atributos",
+        element: <AtributosPage/>,
+      },
+      {
+        path: "catalogo/promociones",
+        element: <PromocionesPage/>,
+      },
+      {
+        path: "catalogo/reseñas/:id",
+        element: <DetalleReseñasPage />,
+      },
+
       {
         path: "devoluciones",
         element: <DevolucionesPage />,
