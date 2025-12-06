@@ -24,14 +24,6 @@ const staticNavItems: NavItem[] = [
     ],
   },
   {
-    label: "Ordenes y devoluciones",
-    icon: <FileText />, // Asegúrate de importar el icono
-    children: [
-      { label: "Órdenes", path: "/ordenes" },
-      { label: "Devoluciones", path: "/devoluciones" },
-    ],
-  },
-  {
     label: "Catálogo",
     icon: <Truck />,
     children: [
@@ -41,6 +33,15 @@ const staticNavItems: NavItem[] = [
       { label: "Promociones", path: "/catalogo/promociones" },
     ],
   },
+  {
+    label: "Ordenes y devoluciones",
+    icon: <FileText />, 
+    children: [
+      { label: "Órdenes", path: "/ordenes" },
+      { label: "Devoluciones", path: "/devoluciones" },
+    ],
+  },
+  
 ];
 
 const MainLayout = () => {
@@ -90,7 +91,7 @@ const MainLayout = () => {
                       className={`flex w-full items-center justify-between px-8 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-100 rounded-md  
                         ${openAccordions.includes(item.label) ? "bg-gray-100" : ""}`}
                     >
-                      <span className="flex items-center gap-2">
+                      <span className="flex items-center gap-2 flex-1 text-left">
                         {item.icon}
                         {item.label}
                       </span>
