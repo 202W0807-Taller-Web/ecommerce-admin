@@ -6,11 +6,16 @@ import { ProtectedRoute } from "./components/ProtectedRoute";
 import { AuthProvider } from "./context/AuthContext";
 
 //Ordenes-Devoluciones
-import DevolucionesPage from './pages/devoluciones/DevolucionesPage';
-import DevolucionDetallePage from './pages/devoluciones/DevolucionDetallePage';
-import CrearDevolucionPage from './pages/devoluciones/CrearDevolucionPage';
-import OrdenesPage from './pages/ordenes/OrdenesPage';
-import DetalleOrden from './pages/ordenes/DetalleOrden';
+import DevolucionesPage from "./pages/devoluciones/DevolucionesPage";
+import DevolucionDetallePage from "./pages/devoluciones/DevolucionDetallePage";
+import CrearDevolucionPage from "./pages/devoluciones/CrearDevolucionPage";
+import OrdenesPage from "./pages/ordenes/OrdenesPage";
+import DetalleOrden from "./pages/ordenes/DetalleOrden";
+
+// Envios
+import EnviosPage from "./pages/envios/EnviosPage";
+import CrearEnvioPage from "./pages/envios/CrearEnvioPage";
+import DetalleEnvioPage from "./pages/envios/DetalleEnvioPage";
 
 // Auth Pages
 import Login from "./pages/auth/Login";
@@ -32,11 +37,6 @@ import AtributosPage from "./pages/catalogo/AtributosPage";
 import ReseñasPage from "./pages/catalogo/ReseñasPage";
 import PromocionesPage from "./pages/catalogo/PromocionesPage";
 import DetalleReseñasPage from "@pages/catalogo/DetalleReseñasPage";
-
-// Envios
-import EnviosPage from "./pages/envios/EnviosPage";
-import CrearEnvioPage from "./pages/envios/CrearEnvioPage";
-import DetalleEnvioPage from "./pages/envios/DetalleEnvioPage";
 
 const router = createBrowserRouter([
   // ============================
@@ -110,21 +110,18 @@ const router = createBrowserRouter([
             element: <DetalleReseñasPage />,
           },
 
-          // Devoluciones
           {
             path: "devoluciones",
             element: <DevolucionesPage />,
           },
           {
-            path: "devoluciones/crear",
+            path: "devoluciones",
             element: <CrearDevolucionPage />,
           },
           {
             path: "devoluciones/:id",
             element: <DevolucionDetallePage />,
           },
-
-          // Ordenes
           {
             path: "ordenes",
             element: <OrdenesPage />,
@@ -134,34 +131,65 @@ const router = createBrowserRouter([
             element: <DetalleOrden />,
           },
 
-          // Envios
+          // Página 404 interna
           {
-            path: "envios/ordenes",
-            element: <EnviosPage />,
-          },
-          {
-            path: "envios/crear",
-            element: <CrearEnvioPage />,
-          },
-          {
-            path: "envios/ordenes/:id",
-            element: <DetalleEnvioPage />,
+            path: "*",
+            element: <div>Página no encontrada</div>,
           },
         ],
       },
     ],
   },
+
   // ============================
-  // 🔓 PUBLIC ROUTES
+  // 🔓 AUTH ROUTES
   // ============================
   {
-    path: "/login",
-    element: <Login />,
-  },
-  {
-    path: "/register",
-    element: <Register />,
+    path: "/auth",
+    element: (
+      <AuthProvider>
+        <AuthLayout />
+      </AuthProvider>
+    ),
+    children: [
+      {
+        path: "login",
+        element: <Login />,
+      },
+      {
+        path: "devoluciones",
+        element: <CrearDevolucionPage />,
+      },
+      {
+        path: "devoluciones/:id",
+        element: <DevolucionDetallePage />,
+      },
+      {
+        path: "ordenes",
+        element: <OrdenesPage />,
+      },
+      {
+        path: "envios/ordenes",
+        element: <EnviosPage />,
+      },
+      {
+        path: "envios/crear",
+        element: <CrearEnvioPage />,
+      },
+      {
+        path: "envios/ordenes/:id",
+        element: <DetalleEnvioPage />,
+      },
+    ],
   },
 ]);
+
+// KAFKA
+// ordenes y devoluciones
+// necesitan estados de envio (finalizado)
+// orden, productoOrden, Historial orden
+
+// nos mandas la confirmacion de la orden (para reservar y para confirmar)
+// otra para devolucion, descuenta automatico
 
 export default router;
