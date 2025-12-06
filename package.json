@@ -12,14 +12,15 @@
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.1.13",
-    "@tanstack/react-query": "^5.90.2",
+    "@tanstack/react-query": "^5.90.12",
     "@tanstack/react-query-devtools": "^5.90.2",
-    "axios": "^1.12.2",
+    "axios": "^1.13.2",
     "lucide-react": "^0.544.0",
+    "moment-timezone": "^0.6.0",
     "path": "^0.12.7",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
-    "react-hook-form": "^7.64.0",
+    "react-hook-form": "^7.68.0",
     "react-router-dom": "^7.9.1",
     "tailgrids": "^2.3.0",
     "tailwindcss": "^4.1.13"

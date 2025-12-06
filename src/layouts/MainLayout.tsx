@@ -2,7 +2,7 @@
 import {useEffect} from "react";
 import { Outlet, Link, useLocation } from "react-router-dom";
 import { useState } from "react";
-import { Menu, X, Home, Package, Truck, ChevronRight } from "lucide-react";
+import { Menu, X, Home, Package, Truck, ChevronRight, FileText } from "lucide-react";
 import type { NavItem } from "types/ui/NavItem";
 import Logo from "@components/Logo";
 
@@ -23,6 +23,14 @@ const navItems: NavItem[] = [
     children: [
       { label: "Carriers", path: "/envios/carriers" },
       { label: "Órdenes", path: "/envios/ordenes" },
+    ],
+  },
+  {
+    label: "Ordenes y devoluciones",
+    icon: <FileText />, // Asegúrate de importar el icono
+    children: [
+      { label: "Órdenes", path: "/ordenes/ordenes" },
+      { label: "Devoluciones", path: "/ordenes/devoluciones" },
     ],
   },
 ];

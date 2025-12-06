@@ -4,12 +4,19 @@ import { createBrowserRouter } from "react-router-dom";
 // Layouts
 import MainLayout from "./layouts/MainLayout";
 
+//Ordenes-Devoluciones
+import DevolucionesPage from './pages/devoluciones/DevolucionesPage';
+import DevolucionDetallePage from './pages/devoluciones/DevolucionDetallePage';
+import CrearDevolucionPage from './pages/devoluciones/CrearDevolucionPage';
+import OrdenesPage from './pages/ordenes/OrdenesPage';
+import DetalleOrden from './pages/ordenes/DetalleOrden';
+
 // Inventarios
 import AlmacenDetailPage from "./pages/inventario/AlmacenDetailPage";
 import AlmacenesPage from "./pages/inventario/AlmacenesPage";
 import TiendasPage from "./pages/inventario/TiendasPage";
 import TiendaDetailPage from "./pages/inventario/TiendaDetailPage";
-import StockPage from "./pages/inventario/StockPage";
+import StockDetailsPage from "./pages/inventario/StockDetailsPage";
 import StockDetailPage from "@pages/inventario/StockDetailPage";
 
 const router = createBrowserRouter([
@@ -35,11 +42,31 @@ const router = createBrowserRouter([
       },
       {
         path: "inventario/productos",
-        element: <StockPage />,
+        element: <StockDetailsPage />,
       },
       {
         path: "inventario/productos/:id",
         element: <StockDetailPage />,
+      },
+      {
+        path: "devoluciones",
+        element: <DevolucionesPage />,
+      },
+      {
+        path: "devoluciones",
+        element: <CrearDevolucionPage />,
+      },
+      {
+        path: "devoluciones/:id",
+        element: <DevolucionDetallePage />,
+      },
+      {
+        path: "ordenes",
+        element: <OrdenesPage />,
+      },
+      {
+        path: "ordenes/:idOrden",
+        element: <DetalleOrden />,
       },
     ],
   },
