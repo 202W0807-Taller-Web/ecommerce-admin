@@ -32,6 +32,7 @@ export default function OrdenesPage() {
   const { data, isLoading } = useQuery({
     queryKey: ["ordenes", page, pageSize, busquedaId, busquedaCliente, estado, tipoDevolucion, fechaInicio, fechaFin],
     queryFn: () => getOrdenes({ page, pageSize, busquedaId, busquedaCliente, estado, tipoDevolucion, fechaInicio, fechaFin }),
+    refetchInterval: 5000,
   });
 
   // extrae datos
@@ -84,7 +85,6 @@ export default function OrdenesPage() {
       );
       setModalOpen(false);
       setOrdenSeleccionada(null);
-      setPage(1);
     } catch (error) {
       console.error("Error al confirmar orden:", error);
       setModalOpen(false);

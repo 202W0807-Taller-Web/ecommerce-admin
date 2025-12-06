@@ -12,6 +12,11 @@ import CrearDevolucionPage from "./pages/devoluciones/CrearDevolucionPage";
 import OrdenesPage from "./pages/ordenes/OrdenesPage";
 import DetalleOrden from "./pages/ordenes/DetalleOrden";
 
+// Envios
+import EnviosPage from "./pages/envios/EnviosPage";
+import CrearEnvioPage from "./pages/envios/CrearEnvioPage";
+import DetalleEnvioPage from "./pages/envios/DetalleEnvioPage";
+
 // Auth Pages
 import Login from "./pages/auth/Login";
 import Register from "./pages/auth/Register";
@@ -147,8 +152,28 @@ const router = createBrowserRouter([
         element: <Login />,
       },
       {
-        path: "register",
-        element: <Register />,
+        path: "devoluciones",
+        element: <CrearDevolucionPage />,
+      },
+      {
+        path: "devoluciones/:id",
+        element: <DevolucionDetallePage />,
+      },
+      {
+        path: "ordenes",
+        element: <OrdenesPage />,
+      },
+      {
+        path: "envios/ordenes",
+        element: <EnviosPage />,
+      },
+      {
+        path: "envios/crear",
+        element: <CrearEnvioPage />,
+      },
+      {
+        path: "envios/ordenes/:id",
+        element: <DetalleEnvioPage />,
       },
     ],
   },
