@@ -1,9 +1,9 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { Plus, Search, Filter, Loader2 } from "lucide-react";
 import Button from "../../components/Button";
 import { TableHeader, TableCell, StatusBadge } from "../../components/Table";
-import { useEnvios, useEnvioStats, useConfirmarEnvio, useEstadosEnvio } from "../../modules/envios/hooks/useEnvios";
+import { useEnvios, useConfirmarEnvio, useEstadosEnvio } from "../../modules/envios/hooks/useEnvios";
 import type { EnvioFilters } from "../../modules/envios/types/EnvioTypes";
 
 const getStatusVariant = (status: string) => {
@@ -22,17 +22,33 @@ const getStatusVariant = (status: string) => {
 
 const EnviosPage = () => {
   const navigate = useNavigate();
-  const [filters, setFilters] = useState<EnvioFilters>({ page: 1, limit: 10 });
+  const [filters, setFilters] = useState<EnvioFilters>({ page: 1, limit: 100 }); // Aumentamos el límite para tener más datos para las métricas
 
   // Hooks de datos
   const { data: enviosResponse, isLoading: isLoadingEnvios } = useEnvios(filters);
-  const { data: statsResponse, isLoading: isLoadingStats } = useEnvioStats();
+  // const { data: statsResponse, isLoading: isLoadingStats } = useEnvioStats(); // Eliminado por solicitud del usuario
   const { data: estadosResponse } = useEstadosEnvio();
   const confirmarEnvioMutation = useConfirmarEnvio();
 
   const envios = enviosResponse?.data || [];
-  const stats = statsResponse?.data;
   const estados = estadosResponse?.data || [];
+
+  // Cálculo de métricas del lado del cliente
+  const stats = useMemo(() => {
+    const initialStats = {
+      en_transito: 0,
+      entregados: 0,
+      con_incidencias: 0
+    };
+    
+    return envios.reduce((acc, envio) => {
+      const estado = envio.estado?.nombre?.toUpperCase();
+      if (estado === 'EN_TRANSITO' || estado === 'EN TRANSITO') acc.en_transito++;
+      if (estado === 'ENTREGADO') acc.entregados++;
+      if (estado === 'FALLIDO' || estado === 'CON INCIDENCIA' || estado === 'CANCELADO') acc.con_incidencias++;
+      return acc;
+    }, initialStats);
+  }, [envios]);
 
   const handleConfirmar = (id: number) => {
     confirmarEnvioMutation.mutate(id);
@@ -56,19 +72,19 @@ const EnviosPage = () => {
         <div className="bg-yellow-400 p-6 text-white">
           <h3 className="font-semibold text-lg">En transito</h3>
           <p className="text-3xl font-bold">
-            {isLoadingStats ? <Loader2 className="animate-spin" /> : stats?.por_estado.find(s => s.estado_nombre === "EN_TRANSITO")?.cantidad || 0}
+            {isLoadingEnvios ? <Loader2 className="animate-spin" /> : stats.en_transito}
           </p>
         </div>
         <div className="bg-yellow-600 p-6 text-white">
           <h3 className="font-semibold text-lg">Entregados</h3>
           <p className="text-3xl font-bold">
-            {isLoadingStats ? <Loader2 className="animate-spin" /> : stats?.por_estado.find(s => s.estado_nombre === "ENTREGADO")?.cantidad || 0}
+            {isLoadingEnvios ? <Loader2 className="animate-spin" /> : stats.entregados}
           </p>
         </div>
         <div className="bg-yellow-700 p-6 text-white">
           <h3 className="font-semibold text-lg">Con incidencias</h3>
           <p className="text-3xl font-bold">
-            {isLoadingStats ? <Loader2 className="animate-spin" /> : stats?.por_estado.find(s => s.estado_nombre === "FALLIDO")?.cantidad || 0}
+            {isLoadingEnvios ? <Loader2 className="animate-spin" /> : stats.con_incidencias}
           </p>
         </div>
       </div>
