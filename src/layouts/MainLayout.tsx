@@ -22,7 +22,7 @@ const staticNavItems: NavItem[] = [
     children: [
       { label: "Almacenes", path: "/inventario/almacenes" },
       { label: "Tiendas", path: "/inventario/tiendas" },
-      // { label: "Stock", path: "/inventario/productos" },
+      { label: "Stock", path: "/inventario/productos" },
     ],
   },
   {
