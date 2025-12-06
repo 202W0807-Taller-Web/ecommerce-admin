@@ -23,8 +23,8 @@ import AlmacenDetailPage from "./pages/inventario/AlmacenDetailPage";
 import AlmacenesPage from "./pages/inventario/AlmacenesPage";
 import TiendasPage from "./pages/inventario/TiendasPage";
 import TiendaDetailPage from "./pages/inventario/TiendaDetailPage";
-//import StockPage from "./pages/inventario/StockPage"; <- no existe
-import StockDetailPage from "@pages/inventario/StockDetailPage";
+import StockPage from "./pages/inventario/StockPage";
+import StockDetailPage from "./pages/inventario/StockDetailPage";
 
 import CategoriasPage from "./pages/catalogo/CategoriasPage";
 import ProductosVariantesPage from "./pages/catalogo/ProductosVariantesPage";
@@ -65,10 +65,10 @@ const router = createBrowserRouter([
             path: "inventario/tiendas/:id",
             element: <TiendaDetailPage />,
           },
-          // {
-          //   path: "inventario/productos",
-          //   element: <StockPage />,
-          // },
+          {
+            path: "inventario/productos",
+            element: <StockPage />,
+          },
           {
             path: "inventario/productos/:id",
             element: <StockDetailPage />,
