@@ -32,6 +32,8 @@ import AtributosPage from "./pages/catalogo/AtributosPage";
 import ReseñasPage from "./pages/catalogo/ReseñasPage";
 import PromocionesPage from "./pages/catalogo/PromocionesPage";
 import DetalleReseñasPage from "@pages/catalogo/DetalleReseñasPage";
+import EnviosPage from "@pages/envios/EnviosPage";
+import CrearEnvioPage from "@pages/envios/CrearEnvioPage";
 
 const router = createBrowserRouter([
   // ============================
@@ -72,6 +74,18 @@ const router = createBrowserRouter([
           {
             path: "inventario/productos/:id",
             element: <StockDetailPage />,
+          },
+          {
+            path: "envios/ordenes",
+            element: <EnviosPage />,
+          },
+          {
+            path: "envios/ordenes/:id",
+            element: <DetalleOrden />,
+          },
+          {
+            path: "envios/crear",
+            element: <CrearEnvioPage />,
           },
 
           // Configuraciones
